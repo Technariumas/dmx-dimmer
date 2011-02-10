@@ -308,10 +308,12 @@ refdes=AIN1
 }
 C 42900 39200 1 0 0 resistor-variable-2.sym
 {
-T 43450 39600 5 10 1 1 0 0 1
+T 43450 39500 5 10 1 1 0 0 1
 refdes=R?
 T 43700 40100 5 10 0 1 0 0 1
 device=VARIABLE_RESISTOR
+T 43400 39000 5 10 1 1 0 0 1
+value=10k
 }
 C 42400 38500 1 0 0 gnd-2.sym
 C 44100 39500 1 0 0 vcc-2.sym
