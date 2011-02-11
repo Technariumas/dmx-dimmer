@@ -1,4 +1,70 @@
 XOMG DMX Dimmer
 
+This is the documentation for xomg's DMX dimmer, which is based on 
+Hendrik Hoelscher's dimmer. See [1] on the latter.
+
+[1] http://www.hoelscher-hi.de/hendrik/english/dimmer.htm
+
+
 ===== INTERFACES =====
+
+This section details the various interfaces of the main
+microcontroller, U1. At the time of writing this is an ATmega168.
+
+
+----- DMX input -----
+
+DMX control signals are received using the 3-pin connector DMX1. The
+balanced signal is converted using a 75176 IC. ???
+
+
+----- Switch mode control -----
+
+ATmega168 has less I/O pins than ATmega8515 (used in Hoelscher's
+design). Switching control would require 10 additional pins, so this
+feature is not implemented.
+
+
+----- Zero-crossing -----
+
+To avoid EMI and high-amplitude voltage spikes, zero-crossing power
+switching is used. That is, outputs are switched on and off at moments
+when mains' AC voltage, which is sinusoidal, is at its minimum amplitude,
+0 volts.
+
+ZC detection is accomplished externally. The output of the detector is
+received on header ZC1, pin 1, and connected to PD3, which is U1's pin for
+external interrupt INT1. This interrupt is triggered every time ???, which
+is configured using register ???.
+
+???
+
+
+----- Status LEDs -----
+
+???
+
+
+----- Temperature control -----
+
+??? Thermocouple to AIN1?
+
+
+----- Output -----
+
+???
+
+
+----- In-system programming -----
+
+Used to update the dimmer's firmware. This requires connecting an AVR
+programmer to ISP1 and shortening jumper JP1.
+
+It is advised to turn off the dimmer's external power.
+
+
+----- Unused pins -----
+
+Several pins of the microcontroller are unused. ???
+
 
