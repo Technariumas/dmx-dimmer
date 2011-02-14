@@ -15,7 +15,31 @@ microcontroller, U1. At the time of writing this is an ATmega168.
 ----- DMX input -----
 
 DMX control signals are received using the 3-pin connector DMX1. The
-balanced signal is converted using a 75176 IC. ???
+balanced signal is converted using a 75176 IC.
+
+VERIFY A low on /RE enables
+the receiver, a low on DE disables the driver. Presumably these two pins can be
+connected to GND, then the microcontroller will only be able to receive the
+DMX signal through the R pin of 75176. This is connected to PD0 of the uC.
+
+On ATmega168, PD0 and PD1 are respectively RXD and TXD of USART; PD2 is
+INT0.
+
+It is desirable to detect an incoming DMX transmission using an external
+interrupt. A timing diagram is available at [1]. According to it, the
+DMX master idles by holding the data line HIGH (MARK before BREAK, MBB).
+When a new packet comes in, the line is pulled LOW (SPACE for BREAK),
+then HIGH (MARK after BREAK, MAB), then data transmission begins. It is
+therefore possible to detect a new DMX packet when the line changes
+state from HIGH to LOW after an MBB.
+
+Data is transmitted in slots
+of 11 bytes (L DDDD DDDD HH), up to 513 slots. The first one is always
+a START CODE. It is followed by slots of data for DMX channels.
+
+The data byte is ordered least significant bit first.
+
+[1] http://www.erwinrol.com/index.php?stagecraft/dmx.php
 
 
 ----- Switch mode control -----
