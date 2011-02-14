@@ -21,8 +21,8 @@ balanced signal is converted using a 75176 IC. ???
 ----- Switch mode control -----
 
 ATmega168 has less I/O pins than ATmega8515 (used in Hoelscher's
-design). Switching control would require 10 additional pins, so this
-feature is not implemented.
+design). Primitive switching control would require 10 additional pins,
+so this feature is not implemented.
 
 
 ----- Zero-crossing -----
