@@ -49,7 +49,7 @@ void board_init (void) {
     set_output(LED0_DDR, LED0);
     set_output(LED1_DDR, LED1);
 
-    // channel number configuration: input /w pullup
+    // channel number configuration: inputs with pullups
     CHAN_DDR &=  ~( (1<<CHAN0) | (1<<CHAN1) | (1<<CHAN2) | \
 		    (1<<CHAN3) | (1<<CHAN4) | (1<<CHAN5) );
     CHAN_PORT |= (1<<CHAN0) | (1<<CHAN1) | (1<<CHAN2) | \
@@ -64,7 +64,7 @@ void board_init (void) {
     // enable int
     
     // serial to parallel: output to controlled lights
-    // set output / usart
+    // set output
 
     // dmx signals
     set_output(USART_DDR, USART_RE);
@@ -76,7 +76,7 @@ void board_init (void) {
 
 void blinkr (void) {
     output_high(LED0_DDR, LED0);
-    _delay_ms(100);
+    _delay_ms(100); // FIXME: these waits block!
     output_low(LED0_DDR, LED0);
     _delay_ms(100);
 }
