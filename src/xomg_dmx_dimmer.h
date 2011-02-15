@@ -14,6 +14,11 @@
 #define LED1_PORT PORTD
 #define LED1      PD6
 
+// DMX/USART
+#define USART_DDR  DDRD
+#define USART_PORT PORTD
+#define USART_RE   PD2   // ~RE pin
+
 // comfortables
 #define output_low(port,pin) port &= ~(1<<pin)
 #define output_high(port,pin) port |= (1<<pin)
@@ -42,6 +47,8 @@ void board_init (void) {
     // set output / usart
 
     // dmx signals
+    set_output(USART_DDR, USART_RE);
+    output_low(USART_DDR, USART_RE);
     usart_init(USART_UBR);
 
     sei();
