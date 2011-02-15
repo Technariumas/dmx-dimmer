@@ -39,6 +39,9 @@
 
 
 #include <avr/io.h>
+#include <avr/interrupt.h>
+#include <avr/wdt.h>
+#include <util/delay.h>
 #include "usart.h"
 
 
@@ -54,8 +57,7 @@ void board_init (void) {
 		    (1<<CHAN3) | (1<<CHAN4) | (1<<CHAN5) );
     CHAN_PORT |= (1<<CHAN0) | (1<<CHAN1) | (1<<CHAN2) | \
                  (1<<CHAN3) | (1<<CHAN4) | (1<<CHAN5);
-    __no_operation();  // sync
-    dmx.channels = 8 + 8 * (PINC & 0b00111111);
+    _delay_ms(1);  // FIXME: noop or remove if sync not needed
 
     // temperature control
     // ?

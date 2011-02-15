@@ -3,25 +3,29 @@
 
 #include "xomg_dmx_dimmer.h"  // board-specific
 #include "usart.h"            // dmx
+#include <stdbool.h>
 
 #define DMX_START_CODE 0      // aka DMX_ADDRESS: first slot's data
 
-struct dmx_t {
-    bool error = false;       // last frame had error
-    unsigned int channels = 8;
-    unsigned int slot = 0;    // slot counter
-    unsigned char status;
-    unsigned char data;
-} dmx;
+typedef struct {
+    bool     error;           // last frame had an error
+    uint16_t channels;
+    uint16_t slot;            // slot counter
+    uint8_t  status;
+    uint8_t  data;
+} dmx_t;
+dmx_t dmx;
 
-
-void main (void)
+int main (void)
 {
     board_init();  // internals and peripherals
+    dmx.channels = 8 + 8 * (PINC & 0b00111111);
 
     while (1) {
 	// ...
     }
+
+    return 0;
 }
 
 // interrupt service routine: usart receive complete
@@ -31,7 +35,7 @@ ISR (USART_RX_vect) {
     dmx.data = UDR0;
 
     // check for USART errors
-    if (status & (1<<DOR0)|(1<<FE0)) {
+    if (dmx.status & ((1<<DOR0)|(1<<FE0)) ) {
 	dmx.error = true;
 	//dmx.slot = 0;
     }

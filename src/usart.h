@@ -24,7 +24,7 @@ void usart_init (unsigned int ubr)
 
 
     /* Enable receiver and interrupt */
-    UCSR0B = (1<<RXEN) | (1<<RXCIE);
+    UCSR0B = (1<<RXEN0) | (1<<RXCIE0);
 
     /* Set frame format: asynchronous, 8-2 (default) */
     //UCSR0C |= (1<<UMSEL00) | (1<<UCSZ00) | (1<<UCSZ01) | (1<<USBS0);
@@ -57,7 +57,7 @@ unsigned char usart_receive (void)
     resl = UDR0;
 
     /* Check for Frame Error, Data OverRun, Parity Error */
-    if ( status & (1<<FE0)|(1<<DOR0)|(1<<UPE0) )
+    if ( status & ((1<<FE0) | (1<<DOR0) | (1<<UPE0)) )
 	return -1;
 
     /* Filter the 9th bit, then return */
