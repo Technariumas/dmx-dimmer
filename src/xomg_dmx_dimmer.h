@@ -3,8 +3,9 @@
 // settings specific to the board and used components
 
 #define F_CPU 16000000  // in case not set in Makefile
-#define DMX_BAUD 250000                 // Hz
-#define USART_UBR F_CPU/16/DMX_BAUD-1   // USART clock gen prescale
+#define BAUD 250000                 // Hz
+#define USART_UBR F_CPU/16/BAUD-1   // USART clock gen prescale
+// NOTE: it is also possible to set baud rate using util/setbaud.h
 
 // leds for debugging
 #define LED0_DDR  DDRD
