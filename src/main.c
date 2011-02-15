@@ -8,6 +8,7 @@
 
 struct dmx_t {
     bool error = false;
+    unsigned int channels = 8;
     unsigned int slot = 0;    // slot counter
 } dmx;
 

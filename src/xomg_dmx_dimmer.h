@@ -15,6 +15,17 @@
 #define LED1_PORT PORTD
 #define LED1      PD6
 
+// dipswitches to select number of channels
+#define CHAN_DDR  DDRC
+#define CHAN_PORT PORTC
+#define CHAN_PIN  PINC
+#define CHAN0     PC0
+#define CHAN1     PC1
+#define CHAN2     PC2
+#define CHAN3     PC3
+#define CHAN4     PC4
+#define CHAN5     PC5
+
 // DMX/USART
 #define USART_DDR  DDRD
 #define USART_PORT PORTD
@@ -37,6 +48,14 @@ void board_init (void) {
     // debug leds
     set_output(LED0_DDR, LED0);
     set_output(LED1_DDR, LED1);
+
+    // channel number configuration: input /w pullup
+    CHAN_DDR &=  ~( (1<<CHAN0) | (1<<CHAN1) | (1<<CHAN2) | \
+		    (1<<CHAN3) | (1<<CHAN4) | (1<<CHAN5) );
+    CHAN_PORT |= (1<<CHAN0) | (1<<CHAN1) | (1<<CHAN2) | \
+                 (1<<CHAN3) | (1<<CHAN4) | (1<<CHAN5);
+    __no_operation();  // sync
+    dmx.channels = 8 + 8 * (PINC & 0b00111111);
 
     // temperature control
     // ?
