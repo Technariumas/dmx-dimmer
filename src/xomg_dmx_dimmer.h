@@ -39,7 +39,7 @@
 #define STP_CLK_DDR     DDRB
 #define STP_CLK_PORT    PORTB
 #define STP_CLK         PB0
-#define STP_NOUTEN_DDR  DDRD
+#define STP_NOUTEN_DDR  DDRD  // ~OUTEN
 #define STP_NOUTEN_PORT PORTD
 #define STP_NOUTEN      PD4
 
@@ -84,12 +84,14 @@ void board_init (void) {
     set_input(ZC_DDR, ZC);
     output_high(ZC_PORT, ZC);
     EIMSK |= _BV(INT1);
-    EICRA |= _BV(ISC11) | _BV(ISC10);  // int on rising edge
+    EICRA |= _BV(ISC11) /*| _BV(ISC10)*/;  // int on falling edge
     
     // serial to parallel (output to controlled lights)
     set_output(STP_DATA_DDR, STP_DATA);
     set_output(STP_CLK_DDR, STP_CLK);
     set_output(STP_NOUTEN_DDR, STP_NOUTEN);
+    output_low(STP_DATA_PORT, STP_DATA);
+    output_low(STP_CLK_PORT, STP_CLK);
     output_high(STP_NOUTEN_PORT, STP_NOUTEN);
 
     // dmx signals

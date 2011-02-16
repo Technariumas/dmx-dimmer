@@ -6,6 +6,7 @@
 #include "usart.h"            // dmx
 
 #define DMX_START_CODE 0      // aka DMX_ADDRESS: first slot's data
+#define DMX_MAX_CHANNELS 512
 
 typedef struct {
     bool     error;           // last frame had an error
@@ -14,7 +15,11 @@ typedef struct {
     uint8_t  status;
     uint8_t  data;
 } dmx_t;
+
 dmx_t dmx = {false, 8, 0, 0, 0};
+uint8_t databuf[DMX_MAX_CHANNELS];  // TODO: init to 0s
+uint8_t zc_count = 0;
+
 
 int main (void)
 {
@@ -48,7 +53,8 @@ ISR (USART_RX_vect, ISR_NOBLOCK) {
 		else dmx.error = true;
 	    }
 	    else {
-		// write data to buffer[dmx.slot-1]
+		// careful with the oboes!
+		databuf[dmx.slot-1] = dmx.data;
 	    }
 	}
 	else {  // dmx.error == true
@@ -65,5 +71,23 @@ ISR (USART_RX_vect, ISR_NOBLOCK) {
 
 // interrupt: zc
 ISR (INT1_vect, ISR_NOBLOCK) {
-    
+    // send current data to dimmers
+    output_high(STP_NOUTEN_DDR, STP_NOUTEN);
+    output_high(STP_CLK_DDR, STP_CLK);
+    output_low(STP_CLK_DDR, STP_CLK);
+    output_low(STP_NOUTEN_DDR, STP_NOUTEN);
+
+    // fill with new data
+    for (int i = 0; i < dmx.channels; i++) {
+	if (databuf[i] >= zc_count) {
+	    output_high(STP_DATA_DDR, STP_DATA);
+	}
+	else {
+	    output_low(STP_DATA_DDR, STP_DATA);
+	}
+	output_high(STP_CLK_DDR, STP_CLK);
+	output_low(STP_CLK_DDR, STP_CLK);
+    }
+
+    zc_count++;  // ok to overflow 255->0
 }
