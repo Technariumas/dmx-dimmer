@@ -26,10 +26,28 @@
 #define CHAN4     PC4
 #define CHAN5     PC5
 
+// zero crossing
+#define ZC_DDR  DDRD
+#define ZC_PORT PORTD
+#define ZC_PIN  PIND   // not used
+#define ZC      PD3
+
+// serial to parallel
+#define STP_DATA_DDR    DDRB
+#define STP_DATA_PORT   PORTB
+#define STP_DATA        PB1
+#define STP_CLK_DDR     DDRB
+#define STP_CLK_PORT    PORTB
+#define STP_CLK         PB0
+#define STP_NOUTEN_DDR  DDRD
+#define STP_NOUTEN_PORT PORTD
+#define STP_NOUTEN      PD4
+
 // DMX/USART
 #define USART_DDR  DDRD
 #define USART_PORT PORTD
-#define USART_RE   PD2   // ~RE pin
+#define USART_NRE   PD2  // ~RE pin
+
 
 // comfortables
 #define output_low(port,pin) port &= ~(1<<pin)
@@ -53,24 +71,30 @@ void board_init (void) {
     set_output(LED1_DDR, LED1);
 
     // channel number configuration: inputs with pullups
+    // TODO: change (1<<XX) to _BV(XX)?
     CHAN_DDR &=  ~( (1<<CHAN0) | (1<<CHAN1) | (1<<CHAN2) | \
 		    (1<<CHAN3) | (1<<CHAN4) | (1<<CHAN5) );
     CHAN_PORT |= (1<<CHAN0) | (1<<CHAN1) | (1<<CHAN2) | \
                  (1<<CHAN3) | (1<<CHAN4) | (1<<CHAN5);
-    _delay_ms(1);  // FIXME: noop or remove if sync not needed
 
     // temperature control
     // ?
 
     // zero crossing
-    // enable int
+    set_input(ZC_DDR, ZC);
+    output_high(ZC_PORT, ZC);
+    EIMSK |= _BV(INT1);
+    EICRA |= _BV(ISC11) | _BV(ISC10);  // int on rising edge
     
-    // serial to parallel: output to controlled lights
-    // set output
+    // serial to parallel (output to controlled lights)
+    set_output(STP_DATA_DDR, STP_DATA);
+    set_output(STP_CLK_DDR, STP_CLK);
+    set_output(STP_NOUTEN_DDR, STP_NOUTEN);
+    output_high(STP_NOUTEN_PORT, STP_NOUTEN);
 
     // dmx signals
-    set_output(USART_DDR, USART_RE);
-    output_low(USART_DDR, USART_RE);
+    set_output(USART_DDR, USART_NRE);
+    output_low(USART_DDR, USART_NRE);
     usart_init(USART_UBR);
 
     sei();

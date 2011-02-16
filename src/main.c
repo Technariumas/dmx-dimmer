@@ -1,9 +1,9 @@
 // xomg's DMX dimmer
 // main.c: 
 
+#include <stdbool.h>
 #include "xomg_dmx_dimmer.h"  // board-specific
 #include "usart.h"            // dmx
-#include <stdbool.h>
 
 #define DMX_START_CODE 0      // aka DMX_ADDRESS: first slot's data
 
@@ -14,7 +14,7 @@ typedef struct {
     uint8_t  status;
     uint8_t  data;
 } dmx_t;
-dmx_t dmx;
+dmx_t dmx = {false, 8, 0, 0, 0};
 
 int main (void)
 {
@@ -29,13 +29,13 @@ int main (void)
 }
 
 // interrupt service routine: usart receive complete
-ISR (USART_RX_vect) {
+ISR (USART_RX_vect, ISR_NOBLOCK) {
     // reading data clears errors from status, so read status first
     dmx.status = UCSR0A;
     dmx.data = UDR0;
 
     // check for USART errors
-    if (dmx.status & ((1<<DOR0)|(1<<FE0)) ) {
+    if ( dmx.status & ((1<<DOR0)|(1<<FE0)) ) {
 	dmx.error = true;
 	//dmx.slot = 0;
     }
@@ -64,6 +64,6 @@ ISR (USART_RX_vect) {
 }
 
 // interrupt: zc
-// non-blocking (otherwise will miss usart frame)
-// send data out
-// prepare new data immediately?
+ISR (INT1_vect, ISR_NOBLOCK) {
+    
+}
