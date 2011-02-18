@@ -5,26 +5,17 @@
 #include "xomg_dmx_dimmer.h"  // board-specific
 #include "usart.h"            // dmx
 
-#define DMX_START_CODE 0      // aka DMX_ADDRESS: first slot's data
-#define DMX_MAX_CHANNELS 512
+#define DMX_START_CODE 0      // first slot's data
 
-typedef struct {
-    bool     error;           // last frame had an error
-    uint16_t channels;
-    uint16_t slot;            // slot counter
-    uint8_t  status;
-    uint8_t  data;
-} dmx_t;
-
-dmx_t dmx = {false, 8, 0, 0, 0};
-uint8_t databuf[DMX_MAX_CHANNELS];  // TODO: init to 0s
+dmx_t dmx = {false, 0, 0, 0, 0};
+uint8_t databuf[DMX_CHANNELS];  // TODO: init to 0s
 uint8_t zc_count = 0;
 
 
 int main (void)
 {
-    board_init();  // internals and peripherals
-    dmx.channels = 8 + 8 * (PINC & 0b00111111);
+    init_board();  // internals and peripherals
+    for (int i = 0; i < sizeof(databuf); i++) databuf[i] = 0;
 
     while (1) {
 	// ...
