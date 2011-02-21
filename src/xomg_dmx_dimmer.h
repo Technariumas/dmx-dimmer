@@ -52,7 +52,6 @@
 // zero crossing
 #define ZC_DDR  DDRD
 #define ZC_PORT PORTD
-#define ZC_PIN  PIND   // not used
 #define ZC      PD3
 
 // serial to parallel
@@ -69,7 +68,7 @@
 // DMX/USART
 #define USART_DDR  DDRD
 #define USART_PORT PORTD
-#define USART_NRE   PD2  // ~RE pin
+#define USART_NRE  PD2  // ~RE pin
 
 
 // data structures

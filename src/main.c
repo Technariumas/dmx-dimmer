@@ -12,8 +12,7 @@ uint8_t databuf[DMX_CHANNELS];  // TODO: init to 0s
 uint8_t zc_count = 0;
 
 
-int main (void)
-{
+int main (void) {
     init_board();  // internals and peripherals
     for (int i = 0; i < sizeof(databuf); i++) databuf[i] = 0;
 
@@ -60,7 +59,7 @@ ISR (USART_RX_vect, ISR_NOBLOCK) {
     if (dmx.slot > dmx.channels) dmx.slot = 0;
 }
 
-// interrupt: zc
+// interrupt service routine: action to take on zero crossing
 ISR (INT1_vect, ISR_NOBLOCK) {
     // send current data to dimmers
     output_high(STP_NOUTEN_DDR, STP_NOUTEN);
