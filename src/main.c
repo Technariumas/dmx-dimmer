@@ -101,17 +101,50 @@ void spi_master_init (void) {
 #define SPI_TRANSMIT_DUMMY 0b01010101
 
 // send and/or receive data
-char spi_master_transmit (char cData) {
-    SPDR = cData;                 // start transmission
+char spi_master_transmit (char data) {
+    SPDR = data;                  // start transmission
     while( !(SPSR & (1<<SPIF)) ); // wait for transmission complete 
     return SPDR;
+}
+
+// zero crossing
+#include <avr/interrupt.h>
+
+#define ZC_DDR  DDRD
+#define ZC_PORT PORTD
+#define ZC      PD3
+
+inline void zc_init (void) {
+    set_input(ZC_DDR, ZC);
+    output_high(ZC_PORT, ZC);
+    EIMSK |= _BV(INT1);
+    EICRA |= _BV(ISC11) /*| _BV(ISC10)*/;  // int on falling edge
+}
+
+uint8_t zc_count = 0;
+uint8_t outcount = 0;
+
+// interrupt service routine: action to take on zero crossing
+ISR (INT1_vect, ISR_NOBLOCK) {
+    zc_count++;
+    if (zc_count >= 50) {
+	outcount++;
+	zc_count = 0;
+    }
+
+    spi_master_transmit(outcount);
+    out_store();
+    out_enable(); delay_ms(1); out_disable();
 }
 
 
 int main (void) {
     uint8_t confl = 0;
     uint8_t confh = 0;
-    uint8_t i = 0;
+    //uint8_t i = 0;
+
+    wdt_disable();
+    zc_init();
 
     // leds are outputs
     set_output(DDRC, DDC3);
@@ -150,7 +183,7 @@ int main (void) {
     delay_ms(1);
 
     spi_master_init();
-    SPCR |= (1<<CPOL);  // otherwise can't read first bit
+    //SPCR |= (1<<CPOL);  // otherwise can't read first bit
 
     // first octet
     output_high(PORTC, PC3);
@@ -167,29 +200,39 @@ int main (void) {
     cfg_reset_enable();
 
     // setup for stp
-    SPCR &= ~(1<<CPOL);
-    SPCR |= (1<<CPHA);
+    //SPCR &= ~(1<<CPOL);
+    //SPCR |= (1<<CPHA);
+
+    // debug: transmit known message and halt
+    /* delay_ms(1000); */
+    /* spi_master_transmit(0b01100110); */
+    /* spi_master_transmit(0b01011010); */
+    /* out_store(); */
+    /* out_enable(); */
+    /* while (1); */
+
+    sei();
     while (1) {
 	wdt_reset();
 
-	// output to stp converter
-	spi_master_transmit(confl);
-	out_store();
-	out_enable(); delay_ms(500); out_disable();
+	/* // output to stp converter */
+	/* spi_master_transmit(confl); */
+	/* out_store(); */
+	/* out_enable(); delay_ms(500); out_disable(); */
 
-	spi_master_transmit(confh);
-	out_store();
-	out_enable(); delay_ms(500); out_disable();
+	/* spi_master_transmit(confh); */
+	/* out_store(); */
+	/* out_enable(); delay_ms(500); out_disable(); */
 
-	// == led blink: cycle finished
-	output_high(PORTC, PC3);
-	output_high(PORTC, PC4);
-	output_high(PORTC, PC5);
-	delay_ms(500);
-	output_low(PORTC, PC3);
-	output_low(PORTC, PC4);
-	output_low(PORTC, PC5);
-	delay_ms(500);
+	/* // == led blink: cycle finished */
+	/* output_high(PORTC, PC3); */
+	/* output_high(PORTC, PC4); */
+	/* output_high(PORTC, PC5); */
+	/* delay_ms(500); */
+	/* output_low(PORTC, PC3); */
+	/* output_low(PORTC, PC4); */
+	/* output_low(PORTC, PC5); */
+	/* delay_ms(500); */
     }
 
     return 1;
