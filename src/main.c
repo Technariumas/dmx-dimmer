@@ -1,5 +1,7 @@
 // dmx dimmer
 
+#define F_CPU 16000000  // 16 MHz
+
 #include <avr/io.h>
 #include <avr/wdt.h>
 #include <util/delay.h>
@@ -11,14 +13,41 @@
 #define set_output(portdir,pin) portdir |=  (1<<pin)
 
 
-// kill time in a calibrated way
+// FIXME: kill time in a calibrated way (NOT!)
 void delay_ms (uint16_t ms) {
-    uint16_t delay_count = 1000; //F_CPU / 17500;
+    uint16_t delay_count = 1000;  // cpu cycles in one ms?
     volatile uint16_t i;
 
     while (ms != 0) {
 	for (i = 0; i != delay_count; i++) wdt_reset();
 	ms--;
+    }
+}
+
+// FIXME: what if wdt is disabled?
+void delay_ns (uint16_t ns) {
+    uint16_t delay_count = 1;  // cpu cycles in one ms?
+    volatile uint16_t i;
+
+    while (ns != 0) {
+	for (i = 0; i != delay_count; i++)
+	    wdt_reset();
+	ns--;
+    }
+}
+
+// wait for degrees of firing angle
+inline void delay_degrees (uint8_t degrees) {
+    // F_CPU / ZC_PER_SEC / DEGREES_BETWEEN_ZC
+    uint16_t cycles = F_CPU / 100 / 256;
+    uint16_t c = cycles;
+    uint8_t d = degrees;
+
+    while (d != 0) {
+	c = cycles;
+	while (c != 0) c--;
+	d--;
+	wdt_reset();
     }
 }
 
@@ -118,23 +147,29 @@ inline void zc_init (void) {
     set_input(ZC_DDR, ZC);
     output_high(ZC_PORT, ZC);
     EIMSK |= _BV(INT1);
-    EICRA |= _BV(ISC11) /*| _BV(ISC10)*/;  // int on falling edge
+    EICRA |= _BV(ISC10);  // int on any change
+    //EICRA |= _BV(ISC11);  // int on falling change
 }
 
 uint8_t zc_count = 0;
 uint8_t outcount = 0;
 
 // interrupt service routine: action to take on zero crossing
+// FIXME: non-blocking interrupt resets everything
 ISR (INT1_vect, ISR_NOBLOCK) {
     zc_count++;
-    if (zc_count >= 50) {
-	outcount++;
-	zc_count = 0;
-    }
+    /* if (zc_count >= 100) { */
+    /* 	//outcount++; */
+    /* 	zc_count = 0; */
+    /* } */
 
-    spi_master_transmit(outcount);
+    delay_degrees(128);
+    spi_master_transmit(0b11111111);
     out_store();
-    out_enable(); delay_ms(1); out_disable();
+    out_enable();
+    //delay_degrees(1);
+    delay_ns(10);
+    out_disable();
 }
 
 
@@ -227,11 +262,11 @@ int main (void) {
 	/* // == led blink: cycle finished */
 	/* output_high(PORTC, PC3); */
 	/* output_high(PORTC, PC4); */
-	/* output_high(PORTC, PC5); */
+	output_high(PORTC, PC5);
 	/* delay_ms(500); */
 	/* output_low(PORTC, PC3); */
 	/* output_low(PORTC, PC4); */
-	/* output_low(PORTC, PC5); */
+	output_low(PORTC, PC5);
 	/* delay_ms(500); */
     }
 
