@@ -145,31 +145,72 @@ char spi_master_transmit (char data) {
 
 inline void zc_init (void) {
     set_input(ZC_DDR, ZC);
-    output_high(ZC_PORT, ZC);
+    output_high(ZC_PORT, ZC);  // pullup
     EIMSK |= _BV(INT1);
-    EICRA |= _BV(ISC10);  // int on any change
-    //EICRA |= _BV(ISC11);  // int on falling change
+    //EICRA |= _BV(ISC10);       // int on any change
+    EICRA |= _BV(ISC11);       // int on falling change
 }
 
-uint8_t zc_count = 0;
-uint8_t outcount = 0;
+/* uint8_t zc_count = 0; */
+/* uint8_t outcount = 0; */
 
 // interrupt service routine: action to take on zero crossing
 // FIXME: non-blocking interrupt resets everything
 ISR (INT1_vect, ISR_NOBLOCK) {
-    zc_count++;
+    /* zc_count++; */
     /* if (zc_count >= 100) { */
     /* 	//outcount++; */
     /* 	zc_count = 0; */
     /* } */
 
-    delay_degrees(128);
+    TCNT1 = 0;
+    TCNT1 = 0;
+}
+
+// timer with prescaling F_CPU/256 gives 62500 ticks per second, 625
+// ticks between two zero crossings
+// ideally, 256 ticks (between two zc) are needed, but this is impossible
+// with internal prescaler
+inline void timer_init (void) {
+    // clear int flags
+    TIFR1  = (1<<OCF1B) | (1<<OCF1A) | (1<<TOV1);
+    // between two zc, count up to 625
+    OCR1BH = 0;
+    OCR1BL = 625;
+    // enable comparator interrupts
+    TIMSK1 = (1<<OCIE1B) | (1<<OCIE1A);
+    // start ticking (clock = F_CPU/256)
+    TCCR1B = (1<<CS12);
+}
+
+// set next firing angle
+inline void timer_cmp_set (uint8_t angle8) {
+    // degree = F_CPU / 100 / 256 (instructions between firing angles)
+    uint16_t angle = angle8 * (F_CPU / 100 / 256);
+    OCR1AH = angle /256;
+    OCR1AL = (angle>>8);
+}
+
+// interrupt: 625 ticks passed, zero crossing now, reset counter
+ISR (TIMER1_COMPB_vect, ISR_NOBLOCK) {
+    TCNT1L = 0;
+}
+
+// interrupt: desired firing angle reached
+ISR (TIMER1_COMPA_vect, ISR_NOBLOCK) {
     spi_master_transmit(0b11111111);
     out_store();
     out_enable();
     //delay_degrees(1);
     delay_ns(10);
     out_disable();
+}
+
+// interrupt: counter overflow
+// this should happen at zero crossing or equidistantly between two zero
+// crossings
+ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
+    timer_cmp_set(128);
 }
 
 
