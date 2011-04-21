@@ -1,6 +1,6 @@
 // dmx dimmer
 
-#define F_CPU 16000000  // 16 MHz
+#define F_CPU 6000000  // 6 MHz
 
 #include <avr/io.h>
 #include <avr/wdt.h>
@@ -36,40 +36,6 @@ void delay_ns (uint16_t ns) {
     }
 }
 
-// wait for degrees of firing angle
-inline void delay_degrees (uint8_t degrees) {
-    // F_CPU / ZC_PER_SEC / DEGREES_BETWEEN_ZC
-    uint16_t cycles = F_CPU / 100 / 256;
-    uint16_t c = cycles;
-    uint8_t d = degrees;
-
-    while (d != 0) {
-	c = cycles;
-	while (c != 0) c--;
-	d--;
-	wdt_reset();
-    }
-}
-
-// indicate 8 bits using 3 leds
-void blink8 (uint8_t data) {
-    uint8_t i;
-
-    for (i = 0; i < 8; i++) {
-	//indicate bit
-	if (data & 0b00000001) output_high(PORTC, PC4);
-	else output_high(PORTC, PC5);
-	delay_ms(500);
-
-	// indication complete
-	output_low(PORTC, PC4);
-	output_low(PORTC, PC5);
-	delay_ms(100);
-
-	data = data >> 1;
-    }    
-}
-
 
 #define SPI_DDR      DDRB
 #define SPI_SS_DDR   DDB2  // ~ slave select (atm unused)
@@ -97,25 +63,6 @@ void blink8 (uint8_t data) {
 #define SPI_CFG_RESET   PD5
 #define SPI_CFG_SS      PD6
 
-
-#define out_enable()     output_low(SPI_SLAVES_PORT, SPI_OUT_ENABLE)
-#define out_disable()    output_high(SPI_SLAVES_PORT, SPI_OUT_ENABLE)
-#define out_store_low()  output_low(SPI_SLAVES_PORT, SPI_OUT_STORE)
-#define out_store_high() output_high(SPI_SLAVES_PORT, SPI_OUT_STORE)
-
-#define cfg_reset_enable()  output_low(SPI_SLAVES_PORT, SPI_CFG_RESET)
-#define cfg_reset_disable() output_high(SPI_SLAVES_PORT, SPI_CFG_RESET)
-#define cfg_select()        output_low(SPI_SLAVES_PORT, SPI_CFG_SS)
-#define cfg_deselect()      output_high(SPI_SLAVES_PORT, SPI_CFG_SS)
-#define cfg_mode_parallel() output_low(SPI_SLAVES_PORT, SPI_CFG_MODE)
-#define cfg_mode_serial()   output_high(SPI_SLAVES_PORT, SPI_CFG_MODE)
-
-
-// push shift register to storage register on positive edge
-void out_store (void) {
-    out_store_high();
-    out_store_low();
-}
 
 void spi_master_init (void) {
     // MOSI, SCK, ~SS are outputs, MISO is left input
@@ -215,100 +162,8 @@ ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
 
 
 int main (void) {
-    uint8_t confl = 0;
-    uint8_t confh = 0;
-    //uint8_t i = 0;
-
-    wdt_disable();
-    zc_init();
-
-    // leds are outputs
-    set_output(DDRC, DDC3);
-    set_output(DDRC, DDC4);
-    set_output(DDRC, DDC5);
-
-    // led blink: devboard ok
-    output_high(PORTC, PC3);
-    output_high(PORTC, PC4);
-    output_high(PORTC, PC5);
-    delay_ms(500);
-    output_low(PORTC, PC3);
-    output_low(PORTC, PC4);
-    output_low(PORTC, PC5);
-
-    set_output(SPI_SLAVES_DDR, SPI_OUT_ENABLE_DDR);
-    set_output(SPI_SLAVES_DDR, SPI_OUT_STORE_DDR);
-    out_disable();
-
-    set_output(SPI_SLAVES_DDR, SPI_CFG_RESET_DDR);
-    set_output(SPI_DDR, SPI_SCK_DDR);
-    set_output(SPI_SLAVES_DDR, SPI_CFG_SS_DDR);
-    set_output(SPI_SLAVES_DDR, SPI_CFG_MODE_DDR);
-    cfg_reset_disable();
-
-    cfg_select();  // redundant, already low
-    delay_ms(1);   // maybe redundant, should be one set-up time
-
-    cfg_mode_parallel();
-    delay_ms(1);
-
-    // pulse clock to read in bits (not needed with 74165)
-    output_high(SPI_PORT, SPI_SCK);
-
-    cfg_mode_serial();
-    delay_ms(1);
-
-    spi_master_init();
-    //SPCR |= (1<<CPOL);  // otherwise can't read first bit
-
-    // first octet
-    output_high(PORTC, PC3);
-    confl = spi_master_transmit(SPI_TRANSMIT_DUMMY);
-    output_low(PORTC, PC3);
-
-    // second octet
-    output_high(PORTC, PC3);
-    confh = spi_master_transmit(SPI_TRANSMIT_DUMMY);
-    output_low(PORTC, PC3);
-
-    output_high(SPI_PORT, SPI_SCK);
-    cfg_deselect();
-    cfg_reset_enable();
-
-    // setup for stp
-    //SPCR &= ~(1<<CPOL);
-    //SPCR |= (1<<CPHA);
-
-    // debug: transmit known message and halt
-    /* delay_ms(1000); */
-    /* spi_master_transmit(0b01100110); */
-    /* spi_master_transmit(0b01011010); */
-    /* out_store(); */
-    /* out_enable(); */
-    /* while (1); */
-
-    sei();
     while (1) {
 	wdt_reset();
-
-	/* // output to stp converter */
-	/* spi_master_transmit(confl); */
-	/* out_store(); */
-	/* out_enable(); delay_ms(500); out_disable(); */
-
-	/* spi_master_transmit(confh); */
-	/* out_store(); */
-	/* out_enable(); delay_ms(500); out_disable(); */
-
-	/* // == led blink: cycle finished */
-	/* output_high(PORTC, PC3); */
-	/* output_high(PORTC, PC4); */
-	output_high(PORTC, PC5);
-	/* delay_ms(500); */
-	/* output_low(PORTC, PC3); */
-	/* output_low(PORTC, PC4); */
-	output_low(PORTC, PC5);
-	/* delay_ms(500); */
     }
 
     return 1;

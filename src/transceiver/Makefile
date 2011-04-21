@@ -78,7 +78,7 @@ PROGRAMMER_MCU=m168
 
 # Name of our project
 # (use a single word, e.g. 'myproject')
-PROJECTNAME=dimmer
+PROJECTNAME=transceiver
 
 # Source files
 # List C/C++/Assembly source files:
