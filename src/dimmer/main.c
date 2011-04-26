@@ -36,6 +36,15 @@ void delay_ns (uint16_t ns) {
     }
 }
 
+// calculate average of two long ints
+uint16_t long_avg (uint16_t a, uint16_t b) {
+    if (a == b) return a;
+    if (a > b)	return (b + (a-b)/2);
+    if (a < b) 	return (a + (b-a)/2);
+
+    return b;  // should never happen
+}
+
 // zero crossing
 #include <avr/interrupt.h>
 
@@ -52,15 +61,26 @@ inline void zc_init (void) {
 }
 
 uint8_t zc_count = 0;
-/* uint8_t outcount = 0; */
+uint16_t zc_dur = 0;           // cycles between two ZCs
 
 // interrupt service routine: action to take on zero crossing
 ISR (INT0_vect, ISR_NOBLOCK) {
+    uint16_t tmp_zc_dur = 0;  // degree duration (temporary)
+    uint16_t old_zc_dur = zc_dur;
+
+    // read two bytes into word variable
+    tmp_zc_dur = TCNT1L;
+    zc_dur = TCNT1H;
+    zc_dur = zc_dur << 8;
+    zc_dur += tmp_zc_dur;
+
+    // get average of previous and current
+    zc_dur = long_avg(old_zc_dur, zc_dur);
+
+    // determine degree duration (there are 256 degrees between 2 ZCs)
+    TCNT0 = zc_dur/256;
+
     zc_count++;  // overflow no problem
-    /* if (zc_count >= 100) { */
-    /* 	//outcount++; */
-    /* 	zc_count = 0; */
-    /* } */
 }
 
 inline void timer1_init (void) {
