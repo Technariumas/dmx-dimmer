@@ -52,6 +52,7 @@ uint16_t long_avg (uint16_t a, uint16_t b) {
 #define ZC_PORT PORTD
 #define ZC      PD2
 
+// 
 inline void zc_init (void) {
     set_input(ZC_DDR, ZC);     // redundant
     output_high(ZC_PORT, ZC);  // pullup
@@ -63,14 +64,18 @@ inline void zc_init (void) {
 uint8_t zc_count = 0;
 uint16_t zc_dur = 0;           // cycles between two ZCs
 
-// interrupt service routine: action to take on zero crossing
+// interrupt: action to take on zero crossing
 ISR (INT0_vect, ISR_NOBLOCK) {
-    uint16_t tmp_zc_dur = 0;  // degree duration (temporary)
+    uint16_t tmp_zc_dur = 0;   // degree duration (temporary)
     uint16_t old_zc_dur = zc_dur;
 
-    // read two bytes into word variable
-    tmp_zc_dur = TCNT1L;
-    zc_dur = TCNT1H;
+    // reset counter
+    TCNT1L = 0;
+
+    // read two ints into long int from input capture register
+    // low must be read first
+    tmp_zc_dur = ICR1L;
+    zc_dur = ICR1H;
     zc_dur = zc_dur << 8;
     zc_dur += tmp_zc_dur;
 
@@ -80,19 +85,19 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     // determine degree duration (there are 256 degrees between 2 ZCs)
     TCNT0 = zc_dur/256;
 
-    zc_count++;  // overflow no problem
+    zc_count++;  // overflow no problem (TODO: remove)
 }
 
-inline void timer1_init (void) {
-    OCR1AL = 100;
-    //OCR1AH = 0;
-
+// 
+inline void counter1_init (void) {
+    TIMSK |= _BV(TOIE1);  // interrupt on overflow
     TCCR1B |= _BV(CS10);  // no prescaler
 }
 
-// interrupt: just for timer testing
-ISR (TIMER1_COMPA_vect, ISR_NOBLOCK) {
-    TCNT1L = 0;  // FIXME: can be done using TCCR1B instead
+// interrupt: maximum counter value reached, time interval between two
+// ZCs too long
+ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
+    // TODO: error handling
 }
 
 
@@ -102,6 +107,7 @@ int main (void) {
     // debug led
     set_output(DDRB, PB4);
 
+    // blink: devboard ok
     output_low(PORTB, PB4);
     delay_ms(200);
     output_high(PORTB, PB4);
@@ -112,7 +118,7 @@ int main (void) {
     delay_ms(200);
 
     zc_init();
-    timer1_init();
+    counter1_init();
     sei();
 
     while (1) {
