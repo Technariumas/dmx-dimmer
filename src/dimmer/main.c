@@ -44,11 +44,11 @@ void delay_ns (uint16_t ns) {
 #define ZC      PD2
 
 inline void zc_init (void) {
-    set_input(ZC_DDR, ZC);
+    set_input(ZC_DDR, ZC);     // redundant
     output_high(ZC_PORT, ZC);  // pullup
 
-    MCUCR |= _BV(ISC01);  // int on falling edge
-    GIMSK |= _BV(INT0);   // enable INT0 interrupt
+    MCUCR |= _BV(ISC01);       // int on falling edge
+    GIMSK |= _BV(INT0);        // enable INT0 interrupt
 }
 
 uint8_t zc_count = 0;
