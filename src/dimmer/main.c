@@ -5,15 +5,14 @@
 #include <stdint.h>
 #include <avr/io.h>
 #include <avr/wdt.h>
-#include <util/delay.h>  // TODO: use or remove
+#include <util/delay.h>    // TODO: use or remove
 #include <avr/interrupt.h>
 
-
-#define output_low(port,pin)  port &= ~(1<<pin)
-#define output_high(port,pin) port |= (1<<pin)
 #define set_input(portdir,pin)  portdir &= ~(1<<pin)
 #define set_output(portdir,pin) portdir |=  (1<<pin)
-
+#define output_low(port,pin)    port &= ~(1<<pin)
+#define output_high(port,pin)   port |=  (1<<pin)
+#define output_toggle(port,pin) port ^=  (1<<pin)
 
 // FIXME: kill time in a calibrated way (NOT!)
 void delay_ms (uint16_t ms) {
@@ -66,12 +65,15 @@ uint8_t angle = 255;      // dmx firing angle (counted backwards!)
 
 // interrupt: action to take on zero crossing
 ISR (INT0_vect, ISR_NOBLOCK) {
-    uint16_t old_zc_dur = zc_dur;
     uint8_t tcntl;
     uint8_t tcnth;
 
     // disable counter0 ASAP
     TCCR0B &= ~(_BV(CS00));
+
+    // turn off outputs
+    output_low(PORTD, PD3);
+    output_high(PORTB, PB4);  // debug led
 
     // read counter (used later)
     // low byte must be read first
@@ -82,9 +84,6 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     // high byte must be written first
     TCNT1H = 0;
     TCNT1L = 0;
-
-    // turn off outputs
-    output_high(PORTB, PB4);  // TODO: don't use debug led for this
 
     // 
     angle = 255;
@@ -120,12 +119,15 @@ uint8_t channel[4];
 ISR (TIMER0_COMPA_vect, ISR_NOBLOCK) {
     // fire appropriate channels
     if (channel[0] >= angle) {
-	output_low(PORTB, PB4); // TODO: don't use debug led for this
+	output_high(PORTD, PD3);  // pulse start
+	output_low(PORTB, PB4); // debug led
     }
 
     if (angle != 0) angle--;
 
     TCNT0 = 0;  // reset counter
+
+    //output_low(PORTD, PD3);  // pulse stop
 }
 
 // zc duration counter
@@ -148,27 +150,102 @@ ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
     /* 	output_high(PORTB, PB4); */
     /* 	delay_ms(500); */
     /* } */
-    if (PORTD & 0b00010000) {
-	output_low(PORTD, PD5);
-    }
-    else {
-	output_high(PORTD, PD5);
-    }
+
+    /* if (PORTD & 0b00010000) { */
+    /* 	output_low(PORTD, PD5); */
+    /* } */
+    /* else { */
+    /* 	output_high(PORTD, PD5); */
+    /* } */
+}
+
+
+#define SPI_DDR      DDRB
+#define SPI_DI_DDR   DDB5  // data in  (MOSI)
+#define SPI_DO_DDR   DDB6  // data out (MISO)
+#define SPI_USCK_DDR DDB7  // clock    (SCK)
+
+#define SPI_PORT PORTB
+#define SPI_DI   PB5
+#define SPI_DO   PB6
+#define SPI_USCK PB7
+
+#define SPI_OUT_DDR       DDRB  // link to SPI Master
+#define SPI_OUT_CHAN0_DDR DDB0
+#define SPI_OUT_CHAN1_DDR DDB1
+#define SPI_OUT_SS_DDR    DDB2  // PCINT2
+#define SPI_OUT_OK_DDR    DDB3  // ok to transmit
+
+#define SPI_OUT_PORT  PORTB
+#define SPI_OUT_CHAN0 PB0
+#define SPI_OUT_CHAN1 PB1
+#define SPI_OUT_SS    PB2
+#define SPI_OUT_OK    PB3
+
+
+//
+inline void spi_slave_init (void) {
+    // slave select, dmx channel select, transmit ok line
+    set_input(SPI_OUT_DDR, SPI_OUT_CHAN0_DDR);
+    set_input(SPI_OUT_DDR, SPI_OUT_CHAN1_DDR);
+    set_input(SPI_OUT_DDR, SPI_OUT_SS_DDR);
+    set_output(SPI_OUT_DDR, SPI_OUT_OK_DDR);
+    output_high(SPI_OUT_PORT, SPI_OUT_CHAN0);
+    output_high(SPI_OUT_PORT, SPI_OUT_CHAN1);
+
+    // enable external interrupt PCINT2 on PB2
+    PCMSK |= _BV(PCINT2);
+    GIMSK |= _BV(PCIE);
+
+    // DI and USCK are inputs, DO is output
+    set_input(SPI_DDR, SPI_DI_DDR);
+    set_input(SPI_DDR, SPI_USCK_DDR);
+    set_output(SPI_DDR, SPI_DO_DDR);  // not used
+
+    // three-wire mode (SPI), external clock (SPI mode 0)
+    USICR = _BV(USIWM0) | _BV(USICS1) /* | _BV(USICS0) */;
+}
+
+// data to transmit when you only want to receive
+#define SPI_TRANSMIT_DUMMY 0b01010101
+
+// TODO: remove if unused
+char spi_slave_receive (void) {
+    USIDR = SPI_TRANSMIT_DUMMY;
+    USISR = _BV(USIOIF);  // clear overflow flag (start transmission?)
+    while ( !(USISR & _BV(USIOIF)) );  // wait for reception complete
+    return USIDR;
+}
+
+// interrupt: master has new dmx data
+ISR (PCINT_vect, ISR_NOBLOCK) {
+    output_toggle(PORTD, PD5);
+    // TODO: read CHAN0/CHAN1
+    USIDR = SPI_TRANSMIT_DUMMY;
+    USISR = _BV(USIOIF);                   // clear overflow flag
+    output_high(SPI_OUT_PORT, SPI_OUT_OK); // i'm ready!
+    while ( !(USISR & _BV(USIOIF)) );      // wait for reception complete
+    output_low(SPI_OUT_PORT, SPI_OUT_OK);
+    channel[0] = USIDR;  // TODO: proper channel selection
 }
 
 
 int main (void) {
+    channel[0] = 255; // TODO: proper init
+
     wdt_disable();
 
     // debug leds
     set_output(DDRB, DDB4);
     set_output(DDRD, DDD5);
+    output_high(PORTB, PB4);
+    output_high(PORTD, PD5);
 
-    // channel selector
-    set_input(DDRD, DDD0);
-    set_input(DDRD, DDD1);
-    output_high(PORTD, PD0);
-    output_high(PORTD, PD1);
+    // output channels
+    set_output(DDRD, DDD3);  // TODO: pretty defines
+    /* set_output(DDRD, DDD4); */
+    /* set_output(DDRD, DDD5); */
+    /* set_output(DDRD, DDD6); */
 
     // blink: devboard ok
     /* output_low(PORTB, PB4); */
@@ -181,21 +258,18 @@ int main (void) {
     /* delay_ms(200); */
 
 
+    spi_slave_init();
     counter0_init();
     counter1_init();
     zc_init();
     sei();
 
     while (1) {
-	// TODO: receive channel values from Master
-	channel[0] = (PIND & 0b00000011) * 84 + 3;
-
-	/* if (zc_count < 128) { */
-	/*     output_low(PORTB, PB4); */
-	/* } */
-	/* else { */
-	/*     output_high(PORTB, PB4); */
-	/* } */
+	// wank
+	/* output_low(PORTD, PD5); */
+	delay_ms(500);
+	/* output_high(PORTD, PD5); */
+	/* delay_ms(500); */
     }
 
     return 1;

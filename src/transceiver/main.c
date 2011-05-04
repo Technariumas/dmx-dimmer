@@ -1,17 +1,18 @@
-// dmx dimmer
+// dmx dimmer, transceiver module
+// TODO: file header
 
 #define F_CPU 16000000  // 16 MHz
 
 #include <avr/io.h>
 #include <avr/wdt.h>
-#include <util/delay.h>
+#include <util/delay.h>  // TODO: use or remove
+#include <avr/interrupt.h>
 
-
-#define output_low(port,pin)  port &= ~(1<<pin)
-#define output_high(port,pin) port |= (1<<pin)
 #define set_input(portdir,pin)  portdir &= ~(1<<pin)
 #define set_output(portdir,pin) portdir |=  (1<<pin)
-
+#define output_low(port,pin)  port &= ~(1<<pin)
+#define output_high(port,pin) port |= (1<<pin)
+#define output_toggle(port,pin) port ^= (1<<pin)
 
 // FIXME: kill time in a calibrated way (NOT!)
 void delay_ms (uint16_t ms) {
@@ -33,21 +34,6 @@ void delay_ns (uint16_t ns) {
 	for (i = 0; i != delay_count; i++)
 	    wdt_reset();
 	ns--;
-    }
-}
-
-// wait for degrees of firing angle
-inline void delay_degrees (uint8_t degrees) {
-    // F_CPU / ZC_PER_SEC / DEGREES_BETWEEN_ZC
-    uint16_t cycles = F_CPU / 100 / 256;
-    uint16_t c = cycles;
-    uint8_t d = degrees;
-
-    while (d != 0) {
-	c = cycles;
-	while (c != 0) c--;
-	d--;
-	wdt_reset();
     }
 }
 
@@ -83,25 +69,30 @@ void blink8 (uint8_t data) {
 #define SPI_MISO     PB4
 #define SPI_SCK      PB5
 
-#define SPI_SLAVES_DDR     DDRD  // ~ slave select (real)
-#define SPI_OUT_ENABLE_DDR DDD0
-#define SPI_OUT_STORE_DDR  DDD1  // serial to parallel
-#define SPI_CFG_MODE_DDR   DDD4
-#define SPI_CFG_RESET_DDR  DDD5
-#define SPI_CFG_SS_DDR     DDD6  // parallel to serial
+#define SPI_SLAVES_DDR    DDRD  // ~ slave select (real)
+#define SPI_OUT_CHAN0_DDR DDD0
+#define SPI_OUT_CHAN1_DDR DDD1
+#define SPI_OUT_SS1_DDR   DDD2
+/* #define SPI_OUT_SS2_DDR   DDD3 */
+/* #define SPI_OUT_SS3_DDR   DDD4 */
+#define SPI_OUT_OK_DDR    DDD3
+#define SPI_CFG_MODE_DDR  DDD4
+#define SPI_CFG_RESET_DDR DDD5
+#define SPI_CFG_SS_DDR    DDD6  // parallel to serial
 
 #define SPI_SLAVES_PORT PORTD
-#define SPI_OUT_ENABLE  PD0   // 0: output enable; 1: z-state
-#define SPI_OUT_STORE   PD1
+#define SPI_OUT_CHAN0   PD0
+#define SPI_OUT_CHAN1   PD1
+#define SPI_OUT_SS1     PD2
+/* #define SPI_OUT_SS2     PD3 */
+/* #define SPI_OUT_SS3     PD4 */
+#define SPI_OUT_OK      PD3
 #define SPI_CFG_MODE    PD4   // 0: parallel in; 1: serial out
 #define SPI_CFG_RESET   PD5
 #define SPI_CFG_SS      PD6
 
-
-#define out_enable()     output_low(SPI_SLAVES_PORT, SPI_OUT_ENABLE)
-#define out_disable()    output_high(SPI_SLAVES_PORT, SPI_OUT_ENABLE)
-#define out_store_low()  output_low(SPI_SLAVES_PORT, SPI_OUT_STORE)
-#define out_store_high() output_high(SPI_SLAVES_PORT, SPI_OUT_STORE)
+#define SPI_SLAVES_PIN PIND
+#define SPI_OUT_OK_PIN PIND3
 
 #define cfg_reset_enable()  output_low(SPI_SLAVES_PORT, SPI_CFG_RESET)
 #define cfg_reset_disable() output_high(SPI_SLAVES_PORT, SPI_CFG_RESET)
@@ -111,19 +102,21 @@ void blink8 (uint8_t data) {
 #define cfg_mode_serial()   output_high(SPI_SLAVES_PORT, SPI_CFG_MODE)
 
 
-// push shift register to storage register on positive edge
-void out_store (void) {
-    out_store_high();
-    out_store_low();
-}
+inline void spi_master_init (void) {
+    // 
+    set_output(SPI_SLAVES_DDR, SPI_OUT_CHAN0_DDR);
+    set_output(SPI_SLAVES_DDR, SPI_OUT_CHAN1_DDR);
+    set_output(SPI_SLAVES_DDR, SPI_OUT_SS1_DDR);
+    /* set_output(SPI_SLAVES_DDR, SPI_OUT_SS2_DDR); */
+    /* set_output(SPI_SLAVES_DDR, SPI_OUT_SS3_DDR); */
+    set_input(SPI_SLAVES_DDR, SPI_OUT_OK_DDR);
 
-void spi_master_init (void) {
     // MOSI, SCK, ~SS are outputs, MISO is left input
     SPI_DDR |= (1<<SPI_MOSI_DDR) | (1<<SPI_SCK_DDR) | (1<<SPI_SS_DDR);
     output_high(SPI_PORT, SPI_SS);  // ~SS inactive
 
-    // Enable SPI, Master, SCK=fosc/128 
-    SPCR = (1<<SPE) | (1<<MSTR) | (1<<SPR0) | (1<<SPR1);
+    // Enable SPI, Master, SCK=fosc/128
+    SPCR = (1<<SPE) | (1<<MSTR) | (1<<SPR1) | (1<<SPR0);
 }
 
 // data to transmit if you only really want to read data
@@ -136,91 +129,15 @@ char spi_master_transmit (char data) {
     return SPDR;
 }
 
-// zero crossing
-#include <avr/interrupt.h>
-
-#define ZC_DDR  DDRD
-#define ZC_PORT PORTD
-#define ZC      PD3
-
-inline void zc_init (void) {
-    set_input(ZC_DDR, ZC);
-    output_high(ZC_PORT, ZC);  // pullup
-    EIMSK |= _BV(INT1);
-    //EICRA |= _BV(ISC10);       // int on any change
-    EICRA |= _BV(ISC11);       // int on falling change
-}
-
-/* uint8_t zc_count = 0; */
-/* uint8_t outcount = 0; */
-
-// interrupt service routine: action to take on zero crossing
-// FIXME: non-blocking interrupt resets everything
-ISR (INT1_vect, ISR_NOBLOCK) {
-    /* zc_count++; */
-    /* if (zc_count >= 100) { */
-    /* 	//outcount++; */
-    /* 	zc_count = 0; */
-    /* } */
-
-    TCNT1 = 0;
-    TCNT1 = 0;
-}
-
-// timer with prescaling F_CPU/256 gives 62500 ticks per second, 625
-// ticks between two zero crossings
-// ideally, 256 ticks (between two zc) are needed, but this is impossible
-// with internal prescaler
-inline void timer_init (void) {
-    // clear int flags
-    TIFR1  = (1<<OCF1B) | (1<<OCF1A) | (1<<TOV1);
-    // between two zc, count up to 625
-    OCR1BH = 0;
-    OCR1BL = 625;
-    // enable comparator interrupts
-    TIMSK1 = (1<<OCIE1B) | (1<<OCIE1A);
-    // start ticking (clock = F_CPU/256)
-    TCCR1B = (1<<CS12);
-}
-
-// set next firing angle
-inline void timer_cmp_set (uint8_t angle8) {
-    // degree = F_CPU / 100 / 256 (instructions between firing angles)
-    uint16_t angle = angle8 * (F_CPU / 100 / 256);
-    OCR1AH = angle /256;
-    OCR1AL = (angle>>8);
-}
-
-// interrupt: 625 ticks passed, zero crossing now, reset counter
-ISR (TIMER1_COMPB_vect, ISR_NOBLOCK) {
-    TCNT1L = 0;
-}
-
-// interrupt: desired firing angle reached
-ISR (TIMER1_COMPA_vect, ISR_NOBLOCK) {
-    spi_master_transmit(0b11111111);
-    out_store();
-    out_enable();
-    //delay_degrees(1);
-    delay_ns(10);
-    out_disable();
-}
-
-// interrupt: counter overflow
-// this should happen at zero crossing or equidistantly between two zero
-// crossings
-ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
-    timer_cmp_set(128);
-}
-
 
 int main (void) {
-    uint8_t confl = 0;
-    uint8_t confh = 0;
-    //uint8_t i = 0;
+    /* uint8_t confl = 0; */
+    /* uint8_t confh = 0; */
+    uint8_t dmx_channel = 0;  // TODO: not needed, fill array from dmx
+    uint8_t dmx_value;        // TODO: get array from dmx
+    uint8_t tmp;
 
     wdt_disable();
-    zc_init();
 
     // leds are outputs
     set_output(DDRC, DDC3);
@@ -236,79 +153,71 @@ int main (void) {
     output_low(PORTC, PC4);
     output_low(PORTC, PC5);
 
-    set_output(SPI_SLAVES_DDR, SPI_OUT_ENABLE_DDR);
-    set_output(SPI_SLAVES_DDR, SPI_OUT_STORE_DDR);
-    out_disable();
+    // borrow some spi pins to read in cfg
+    /* set_output(SPI_SLAVES_DDR, SPI_CFG_RESET_DDR); */
+    /* set_output(SPI_DDR, SPI_SCK_DDR); */
+    /* set_output(SPI_SLAVES_DDR, SPI_CFG_SS_DDR); */
+    /* set_output(SPI_SLAVES_DDR, SPI_CFG_MODE_DDR); */
+    /* cfg_reset_disable(); */
 
-    set_output(SPI_SLAVES_DDR, SPI_CFG_RESET_DDR);
-    set_output(SPI_DDR, SPI_SCK_DDR);
-    set_output(SPI_SLAVES_DDR, SPI_CFG_SS_DDR);
-    set_output(SPI_SLAVES_DDR, SPI_CFG_MODE_DDR);
-    cfg_reset_disable();
+    /* cfg_select();  // redundant, already low */
+    /* delay_ms(1);   // maybe redundant, should be one set-up time */
 
-    cfg_select();  // redundant, already low
-    delay_ms(1);   // maybe redundant, should be one set-up time
+    /* cfg_mode_parallel(); */
+    /* delay_ms(1); */
 
-    cfg_mode_parallel();
-    delay_ms(1);
+    /* // pulse clock to read in bits (not needed with 74165) */
+    /* output_high(SPI_PORT, SPI_SCK); */
 
-    // pulse clock to read in bits (not needed with 74165)
-    output_high(SPI_PORT, SPI_SCK);
-
-    cfg_mode_serial();
-    delay_ms(1);
+    /* cfg_mode_serial(); */
+    /* delay_ms(1); */
 
     spi_master_init();
     //SPCR |= (1<<CPOL);  // otherwise can't read first bit
 
-    // first octet
-    output_high(PORTC, PC3);
-    confl = spi_master_transmit(SPI_TRANSMIT_DUMMY);
-    output_low(PORTC, PC3);
+    /* // read in first octet */
+    /* output_high(PORTC, PC3); */
+    /* confl = spi_master_transmit(SPI_TRANSMIT_DUMMY); */
+    /* output_low(PORTC, PC3); */
 
-    // second octet
-    output_high(PORTC, PC3);
-    confh = spi_master_transmit(SPI_TRANSMIT_DUMMY);
-    output_low(PORTC, PC3);
+    /* // read in second octet */
+    /* output_high(PORTC, PC3); */
+    /* confh = spi_master_transmit(SPI_TRANSMIT_DUMMY); */
+    /* output_low(PORTC, PC3); */
 
-    output_high(SPI_PORT, SPI_SCK);
-    cfg_deselect();
-    cfg_reset_enable();
-
-    // setup for stp
-    //SPCR &= ~(1<<CPOL);
-    //SPCR |= (1<<CPHA);
-
-    // debug: transmit known message and halt
-    /* delay_ms(1000); */
-    /* spi_master_transmit(0b01100110); */
-    /* spi_master_transmit(0b01011010); */
-    /* out_store(); */
-    /* out_enable(); */
-    /* while (1); */
+    /* output_high(SPI_PORT, SPI_SCK); */
+    /* cfg_deselect(); */
+    /* cfg_reset_enable(); */
 
     sei();
+
+    dmx_value = 0;  // TODO: remove
     while (1) {
 	wdt_reset();
 
-	/* // output to stp converter */
-	/* spi_master_transmit(confl); */
-	/* out_store(); */
-	/* out_enable(); delay_ms(500); out_disable(); */
+	// TODO: proper dmx_channel set
+	output_low(SPI_SLAVES_PORT, SPI_OUT_CHAN0);
+	output_low(SPI_SLAVES_PORT, SPI_OUT_CHAN1);
+	output_toggle(SPI_SLAVES_PORT, SPI_OUT_SS1);  // interrupt
+	while ( !(SPI_SLAVES_PIN & _BV(SPI_OUT_OK_PIN)) );  // wait
+	tmp = spi_master_transmit(dmx_value);
+	output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN0);
+	output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN1);
 
-	/* spi_master_transmit(confh); */
-	/* out_store(); */
-	/* out_enable(); delay_ms(500); out_disable(); */
-
-	/* // == led blink: cycle finished */
-	/* output_high(PORTC, PC3); */
-	/* output_high(PORTC, PC4); */
+	// led: transmitted
 	output_high(PORTC, PC5);
-	/* delay_ms(500); */
-	/* output_low(PORTC, PC3); */
-	/* output_low(PORTC, PC4); */
-	output_low(PORTC, PC5);
-	/* delay_ms(500); */
+	delay_ms(10);
+	output_low(PORTC, PC5);	
+
+	// debug
+	if (tmp != 0b01010101) {
+	    output_high(PORTC, PC4);
+	    delay_ms(4000);
+	    output_low(PORTC, PC4);
+	}
+	else delay_ms(4000);
+
+	dmx_value += 32;
     }
 
     return 1;
