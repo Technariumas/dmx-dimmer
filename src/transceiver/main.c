@@ -136,6 +136,7 @@ int main (void) {
     uint8_t dmx_channel = 0;  // TODO: not needed, fill array from dmx
     uint8_t dmx_value;        // TODO: get array from dmx
     uint8_t tmp;
+    uint8_t inc = 1;  // debug - 0: down, 1: up
 
     wdt_disable();
 
@@ -191,7 +192,7 @@ int main (void) {
 
     sei();
 
-    dmx_value = 0;  // TODO: remove
+    dmx_value = 0;  // debug
     while (1) {
 	wdt_reset();
 
@@ -212,12 +213,15 @@ int main (void) {
 	// debug
 	if (tmp != 0b01010101) {
 	    output_high(PORTC, PC4);
-	    delay_ms(4000);
+	    delay_ms(990);
 	    output_low(PORTC, PC4);
 	}
-	else delay_ms(4000);
+	else delay_ms(40);
 
-	dmx_value += 32;
+	if (dmx_value == 0) inc = 1;
+	if (dmx_value == 255) inc = 0;
+	if (inc == 1) dmx_value++;
+	if (inc == 0) dmx_value--;
     }
 
     return 1;

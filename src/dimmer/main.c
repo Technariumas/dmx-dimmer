@@ -37,10 +37,12 @@ void delay_ns (uint16_t ns) {
 }
 
 // push old value of zc duration towards new value
-uint16_t zc_calibrate (uint16_t old, uint16_t new) {
+inline uint16_t zc_calibrate (uint16_t old, uint16_t new) {
     if (old == new) return old;
-    if (old > new)  return (old - (old-new)/8);
-    if (old < new) return (old + (new-old)/8);
+    /* if (old > new)  return (old - (old-new)/8); */
+    /* if (old < new) return (old + (new-old)/8); */
+    if (old > new) return --old;
+    if (old < new) return ++old;
     return new;  // should never happen
 }
 
@@ -59,6 +61,7 @@ inline void zc_init (void) {
     GIMSK |= _BV(INT0);        // enable INT0 interrupt
 }
 
+uint16_t old_zc_dur = 60000;
 uint16_t zc_dur = 60000;  // cycles between two ZCs (ideal @ 50 Hz)
 uint8_t deg_dur = 234;    // cycles b/w two firing angles (ideal @ 50 Hz)
 uint8_t angle = 255;      // dmx firing angle (counted backwards!)
@@ -70,6 +73,7 @@ ISR (INT0_vect, ISR_NOBLOCK) {
 
     // disable counter0 ASAP
     TCCR0B &= ~(_BV(CS00));
+    TIMSK &= ~(_BV(OCIE0A));
 
     // turn off outputs
     output_low(PORTD, PD3);
@@ -88,19 +92,26 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     // 
     angle = 255;
 
+    //
+    old_zc_dur = zc_dur;
+
     // read two ints into long int
     zc_dur = tcnth;
     zc_dur = zc_dur << 8;
     zc_dur += tcntl;
 
     // push old zc_dur towards new
-    //zc_dur = zc_calibrate(old_zc_dur, zc_dur);
+    zc_dur = zc_calibrate(old_zc_dur, zc_dur);
 
     // determine degree duration (there are 256 degrees between 2 ZCs)
     deg_dur = zc_dur/256;
     OCR0A = deg_dur;
 
+    // reset timer0
+    TCNT0 = 0;
+
     // re-enable counter0
+    TIMSK |= _BV(OCIE0A);
     TCCR0B |= _BV(CS00);
 }
 
@@ -116,14 +127,14 @@ uint8_t channel[4];
 
 // interrupt: new firing angle reached
 // TODO: fire '255' from ZC int
-ISR (TIMER0_COMPA_vect, ISR_NOBLOCK) {
+ISR (TIMER0_COMPA_vect, ISR_BLOCK) {
     // fire appropriate channels
     if (channel[0] >= angle) {
 	output_high(PORTD, PD3);  // pulse start
 	output_low(PORTB, PB4); // debug led
     }
 
-    if (angle != 0) angle--;
+    if (angle > 1) angle--;
 
     TCNT0 = 0;  // reset counter
 
@@ -151,12 +162,7 @@ ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
     /* 	delay_ms(500); */
     /* } */
 
-    /* if (PORTD & 0b00010000) { */
-    /* 	output_low(PORTD, PD5); */
-    /* } */
-    /* else { */
-    /* 	output_high(PORTD, PD5); */
-    /* } */
+    /* output_toggle(PORTD, PD5); */
 }
 
 
@@ -231,6 +237,7 @@ ISR (PCINT_vect, ISR_NOBLOCK) {
 
 
 int main (void) {
+    uint8_t i = 0;
     channel[0] = 255; // TODO: proper init
 
     wdt_disable();
@@ -267,7 +274,7 @@ int main (void) {
     while (1) {
 	// wank
 	/* output_low(PORTD, PD5); */
-	delay_ms(500);
+	i++;
 	/* output_high(PORTD, PD5); */
 	/* delay_ms(500); */
     }
