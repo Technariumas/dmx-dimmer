@@ -8,7 +8,7 @@
 #define DMX_START_CODE 0      // first slot's data
 
 dmx_t dmx = {false, 0, 0, 0, 0};
-uint8_t databuf[DMX_CHANNELS];  // TODO: init to 0s
+uint8_t databuf[DMX_CHANNELS];
 uint8_t zc_count = 0;
 
 

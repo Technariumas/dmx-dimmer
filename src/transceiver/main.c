@@ -112,11 +112,11 @@ inline void spi_master_init (void) {
     set_input(SPI_SLAVES_DDR, SPI_OUT_OK_DDR);
 
     // MOSI, SCK, ~SS are outputs, MISO is left input
-    SPI_DDR |= (1<<SPI_MOSI_DDR) | (1<<SPI_SCK_DDR) | (1<<SPI_SS_DDR);
+    SPI_DDR |= _BV(SPI_MOSI_DDR) | _BV(SPI_SCK_DDR) | _BV(SPI_SS_DDR);
     output_high(SPI_PORT, SPI_SS);  // ~SS inactive
 
     // Enable SPI, Master, SCK=fosc/128
-    SPCR = (1<<SPE) | (1<<MSTR) | (1<<SPR1) | (1<<SPR0);
+    SPCR = _BV(SPE) | _BV(MSTR) | _BV(SPR1) | _BV(SPR0);
 }
 
 // data to transmit if you only really want to read data
@@ -125,8 +125,67 @@ inline void spi_master_init (void) {
 // send and/or receive data
 char spi_master_transmit (char data) {
     SPDR = data;                  // start transmission
-    while( !(SPSR & (1<<SPIF)) ); // wait for transmission complete 
+    while( !(SPSR & _BV(SPIF)) ); // wait for transmission complete 
     return SPDR;
+}
+
+// RS485 chip SN75176B got a Read Enable and Transmit Enable pins
+#define USART_PORT PORTD  // RS485 PORT for Read Enable (Receiving)
+#define USART_DDR  DDRD   // RS485 DDR  for Read Enable (Receiving)
+#define USART_NRE  PD2    // Active Low Read Enable
+
+typedef struct {
+    uint8_t  error;           // last frame had an error
+    uint16_t startaddr;
+    uint16_t slot;            // slot counter
+    uint8_t  status;
+    uint8_t  data;
+} dmx_t;
+
+dmx_t dmx = {0, 100, 0, 0, 0};
+#define DMX_CHANNELS 12
+uint8_t databuf[DMX_CHANNELS];
+
+// 
+void usart_init (void) {
+    // init databuf (TODO: in function?)
+    int i;
+    for (i = 0; i < sizeof(databuf); i++) databuf[i] = 0;
+
+    // ~RE is on by default
+    set_output(USART_DDR, USART_NRE);
+    output_low(USART_PORT, USART_NRE);
+
+    // set baud rate (250 kHz)
+    UBRR0H = 0;
+    UBRR0L = 3;
+
+    // set frame format: asynchronous, 1-8-2, no parity
+    UCSR0C = _BV(UCSZ00) | _BV(UCSZ01) | _BV(USBS0);
+
+    // enable receiver and interrupt
+    UCSR0B = _BV(RXEN0) | _BV(RXCIE0);
+}
+
+// interrupt: usart receive complete
+ISR (USART_RX_vect, ISR_NOBLOCK) {
+    // reading data clears errors from status, so read status first
+    dmx.status = UCSR0A;
+    dmx.data = UDR0;
+
+    // data overrun or frame error (break condition?)
+    if ( dmx.status & (_BV(DOR0)|_BV(FE0)) ) {
+	//dmx.error = 1;
+	dmx.slot = 0;
+    }
+    else {
+	if ((dmx.slot > dmx.startaddr) &&
+	    (dmx.slot <= dmx.startaddr + DMX_CHANNELS))
+	    databuf[dmx.slot-1] = dmx.data;
+	dmx.slot++;
+    }
+
+    output_toggle(PORTC, PC3);  // debug
 }
 
 
@@ -190,6 +249,8 @@ int main (void) {
     /* cfg_deselect(); */
     /* cfg_reset_enable(); */
 
+    usart_init();
+
     sei();
 
     dmx_value = 0;  // debug
@@ -201,7 +262,7 @@ int main (void) {
 	output_low(SPI_SLAVES_PORT, SPI_OUT_CHAN1);
 	output_toggle(SPI_SLAVES_PORT, SPI_OUT_SS1);  // interrupt
 	while ( !(SPI_SLAVES_PIN & _BV(SPI_OUT_OK_PIN)) );  // wait
-	tmp = spi_master_transmit(dmx_value);
+	tmp = spi_master_transmit(databuf[0]);
 	output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN0);
 	output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN1);
 
@@ -218,10 +279,10 @@ int main (void) {
 	}
 	else delay_ms(40);
 
-	if (dmx_value == 0) inc = 1;
-	if (dmx_value == 255) inc = 0;
-	if (inc == 1) dmx_value++;
-	if (inc == 0) dmx_value--;
+	/* if (dmx_value == 0) inc = 1; */
+	/* if (dmx_value == 255) inc = 0; */
+	/* if (inc == 1) dmx_value++; */
+	/* if (inc == 0) dmx_value--; */
     }
 
     return 1;
