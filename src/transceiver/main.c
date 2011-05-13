@@ -17,7 +17,7 @@
 // FIXME: kill time in a calibrated way (NOT!)
 void delay_ms (uint16_t ms) {
     uint16_t delay_count = 1000;  // cpu cycles in one ms?
-    volatile uint16_t i;
+    /* volatile */ uint16_t i;
 
     while (ms != 0) {
 	for (i = 0; i != delay_count; i++) wdt_reset();
@@ -38,23 +38,23 @@ void delay_ns (uint16_t ns) {
 }
 
 // indicate 8 bits using 3 leds
-void blink8 (uint8_t data) {
-    uint8_t i;
+/* void blink8 (uint8_t data) { */
+/*     uint8_t i; */
 
-    for (i = 0; i < 8; i++) {
-	//indicate bit
-	if (data & 0b00000001) output_high(PORTC, PC4);
-	else output_high(PORTC, PC5);
-	delay_ms(500);
+/*     for (i = 0; i < 8; i++) { */
+/* 	//indicate bit */
+/* 	if (data & 0b00000001) output_high(PORTC, PC4); */
+/* 	else output_high(PORTC, PC5); */
+/* 	delay_ms(500); */
 
-	// indication complete
-	output_low(PORTC, PC4);
-	output_low(PORTC, PC5);
-	delay_ms(100);
+/* 	// indication complete */
+/* 	output_low(PORTC, PC4); */
+/* 	output_low(PORTC, PC5); */
+/* 	delay_ms(100); */
 
-	data = data >> 1;
-    }    
-}
+/* 	data = data >> 1; */
+/*     }     */
+/* } */
 
 
 #define SPI_DDR      DDRB
@@ -70,29 +70,29 @@ void blink8 (uint8_t data) {
 #define SPI_SCK      PB5
 
 #define SPI_SLAVES_DDR    DDRD  // ~ slave select (real)
-#define SPI_OUT_CHAN0_DDR DDD0
-#define SPI_OUT_CHAN1_DDR DDD1
-#define SPI_OUT_SS1_DDR   DDD2
+#define SPI_OUT_CHAN0_DDR DDD3
+#define SPI_OUT_CHAN1_DDR DDD4
+#define SPI_OUT_SS1_DDR   DDD5
 /* #define SPI_OUT_SS2_DDR   DDD3 */
 /* #define SPI_OUT_SS3_DDR   DDD4 */
-#define SPI_OUT_OK_DDR    DDD3
-#define SPI_CFG_MODE_DDR  DDD4
-#define SPI_CFG_RESET_DDR DDD5
-#define SPI_CFG_SS_DDR    DDD6  // parallel to serial
+#define SPI_OUT_OK_DDR    DDD6
+/* #define SPI_CFG_MODE_DDR  DDD4 */
+/* #define SPI_CFG_RESET_DDR DDD5 */
+/* #define SPI_CFG_SS_DDR    DDD6  // parallel to serial */
 
 #define SPI_SLAVES_PORT PORTD
-#define SPI_OUT_CHAN0   PD0
-#define SPI_OUT_CHAN1   PD1
-#define SPI_OUT_SS1     PD2
+#define SPI_OUT_CHAN0   PD3
+#define SPI_OUT_CHAN1   PD4
+#define SPI_OUT_SS1     PD5
 /* #define SPI_OUT_SS2     PD3 */
 /* #define SPI_OUT_SS3     PD4 */
-#define SPI_OUT_OK      PD3
-#define SPI_CFG_MODE    PD4   // 0: parallel in; 1: serial out
-#define SPI_CFG_RESET   PD5
-#define SPI_CFG_SS      PD6
+#define SPI_OUT_OK      PD6
+/* #define SPI_CFG_MODE    PD4   // 0: parallel in; 1: serial out */
+/* #define SPI_CFG_RESET   PD5 */
+/* #define SPI_CFG_SS      PD6 */
 
 #define SPI_SLAVES_PIN PIND
-#define SPI_OUT_OK_PIN PIND3
+#define SPI_OUT_OK_PIN PIND6
 
 #define cfg_reset_enable()  output_low(SPI_SLAVES_PORT, SPI_CFG_RESET)
 #define cfg_reset_disable() output_high(SPI_SLAVES_PORT, SPI_CFG_RESET)
@@ -130,9 +130,17 @@ char spi_master_transmit (char data) {
 }
 
 // RS485 chip SN75176B got a Read Enable and Transmit Enable pins
-#define USART_PORT PORTD  // RS485 PORT for Read Enable (Receiving)
-#define USART_DDR  DDRD   // RS485 DDR  for Read Enable (Receiving)
-#define USART_NRE  PD2    // Active Low Read Enable
+#define USART_DDR     DDRD   // RS485 DDR  for Read Enable (Receiving)
+#define USART_RXD_DDR DDD0   // receive
+#define USART_TXD_DDR DDD1   // drive/transmit
+#define USART_NRE_DDR DDD2   // Active Low Read Enable
+
+#define USART_PORT PORTD
+#define USART_TXD  PD1
+#define USART_NRE  PD2
+
+#define USART_PIN     PIND
+#define USART_RXD_PIN PIND0
 
 typedef struct {
     uint8_t  error;           // last frame had an error
@@ -142,7 +150,7 @@ typedef struct {
     uint8_t  data;
 } dmx_t;
 
-dmx_t dmx = {0, 100, 0, 0, 0};
+dmx_t dmx = {0, 1, 0, 0, 0};
 #define DMX_CHANNELS 12
 uint8_t databuf[DMX_CHANNELS];
 
@@ -160,7 +168,7 @@ void usart_init (void) {
     UBRR0H = 0;
     UBRR0L = 3;
 
-    // set frame format: asynchronous, 1-8-2, no parity
+    // set frame format: asynchronous, 8 data bits, 2 stop bits, no parity
     UCSR0C = _BV(UCSZ00) | _BV(UCSZ01) | _BV(USBS0);
 
     // enable receiver and interrupt
@@ -168,25 +176,26 @@ void usart_init (void) {
 }
 
 // interrupt: usart receive complete
-ISR (USART_RX_vect, ISR_NOBLOCK) {
-    // reading data clears errors from status, so read status first
-    dmx.status = UCSR0A;
-    dmx.data = UDR0;
+/* ISR (USART_RX_vect, ISR_NOBLOCK) { */
+/*     output_high(PORTC, PC3);  // debug */
 
-    // data overrun or frame error (break condition?)
-    if ( dmx.status & (_BV(DOR0)|_BV(FE0)) ) {
-	//dmx.error = 1;
-	dmx.slot = 0;
-    }
-    else {
-	if ((dmx.slot > dmx.startaddr) &&
-	    (dmx.slot <= dmx.startaddr + DMX_CHANNELS))
-	    databuf[dmx.slot-1] = dmx.data;
-	dmx.slot++;
-    }
+/*     // reading data clears errors from status, so read status first */
+/*     dmx.status = UCSR0A; */
+/*     dmx.data = UDR0; */
 
-    output_toggle(PORTC, PC3);  // debug
-}
+/*     // data overrun or frame error (break condition?) */
+/*     if ( dmx.status & (_BV(DOR0)|_BV(FE0)) ) { */
+/* 	//dmx.error = 1; */
+/* 	dmx.slot = 0; */
+/*     } */
+/*     else { */
+/* 	if ((dmx.slot > dmx.startaddr) && */
+/* 	    (dmx.slot <= dmx.startaddr + DMX_CHANNELS)) */
+/* 	    databuf[dmx.slot-1] = dmx.data; */
+/* 	dmx.slot++; */
+/*     } */
+/*     output_low(PORTC, PC3);  // debug */
+/* } */
 
 
 int main (void) {
@@ -249,7 +258,10 @@ int main (void) {
     /* cfg_deselect(); */
     /* cfg_reset_enable(); */
 
-    usart_init();
+    //usart_init();
+    output_high(PORTC, PC3);
+    delay_ms(250);
+    output_low(PORTC, PC3);
 
     sei();
 
@@ -257,18 +269,21 @@ int main (void) {
     while (1) {
 	wdt_reset();
 
+	// debug: start transmit
+	output_high(PORTC, PC5);
+
 	// TODO: proper dmx_channel set
 	output_low(SPI_SLAVES_PORT, SPI_OUT_CHAN0);
 	output_low(SPI_SLAVES_PORT, SPI_OUT_CHAN1);
 	output_toggle(SPI_SLAVES_PORT, SPI_OUT_SS1);  // interrupt
 	while ( !(SPI_SLAVES_PIN & _BV(SPI_OUT_OK_PIN)) );  // wait
-	tmp = spi_master_transmit(databuf[0]);
+	tmp = databuf[0];
+	tmp = spi_master_transmit(tmp);
 	output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN0);
 	output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN1);
 
 	// led: transmitted
-	output_high(PORTC, PC5);
-	delay_ms(10);
+	/* delay_ms(10); */
 	output_low(PORTC, PC5);	
 
 	// debug
