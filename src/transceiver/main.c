@@ -130,7 +130,7 @@ char spi_master_transmit (char data) {
 }
 
 // RS485 chip SN75176B got a Read Enable and Transmit Enable pins
-#define USART_DDR     DDRD   // RS485 DDR  for Read Enable (Receiving)
+#define USART_DDR     DDRD   // RS485 DDR for Read Enable (Receiving)
 #define USART_RXD_DDR DDD0   // receive
 #define USART_TXD_DDR DDD1   // drive/transmit
 #define USART_NRE_DDR DDD2   // Active Low Read Enable
@@ -142,23 +142,26 @@ char spi_master_transmit (char data) {
 #define USART_PIN     PIND
 #define USART_RXD_PIN PIND0
 
+enum dmx_state_t {IDLE, BREAK, SKIP, DATA};
+
 typedef struct {
-    uint8_t  error;           // last frame had an error
-    uint16_t startaddr;
-    uint16_t slot;            // slot counter
-    uint8_t  status;
-    uint8_t  data;
+    enum dmx_state_t state;    // state machine
+    uint16_t         address;  // dmx address (of first channel)
+    uint16_t         slot;     // slot number (counted backwards!)
+    uint8_t          status;   // usart status byte
+    uint8_t          data;     // usart data byte
 } dmx_t;
 
-dmx_t dmx = {0, 1, 0, 0, 0};
+dmx_t dmx = {IDLE, 1, 0, 0, 0};
+
 #define DMX_CHANNELS 12
 uint8_t databuf[DMX_CHANNELS];
 
 // 
 void usart_init (void) {
     // init databuf (TODO: in function?)
-    int i;
-    for (i = 0; i < sizeof(databuf); i++) databuf[i] = 0;
+    /* int i; */
+    /* for (i = 0; i < sizeof(databuf); i++) databuf[i] = 0; */
 
     // ~RE is on by default
     set_output(USART_DDR, USART_NRE);
@@ -176,26 +179,41 @@ void usart_init (void) {
 }
 
 // interrupt: usart receive complete
-/* ISR (USART_RX_vect, ISR_NOBLOCK) { */
-/*     output_high(PORTC, PC3);  // debug */
+ISR (USART_RX_vect, ISR_BLOCK) {
+    output_high(PORTC, PC3);  // debug: int start
 
-/*     // reading data clears errors from status, so read status first */
-/*     dmx.status = UCSR0A; */
-/*     dmx.data = UDR0; */
+    // reading data clears status flags, so read status first
+    dmx.status = UCSR0A;
+    dmx.data = UDR0;
 
-/*     // data overrun or frame error (break condition?) */
-/*     if ( dmx.status & (_BV(DOR0)|_BV(FE0)) ) { */
-/* 	//dmx.error = 1; */
-/* 	dmx.slot = 0; */
-/*     } */
-/*     else { */
-/* 	if ((dmx.slot > dmx.startaddr) && */
-/* 	    (dmx.slot <= dmx.startaddr + DMX_CHANNELS)) */
-/* 	    databuf[dmx.slot-1] = dmx.data; */
-/* 	dmx.slot++; */
-/*     } */
-/*     output_low(PORTC, PC3);  // debug */
-/* } */
+    // data overrun or frame error (break condition)
+    if ( dmx.status & (_BV(DOR0)|_BV(FE0)) ) {
+	dmx.state = BREAK;
+    }
+    else {
+	switch (dmx.state) {  // previous slot's state
+	case BREAK:
+	    if (dmx.data != 0) dmx.state = IDLE;  // invalid start code
+	    else {
+		dmx.slot = dmx.address - 1;  // skip this many slots
+		if (dmx.slot == 0) dmx.state = DATA; // address == 1
+		else dmx.state = SKIP;
+	    }
+	    break;
+	case SKIP:
+	    if (--dmx.slot == 0) dmx.state = DATA;
+	    break;
+	case DATA:
+	    databuf[dmx.slot++] = dmx.data;
+	    if (dmx.slot == DMX_CHANNELS) dmx.state = IDLE;
+	    break;
+	case IDLE:
+	    break;
+	}
+    }
+
+    output_low(PORTC, PC3);  // debug: int stop
+}
 
 
 int main (void) {
@@ -258,11 +276,7 @@ int main (void) {
     /* cfg_deselect(); */
     /* cfg_reset_enable(); */
 
-    //usart_init();
-    output_high(PORTC, PC3);
-    delay_ms(250);
-    output_low(PORTC, PC3);
-
+    usart_init();
     sei();
 
     dmx_value = 0;  // debug
