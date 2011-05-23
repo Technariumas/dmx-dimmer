@@ -13,7 +13,7 @@ inline void spi_master_init (void) {
     /* set_output(SPI_SLAVES_DDR, SPI_OUT_SS3_DDR); */
     set_input(SPI_SLAVES_DDR, SPI_OUT_OK_DDR);
 
-    // FIXME: what's this? pull-ups on other end?
+    // pull-ups on slave end, pull high so no current flows
     output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN0);
     output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN1);    
 
