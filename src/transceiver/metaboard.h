@@ -16,7 +16,8 @@
 #define LEDBASE   PC3
 
 #define leds_init() LEDS_DDR  |= _BV(LED1_DDR)|_BV(LED2_DDR)|_BV(LED3_DDR)
-#define ledon(led)  LEDS_PORT |=   _BV( LEDBASE+led )
-#define ledoff(led) LEDS_PORT &= ~(_BV( LEDBASE+led ))
+#define ledon(led)     LEDS_PORT |=   _BV( LEDBASE+led )
+#define ledoff(led)    LEDS_PORT &= ~(_BV( LEDBASE+led ))
+#define ledtoggle(led) LEDS_PORT ^=   _BV( LEDBASE+led )
 
 #endif /* _METABOARD_H_ */

@@ -2,7 +2,6 @@
 // TODO: file header
 
 #define F_CPU 16000000  // 16 MHz
-#define DMX_CHANNELS 12
 
 #include <inttypes.h>
 #include <avr/io.h>
@@ -14,12 +13,11 @@
 #include "iocontrol.h"
 #include "fakedelay.h"  // TODO: remove?
 #include "metaboard.h"  // TODO: remove
+#include "dmx.h"
 #include "spi.h"
 #include "usart.h"
 
-dmx_t   dmx = {IDLE, 1, 0, 0, 0};  // TODO: move as static to ISR?
-uint8_t databuf[DMX_CHANNELS];
-
+dmx_t    dmx = {IDLE, 1, 0, 0, 0, 0};
 
 // configure i/o on spi pins to read in settings once
 inline void cfg_init (void) {
@@ -36,8 +34,8 @@ inline void cfg_init (void) {
 int main (void) {
     /* uint8_t confl = 0; */
     /* uint8_t confh = 0; */
-    uint8_t dmx_channel = 0;  // TODO: not needed, fill array from dmx
-    uint8_t tmp;
+    uint8_t c;      // channel iterator
+    uint8_t retval;
 
     wdt_disable();
 
@@ -57,7 +55,7 @@ int main (void) {
 
     cfg_init();
 
-    /* cfg_select();
+    /* cfg_select(); */
     /* delay_ms(1);   // maybe redundant, should be one set-up time */
 
     /* cfg_mode_parallel(); */
@@ -93,33 +91,42 @@ int main (void) {
     while (1) {
 	ledon(2);  // debug: start transmit
 
-	// TODO: proper dmx_channel set
-	output_low(SPI_SLAVES_PORT, SPI_OUT_CHAN0);
-	output_low(SPI_SLAVES_PORT, SPI_OUT_CHAN1);
+	// iterate over DMX channels
+	for (c = 0; c < DMX_CHANNELS; c++) {
+	    // check if new data present for this channel
+	    if (dmx.dataisnew & ((uint16_t)1 << c)) {
+		/* new data may come in the time frame between data
+		 * transmission and checking if it was successful, so
+		 * unset the channel's flag now and set it back on later
+		 * if needed
+		 */
+		dmx.dataisnew &= ~((uint16_t)1 << c);
 
-        // TODO: interrupt on proper phase arbiter
-	output_toggle(SPI_SLAVES_PORT, SPI_OUT_SS1);
+		// for any slave, set which of the 4 dmx channels t'is for
+		spi_chan_select(c);
 
-        // wait 'till slave is ready
-	while ( !(SPI_SLAVES_PIN & _BV(SPI_OUT_OK_PIN)) );
+		// select one of three slave arbiters
+		spi_request_interrupt(c/4);
 
-	// TODO: transmit proper channel's value
-	tmp = spi_master_transmit(databuf[0]);
+		// wait 'till slave ready
+		while ( !(SPI_SLAVES_PIN & _BV(SPI_OUT_OK_PIN)) );
 
-	// FIXME: what's this? pull-ups on other end?
-	output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN0);
-	output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN1);
+		// transmit channel's value
+		retval = spi_master_transmit(dmx.chanval[c]);
 
-	// TODO: check if transmission successful
-	if (tmp != SPI_TRANSMIT_DUMMY) {
-	    ledoff(1);
-	    delay_ms(990);
-	    ledoff(1);
-	}
-	else delay_ms(40);
+		// FIXME: what's this? pull-ups on other end?
+		spi_chan_select(SPI_CHAN_RESET);
+
+		// check if transmission successful
+		if (retval != SPI_TRANSMIT_DUMMY) {
+		    dmx.dataisnew |= ((uint16_t)1 << c);
+		    ledtoggle(1);
+		}
+	    }  // if (new chan data)
+	}  // for (channel iterate)
 
 	ledoff(2);  // debug: transmitted
-    }
+    }  // while (1)
 
     return 1;
 }
@@ -142,7 +149,7 @@ ISR (USART_RX_vect, ISR_BLOCK) {
 	    if (dmx.data != 0) dmx.state = IDLE;  // invalid start code
 	    else {
 		dmx.slot = dmx.address - 1;  // skip this many slots
-		if (dmx.slot == 0) dmx.state = DATA; // address == 1
+		if (dmx.slot == 0) dmx.state = DATA; // dmx.address == 1
 		else dmx.state = SKIP;
 	    }
 	    break;
@@ -150,8 +157,11 @@ ISR (USART_RX_vect, ISR_BLOCK) {
 	    if (--dmx.slot == 0) dmx.state = DATA;
 	    break;
 	case DATA:
-	    databuf[dmx.slot++] = dmx.data;
-	    if (dmx.slot == DMX_CHANNELS) dmx.state = IDLE;
+	    if (dmx.chanval[dmx.slot] != dmx.data) {
+		dmx.chanval[dmx.slot] = dmx.data;
+		dmx.dataisnew |= ((uint16_t)1 << dmx.slot);
+	    }
+	    if (++dmx.slot == DMX_CHANNELS) dmx.state = IDLE;
 	    break;
 	case IDLE:
 	    break;

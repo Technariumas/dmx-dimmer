@@ -13,6 +13,9 @@
 // data to transmit if you only really want to read data
 #define SPI_TRANSMIT_DUMMY 0b01010101
 
+// FIXME: what's this? pull-ups on other end?
+#define SPI_CHAN_RESET 3
+
 #define cfg_reset_enable()  output_low(SPI_SLAVES_PORT, SPI_CFG_RESET)
 #define cfg_reset_disable() output_high(SPI_SLAVES_PORT, SPI_CFG_RESET)
 #define cfg_select()        output_low(SPI_SLAVES_PORT, SPI_CFG_SS)
@@ -22,7 +25,14 @@
 
 // configure i/o for proper spi transmissions
 inline void spi_master_init (void);
+
 // send and/or receive data
 uint8_t spi_master_transmit (uint8_t data);
+
+// set slave's addressed dmx channel
+inline void spi_chan_select (uint8_t c);
+
+// request interrupt on proper phase arbiter
+inline void spi_request_interrupt (uint8_t slave);
 
 #endif /* _SPI_H_ */
