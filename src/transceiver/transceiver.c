@@ -114,7 +114,7 @@ int main (void) {
 		// transmit channel's value
 		retval = spi_master_transmit(dmx.chanval[c]);
 
-		// FIXME: what's this? pull-ups on other end?
+		// pull-ups on other end, reduce power consumption
 		spi_chan_select(SPI_CHAN_RESET);
 
 		// check if transmission successful
