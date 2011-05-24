@@ -179,8 +179,8 @@ ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
 #define SPI_OUT_DDR       DDRB  // link to SPI Master
 #define SPI_OUT_CHAN0_DDR DDB0
 #define SPI_OUT_CHAN1_DDR DDB1
-#define SPI_OUT_SS_DDR    DDB2  // PCINT2
-#define SPI_OUT_OK_DDR    DDB3  // ok to transmit
+#define SPI_OUT_OK_DDR    DDB2  // ok to transmit
+#define SPI_OUT_SS_DDR    DDB3  // PCINT3
 
 #define SPI_OUT_PORT  PORTB
 #define SPI_OUT_CHAN0 PB0
@@ -199,8 +199,8 @@ inline void spi_slave_init (void) {
     output_high(SPI_OUT_PORT, SPI_OUT_CHAN0);
     output_high(SPI_OUT_PORT, SPI_OUT_CHAN1);
 
-    // enable external interrupt PCINT2 on PB2
-    PCMSK |= _BV(PCINT2);
+    // enable external interrupt PCINT3 on PB3
+    PCMSK |= _BV(PCINT3);
     GIMSK |= _BV(PCIE);
 
     // DI and USCK are inputs, DO is output
