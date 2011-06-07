@@ -1,0 +1,3 @@
+- don't pull output channel up and then down on zc. instead, send a short
+  pulse. makes it interrupt-friendly. disable interrupts during this
+  pulse?
