@@ -8,7 +8,6 @@
 //#include <util/delay.h>  // TODO: use or remove
 #include <avr/interrupt.h>
 
-#include "pinout.h"
 #include "iocontrol.h"
 #include "fakedelay.h"  // TODO: remove?
 #include "metaboard.h"  // TODO: remove

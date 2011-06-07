@@ -7,8 +7,9 @@
 #define _SPI_H_
 
 #include <inttypes.h>
+
 #include "iocontrol.h"
-#include "pinout.h"
+#include "transceiver.h"
 
 // data to transmit if you only really want to read data
 #define SPI_TRANSMIT_DUMMY 0b01010101

@@ -3,8 +3,9 @@
 #include "usart.h"
 
 #include <avr/io.h>
+
+#include "transceiver.h"
 #include "iocontrol.h"
-#include "pinout.h"
 
 void usart_init (void) {
     // init databuf (TODO: in function?)

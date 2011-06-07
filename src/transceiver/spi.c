@@ -2,7 +2,7 @@
 
 #include "spi.h"
 
-#include "pinout.h"
+#include "transceiver.h"
 
 inline void spi_master_init (void) {
     // set up custom communication lines (not handled by hardware SPI)
