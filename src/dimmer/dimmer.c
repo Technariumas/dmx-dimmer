@@ -4,7 +4,7 @@
 
 #include <inttypes.h>
 #include <avr/io.h>
-#include <avr/wdt.h>
+#include <avr/wdt.h>       // TODO: disable in hardware and remove
 #include <util/delay.h>    // TODO: use or remove
 #include <avr/interrupt.h>
 
@@ -23,7 +23,8 @@ zc_t zc = {CYCLES_ZC, CYCLES_ZC, CYCLES_ANG, 255};
 #undef CYCLES_ANG
 
 // DMX values received from Master
-uint8_t channel[CHANNELS];
+uint8_t chanval[DMX_CHANNELS];
+
 
 int main (void) {
     uint8_t i = 0;
@@ -37,7 +38,7 @@ int main (void) {
     output_high(PORTD, PD5);
 
     // init 
-    for (i = 0; i < CHANNELS; i++) channel[i] = 0;
+    for (i = 0; i < DMX_CHANNELS; i++) chanval[i] = 0;
 
     // output channels
     set_output(DDRD, DDD3);  // TODO: pretty pin defines
@@ -128,8 +129,8 @@ ISR (TIMER0_COMPA_vect, ISR_BLOCK) {
     uint8_t i;
 
     // TODO: fire appropriate channels
-    for (i = 0; i < CHANNELS; i++) {
-	if (channel[i] >= zc.angle) {
+    for (i = 0; i < DMX_CHANNELS; i++) {
+	if (chanval[i] >= zc.angle) {
 	    output_high(PORTD, PD3);  // pulse start
 	    output_low(PORTB, PB4); // debug led
 	}
@@ -164,5 +165,5 @@ ISR (PCINT_vect, ISR_NOBLOCK) {
     output_high(SPI_OUT_PORT, SPI_OUT_OK); // i'm ready!
     while ( !(USISR & _BV(USIOIF)) );      // wait for reception complete
     output_low(SPI_OUT_PORT, SPI_OUT_OK);
-    channel[0] = USIDR;  // TODO: proper channel selection
+    chanval[0] = USIDR;  // TODO: proper channel selection
 }

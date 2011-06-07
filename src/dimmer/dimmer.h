@@ -8,9 +8,10 @@
 
 // ===== CONFIG =====
 
-#define F_CPU    6000000  // 6 MHz
-#define F_MAINS  50
-#define CHANNELS 4
+#define F_CPU   6000000  // 6 MHz
+#define F_MAINS 50
+
+#define DMX_CHANNELS 4
 
 // ===== PINOUT =====
 
