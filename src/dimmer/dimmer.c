@@ -32,44 +32,27 @@ int main (void) {
     wdt_disable();
 
     // debug leds
-    set_output(DDRB, DDB4);
-    set_output(DDRD, DDD5);
-    output_high(PORTB, PB4);
-    output_high(PORTD, PD5);
+    leds_init();
+    led_off(0);
+    led_off(1);
 
-    // init 
+    // init data structure
     for (i = 0; i < DMX_CHANNELS; i++) chanval[i] = 0;
 
     // output channels
-    set_output(DDRD, DDD3);  // TODO: pretty pin defines
-    /* set_output(DDRD, DDD4); */
-    /* set_output(DDRD, DDD5); */
-    /* set_output(DDRD, DDD6); */
+    dimmers_init();
 
-    // blink: devboard ok
-    /* output_low(PORTB, PB4); */
-    /* delay_ms(200); */
-    /* output_high(PORTB, PB4); */
-    /* delay_ms(200); */
-    /* output_low(PORTB, PB4); */
-    /* delay_ms(200); */
-    /* output_high(PORTB, PB4); */
-    /* delay_ms(200); */
-
-
+    // submit to slavery
     spi_slave_init();
+
+    // 
     counter0_init(zc.deg_dur);
     counter1_init();
     zc_init();
+
     sei();
 
-    while (1) {
-	// wank
-	/* output_low(PORTD, PD5); */
-	i++;
-	/* output_high(PORTD, PD5); */
-	/* delay_ms(500); */
-    }
+    while (1) i++;  // everything else is interrupt-driven
 
     return 1;
 }
@@ -85,7 +68,7 @@ ISR (INT0_vect, ISR_NOBLOCK) {
 
     // turn off outputs
     output_low(PORTD, PD3);
-    output_high(PORTB, PB4);  // debug led
+    /* output_high(PORTB, PB4);  // debug led */
 
     // read counter (used later)
     // low byte must be read first
@@ -132,7 +115,7 @@ ISR (TIMER0_COMPA_vect, ISR_BLOCK) {
     for (i = 0; i < DMX_CHANNELS; i++) {
 	if (chanval[i] >= zc.angle) {
 	    output_high(PORTD, PD3);  // pulse start
-	    output_low(PORTB, PB4); // debug led
+	    /* output_low(PORTB, PB4); // debug led */
 	}
     }
 
@@ -153,17 +136,20 @@ ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
     /* 	delay_ms(500); */
     /* } */
 
-    /* output_toggle(PORTD, PD5); */
+    led_toggle(0);
 }
 
 // interrupt: master has new dmx data
 ISR (PCINT_vect, ISR_NOBLOCK) {
-    output_toggle(PORTD, PD5);
+    led_toggle(1);
+
     // TODO: read CHAN0/CHAN1
+
     USIDR = SPI_TRANSMIT_DUMMY;
     USISR = _BV(USIOIF);                   // clear overflow flag
     output_high(SPI_OUT_PORT, SPI_OUT_OK); // i'm ready!
     while ( !(USISR & _BV(USIOIF)) );      // wait for reception complete
     output_low(SPI_OUT_PORT, SPI_OUT_OK);
+
     chanval[0] = USIDR;  // TODO: proper channel selection
 }

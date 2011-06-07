@@ -15,6 +15,14 @@
 
 // ===== PINOUT =====
 
+// leds
+#define LEDS_DDR DDRD
+#define LED0_DDR DDD0
+#define LED1_DDR DDD1
+
+#define LEDS_PORT PORTD
+#define LEDBASE   PD0
+
 // zero crossing
 #define ZC_DDR  DDRD
 #define ZC_PORT PORTD
@@ -42,5 +50,30 @@
 #define SPI_OUT_CHAN0 PB1
 #define SPI_OUT_CHAN1 PB2
 #define SPI_OUT_OK    PB3
+
+// channel dimming
+#define DIMMERS_DDR DDRD
+#define DIMMER0_DDR DDD3
+#define DIMMER1_DDR DDD4
+#define DIMMER2_DDR DDD5
+#define DIMMER3_DDR DDD6
+
+#define DIMMERS_PORT PORTD
+#define DIMMERBASE   PD3
+
+// ===== FUNCTIONS =====
+
+// leds
+#define leds_init() LEDS_DDR |= _BV(LED0_DDR)|_BV(LED1_DDR)
+#define led_on(led)     LEDS_PORT &= ~(_BV( LEDBASE+led ))
+#define led_off(led)    LEDS_PORT |=   _BV( LEDBASE+led )
+#define led_toggle(led) LEDS_PORT ^=   _BV( LEDBASE+led )
+
+// dimmers
+#define dimmers_init() DIMMERS_DDR |= _BV(DIMMER0_DDR)|_BV(DIMMER1_DDR)|_BV(DIMMER2_DDR)|_BV(DIMMER3_DDR)
+#define dimmer_on(dim)  DIMMERS_PORT |=   _BV( DIMMERBASE+dim )
+#define dimmer_off(dim) DIMMERS_PORT &= ~(_BV( DIMMERBASE+dim ))
+
+//int main (void);
 
 #endif /* _DIMMER_H_ */
