@@ -4,6 +4,8 @@
 #ifndef _DIMMER_H_
 #define _DIMMER_H_
 
+#include <avr/io.h>
+
 // ===== CONFIG =====
 
 #define F_CPU    6000000  // 6 MHz
