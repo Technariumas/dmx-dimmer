@@ -1,7 +1,6 @@
 // dmx dimmer, transceiver module
-// TODO: file header
 
-#define F_CPU 16000000  // 16 MHz
+#include "transceiver.h"
 
 #include <inttypes.h>
 #include <avr/io.h>

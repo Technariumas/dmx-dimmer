@@ -5,7 +5,7 @@
 #include <inttypes.h>
 #include <avr/io.h>
 
-#include "pinout.h"
+#include "dimmer.h"
 #include "iocontrol.h"
 
 inline uint16_t zc_calibrate (uint16_t old, uint16_t new) {
