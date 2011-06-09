@@ -63,7 +63,11 @@
 #define DIMMER3_DDR DDD6
 
 #define DIMMERS_PORT PORTD
-#define DIMMERBASE   PD3
+#define DIMMER0      PD3
+#define DIMMER1      PD4
+#define DIMMER2      PD5
+#define DIMMER3      PD6
+#define DIMMERBASE   DIMMER0
 
 // ===== FUNCTIONS =====
 

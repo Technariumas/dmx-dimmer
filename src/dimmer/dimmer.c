@@ -67,8 +67,8 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     TIMSK &= ~(_BV(OCIE0A));
 
     // turn off outputs
-    output_low(PORTD, PD3);
-    /* output_high(PORTB, PB4);  // debug led */
+    DIMMERS_PORT &= ~( _BV(DIMMER0) | _BV(DIMMER1) | 
+		       _BV(DIMMER2) | _BV(DIMMER3) );
 
     // read counter (used later)
     // low byte must be read first
@@ -109,21 +109,19 @@ ISR (INT0_vect, ISR_NOBLOCK) {
 // interrupt: new firing angle reached
 // TODO: fire '255' from ZC int
 ISR (TIMER0_COMPA_vect, ISR_BLOCK) {
-    uint8_t i;
+    uint8_t c;
 
-    // TODO: fire appropriate channels
-    for (i = 0; i < DMX_CHANNELS; i++) {
-	if (chanval[i] >= zc.angle) {
-	    output_high(PORTD, PD3);  // pulse start
-	    /* output_low(PORTB, PB4); // debug led */
+    // fire appropriate channels
+    for (c = 0; c < DMX_CHANNELS; c++) {
+	if (chanval[c] >= zc.angle) {
+	    output_high(DIMMERS_PORT, DIMMERBASE + c);
+	    /* led_toggle(1); // debug led */
 	}
     }
 
     if (zc.angle > 1) zc.angle--;  // FIXME: had glitches with ">0"
 
     TCNT0 = 0;  // reset counter
-
-    //output_low(PORTD, PD3);  // pulse stop
 }
 
 // interrupt: maximum counter value reached, time interval between two
