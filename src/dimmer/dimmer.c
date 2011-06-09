@@ -141,9 +141,12 @@ ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
 
 // interrupt: master has new dmx data
 ISR (PCINT_vect, ISR_NOBLOCK) {
+    uint8_t chan = 0;
+
     led_toggle(1);
 
-    // TODO: read CHAN0/CHAN1
+    // read CHAN0/CHAN1
+    chan = (_BV(SPI_OUT_CHAN0_PIN)) + (_BV(SPI_OUT_CHAN1_PIN) << 1);
 
     USIDR = SPI_TRANSMIT_DUMMY;
     USISR = _BV(USIOIF);                   // clear overflow flag
@@ -151,5 +154,5 @@ ISR (PCINT_vect, ISR_NOBLOCK) {
     while ( !(USISR & _BV(USIOIF)) );      // wait for reception complete
     output_low(SPI_OUT_PORT, SPI_OUT_OK);
 
-    chanval[0] = USIDR;  // TODO: proper channel selection
+    chanval[chan] = USIDR;
 }
