@@ -115,7 +115,7 @@ ISR (TIMER0_COMPA_vect, ISR_BLOCK) {
     for (c = 0; c < DMX_CHANNELS; c++) {
 	if (chanval[c] >= zc.angle) {
 	    output_high(DIMMERS_PORT, DIMMERBASE + c);
-	    /* led_toggle(1); // debug led */
+	    /* led_toggle(1); */
 	}
     }
 
