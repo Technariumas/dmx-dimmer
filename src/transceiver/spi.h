@@ -36,4 +36,7 @@ inline void spi_chan_select (uint8_t c);
 // request interrupt on proper phase arbiter
 inline void spi_request_interrupt (uint8_t slave);
 
+// this is not proper SPI, but a workaround for 74166's operation mode
+inline void cfg_init (void);
+
 #endif /* _SPI_H_ */

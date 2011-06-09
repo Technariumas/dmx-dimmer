@@ -48,3 +48,13 @@ inline void spi_request_interrupt (uint8_t slave) {
     /* case 2: output_toggle(SPI_SLAVES_PORT, SPI_OUT_SS3); break; */
     }
 }
+
+inline void cfg_init (void) {
+    /* set_output(SPI_SLAVES_DDR, SPI_CFG_RESET_DDR); */
+    /* set_output(SPI_DDR, SPI_SCK_DDR); */
+    /* set_output(SPI_SLAVES_DDR, SPI_CFG_SS_DDR); */
+    /* set_output(SPI_SLAVES_DDR, SPI_CFG_MODE_DDR); */
+
+    /* cfg_reset_disable(); */
+    /* cfg_deselect(); */
+}

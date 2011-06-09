@@ -17,17 +17,6 @@
 
 dmx_t    dmx = {IDLE, 1, 0, 0, 0, 0};
 
-// configure i/o on spi pins to read in settings once
-inline void cfg_init (void) {
-    /* set_output(SPI_SLAVES_DDR, SPI_CFG_RESET_DDR); */
-    /* set_output(SPI_DDR, SPI_SCK_DDR); */
-    /* set_output(SPI_SLAVES_DDR, SPI_CFG_SS_DDR); */
-    /* set_output(SPI_SLAVES_DDR, SPI_CFG_MODE_DDR); */
-
-    /* cfg_reset_disable(); */
-    /* cfg_deselect(); */
-}
-
 
 int main (void) {
     /* uint8_t confl = 0; */
@@ -50,7 +39,6 @@ int main (void) {
      * properly; this is due to 74166's mode of operation and is not
      * needed if 74165 ICs are used instead; consult datasheets
      */
-
     cfg_init();
 
     /* cfg_select(); */
@@ -66,9 +54,11 @@ int main (void) {
     /* cfg_mode_serial(); */
     /* delay_ms(1); */
 
+    // proceed with proper SPI operation
     spi_master_init();
     //SPCR |= (1<<CPOL);  // otherwise can't read first bit
 
+    // TODO: cfg_read()
     /* // read in first octet */
     /* ledon(0); */
     /* confl = spi_master_transmit(SPI_TRANSMIT_DUMMY); */
@@ -79,7 +69,7 @@ int main (void) {
     /* confh = spi_master_transmit(SPI_TRANSMIT_DUMMY); */
     /* ledoff(0); */
 
-    /* output_high(SPI_PORT, SPI_SCK); */
+    /* output_high(SPI_PORT, SPI_SCK);  // TODO: is this needed? */
     /* cfg_deselect(); */
     /* cfg_reset_enable(); */
 
@@ -93,7 +83,7 @@ int main (void) {
 	for (c = 0; c < DMX_CHANNELS; c++) {
 	    // check if new data present for this channel
 	    if (dmx.dataisnew & ((uint16_t)1 << c)) {
-		/* new data may come in the time frame between data
+		/* even newer data may come in the time frame between
 		 * transmission and checking if it was successful, so
 		 * unset the channel's flag now and set it back on later
 		 * if needed
@@ -115,7 +105,7 @@ int main (void) {
 		// pull-ups on other end, reduce power consumption
 		spi_chan_select(SPI_CHAN_RESET);
 
-		// check if transmission successful
+		// check if transmission not successful
 		if (retval != SPI_TRANSMIT_DUMMY) {
 		    dmx.dataisnew |= ((uint16_t)1 << c);
 		    ledtoggle(1);
@@ -168,3 +158,4 @@ ISR (USART_RX_vect, ISR_BLOCK) {
 
     ledoff(0);  // debug: int stop
 }
+
