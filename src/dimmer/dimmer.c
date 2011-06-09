@@ -26,6 +26,17 @@ zc_t zc = {CYCLES_ZC, CYCLES_ZC, CYCLES_ANG, 255};
 uint8_t chanval[DMX_CHANNELS];
 
 
+inline void fire_channels (uint8_t angle) {
+    uint8_t c;
+
+    for (c = 0; c < DMX_CHANNELS; c++) {
+	if (chanval[c] >= angle) {
+	    output_high(DIMMERS_PORT, DIMMERBASE + c);
+	    /* led_toggle(1); */
+	}
+    }
+}
+
 int main (void) {
     uint8_t i = 0;
 
@@ -80,7 +91,7 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     TCNT1H = 0;
     TCNT1L = 0;
 
-    // 
+    // reset current angle counter 
     zc.angle = 255;
 
     //
@@ -104,21 +115,14 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     // re-enable counter0
     TIMSK |= _BV(OCIE0A);
     TCCR0B |= _BV(CS00);
+
+    // first angle interrupt will happen on '254', so do '255' now
+    fire_channels(255);
 }
 
 // interrupt: new firing angle reached
-// TODO: fire '255' from ZC int
 ISR (TIMER0_COMPA_vect, ISR_BLOCK) {
-    uint8_t c;
-
-    // fire appropriate channels
-    for (c = 0; c < DMX_CHANNELS; c++) {
-	if (chanval[c] >= zc.angle) {
-	    output_high(DIMMERS_PORT, DIMMERBASE + c);
-	    /* led_toggle(1); */
-	}
-    }
-
+    fire_channels(zc.angle);
     if (zc.angle > 1) zc.angle--;  // FIXME: had glitches with ">0"
 
     TCNT0 = 0;  // reset counter

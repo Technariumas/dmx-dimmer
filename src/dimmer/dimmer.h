@@ -82,6 +82,9 @@
 #define dimmer_on(dim)  DIMMERS_PORT |=   _BV( DIMMERBASE+dim )
 #define dimmer_off(dim) DIMMERS_PORT &= ~(_BV( DIMMERBASE+dim ))
 
+// fire all channels with at least value 'angle'
+inline void fire_channels (uint8_t angle);
+
 //int main (void);
 
 #endif /* _DIMMER_H_ */
