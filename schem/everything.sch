@@ -911,7 +911,7 @@ device=TRIAC
 T 77000 43600 5 10 1 1 0 2 1
 refdes=D?
 T 77000 43300 5 10 1 1 0 0 1
-value=TIC246
+value=BTA20
 }
 C 70700 44200 1 0 0 resistor-2.sym
 {
