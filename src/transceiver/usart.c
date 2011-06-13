@@ -12,9 +12,9 @@ void usart_init (void) {
     /* int i; */
     /* for (i = 0; i < sizeof(databuf); i++) databuf[i] = 0; */
 
-    // ~RE is on by default
-    set_output(USART_DDR, USART_NRE);
-    output_low(USART_PORT, USART_NRE);
+    // ~RE not used: always a receiver
+    /* set_output(USART_DDR, USART_NRE); */
+    /* output_low(USART_PORT, USART_NRE); */
 
     // set baud rate (250 kHz)
     UBRR0H = 0;
