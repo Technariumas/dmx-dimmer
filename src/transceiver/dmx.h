@@ -19,6 +19,8 @@ typedef struct {
     uint16_t         dataisnew;  // flag new data
     uint8_t          status;     // usart status byte
     uint8_t          data;       // usart data byte
+    uint8_t          preheat;
+    uint8_t          maxval;
     uint8_t          chanval[DMX_CHANNELS];
 } dmx_t;
 

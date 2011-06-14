@@ -48,7 +48,6 @@
 #define SPI_SLAVES_PIN PIND
 #define SPI_OUT_OK_PIN PIND6
 
-// RS485 chip SN75176B got a Read Enable and Transmit Enable pins
 #define USART_DDR     DDRD   // RS485 DDR for Read Enable (Receiving)
 #define USART_RXD_DDR DDD0   // receive
 #define USART_TXD_DDR DDD1   // drive/transmit

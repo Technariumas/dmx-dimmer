@@ -13,9 +13,10 @@
 #include "metaboard.h"  // TODO: remove
 #include "dmx.h"
 #include "spi.h"
+#include "adc.h"
 #include "usart.h"
 
-dmx_t    dmx = {IDLE, 1, 0, 0, 0, 0};
+dmx_t    dmx = {IDLE, 1, 0, 0, 0, 0, 0, 255};
 
 
 int main (void) {
@@ -73,11 +74,18 @@ int main (void) {
     /* cfg_deselect(); */
     /* cfg_reset_enable(); */
 
+    adc_init();
     usart_init();
     sei();
 
     while (1) {
 	ledon(2);  // debug: start transmit
+
+	// see if preheat/maxval on panel changed
+	if (!adc_running()) {
+	    adc_channel_toggle();
+	    adc_start();
+	}
 
 	// iterate over DMX channels
 	for (c = 0; c < DMX_CHANNELS; c++) {
@@ -159,3 +167,12 @@ ISR (USART_RX_vect, ISR_BLOCK) {
     ledoff(0);  // debug: int stop
 }
 
+// interrupt: ADC conversion complete
+ISR (ADC_vect, ISR_NOBLOCK) {
+    if (adc_channel_get()) {  // was getting maxval
+	dmx.maxval = ADCH/2 + 128;
+    }
+    else {                    // was getting preheat
+	dmx.preheat = ADCH/2;
+    }
+}
