@@ -16,7 +16,7 @@
 #include "adc.h"
 #include "usart.h"
 
-dmx_t    dmx = {IDLE, 1, 0, 0, 0, 0, 0, 255};
+dmx_t dmx = {IDLE, 1, 0, 0, 0, 0, 0, 255};
 
 
 int main (void) {
@@ -82,7 +82,7 @@ int main (void) {
 	ledon(2);  // debug: start transmit
 
 	// see if preheat/maxval on panel changed
-	if (!adc_running()) {
+	if ( !(adc_running()) ) {
 	    adc_channel_toggle();
 	    adc_start();
 	}
@@ -97,6 +97,12 @@ int main (void) {
 		 * if needed
 		 */
 		dmx.dataisnew &= ~((uint16_t)1 << c);
+
+		// make sure chanval is in [preheat; maxval] range
+		if (dmx.chanval[c] < dmx.preheat)
+		    dmx.chanval[c] = dmx.preheat;
+		if (dmx.chanval[c] > dmx.maxval)
+		    dmx.chanval[c] = dmx.maxval;
 
 		// for any slave, set which of the 4 dmx channels t'is for
 		spi_chan_select(c);
@@ -169,10 +175,8 @@ ISR (USART_RX_vect, ISR_BLOCK) {
 
 // interrupt: ADC conversion complete
 ISR (ADC_vect, ISR_NOBLOCK) {
-    if (adc_channel_get()) {  // was getting maxval
+    if (adc_channel_get())
 	dmx.maxval = ADCH/2 + 128;
-    }
-    else {                    // was getting preheat
+    else
 	dmx.preheat = ADCH/2;
-    }
 }

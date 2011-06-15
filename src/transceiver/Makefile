@@ -85,7 +85,7 @@ PROJECTNAME=transceiver
 # (list all files to compile, e.g. 'a.c b.cpp as.S'):
 # Use .cc, .cpp or .C suffix for C++ files, use .S 
 # (NOT .s !!!) for assembly source code files.
-PRJSRC=fakedelay.c usart.c spi.c transceiver.c
+PRJSRC=fakedelay.c usart.c spi.c adc.c transceiver.c
 
 # additional includes (e.g. -I/path/to/mydir)
 INC=-I.
