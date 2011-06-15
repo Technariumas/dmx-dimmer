@@ -23,6 +23,7 @@ int main (void) {
     /* uint8_t confl = 0; */
     /* uint8_t confh = 0; */
     uint8_t c;      // channel iterator
+    uint8_t chanval;
     uint8_t retval;
 
     wdt_disable();
@@ -98,11 +99,15 @@ int main (void) {
 		 */
 		dmx.dataisnew &= ~((uint16_t)1 << c);
 
-		// make sure chanval is in [preheat; maxval] range
-		if (dmx.chanval[c] < dmx.preheat)
-		    dmx.chanval[c] = dmx.preheat;
-		if (dmx.chanval[c] > dmx.maxval)
-		    dmx.chanval[c] = dmx.maxval;
+		/* make sure chanval is in [preheat; maxval] range, but
+		 * use a temporary var for this - otherwise the USART
+		 * interrupt might change it back again
+		 */
+		chanval = dmx.chanval[c];
+		if (chanval < dmx.preheat)
+		    chanval = dmx.preheat;
+		if (chanval > dmx.maxval)
+		    chanval = dmx.maxval;
 
 		// for any slave, set which of the 4 dmx channels t'is for
 		spi_chan_select(c);
@@ -114,7 +119,7 @@ int main (void) {
 		while ( !(SPI_SLAVES_PIN & _BV(SPI_OUT_OK_PIN)) );
 
 		// transmit channel's value
-		retval = spi_master_transmit(dmx.chanval[c]);
+		retval = spi_master_transmit(chanval);
 
 		// pull-ups on other end, reduce power consumption
 		spi_chan_select(SPI_CHAN_RESET);
