@@ -1,0 +1,295 @@
+# release: pcb 1.99x
+# To read pcb files, the pcb version (or the cvs source date) must be >= the file version
+FileVersion[20070407]
+PCB["" 600000 500000]
+Grid[10000.000000 0 0 0]
+Cursor[0 0 0.000000]
+PolyArea[200000000.000000]
+Thermal[0.500000]
+DRC[1000 1000 1000 1000 1500 1000]
+Flags("nameonpcb,uniquename,clearnew,snappin")
+Groups("1,c:2,s:3:4:5:6:7:8")
+Styles["Signal,1000,3600,2000,1000:Power,2500,6000,3500,1000:Fat,4000,6000,3500,1000:Skinny,600,2402,1181,600"]
+
+	
+Element(0x00 "CONNECTOR-1-2" "CONN_DIM12" "unknown" 260 0 3 100 0x00)
+(
+	Pin(50 50 60 38 "1" 0x101)
+	Pin(150 50 60 38 "2" 0x01)
+	 
+	ElementLine(0 0 0 100 10)
+	ElementLine(0 100 200 100 10)
+	ElementLine(200 100 200 0 10)
+	ElementLine(200 0 0 0 10)
+	ElementLine(0 100 100 100 10)
+	ElementLine(100 100 100 0 10)
+	Mark(50 50)
+)
+# grab the input values and convert to 1/100 mil
+       
+	
+	
+	
+	
+	
+	
+	# how much to grow the pads by for soldermask [1/100 mil]
+	
+	# clearance from planes [1/100 mil]
+	
+	# silk screen width  [1/100 mil]
+	
+	# courtyard silk screen width  [1/100 mil]
+	
+# element_flags, description, pcb-name, value, mark_x, mark_y,
+# text_x, text_y, text_direction, text_scale, text_flags
+Element[0x00000000 "0805" "R1" "680" 0 0 -3150 -3150 0 100 ""]
+(
+# 
+# Pad[x1, y1, x2, y2, thickness, clearance, mask, name , pad number, flags]
+	Pad[-3543 -393
+		-3543 393
+		5118 2000 5718 "1" "1" "square"]
+	    Pad[3543 -393
+		3543 393
+		5118 2000 5718 "2" "2" "square"]
+	 
+
+	ElementLine[-393 -2755 393 -2755 800]
+	    ElementLine[-393 2755 393 2755 800]
+	   
+
+#
+# This draws a 1 mil placement courtyard outline in silk.  It should probably
+# not be included since you wont want to try and fab a 1 mil silk line.  Then
+# again, it is most useful during parts placement.  It really is time for some
+# additional non-fab layers...
+
+#	ElementLine[eval(-1*V1/2) eval(-1*V2/2) eval(-1*V1/2) eval(   V2/2) CYW]
+#	ElementLine[eval(-1*V1/2) eval(-1*V2/2) eval(   V1/2) eval(-1*V2/2) CYW]
+#	ElementLine[eval(   V1/2) eval(   V2/2) eval(   V1/2) eval(-1*V2/2) CYW]
+#	ElementLine[eval(   V1/2) eval(   V2/2) eval(-1*V1/2) eval(   V2/2) CYW]
+
+)
+Element(0x00 "TO220" "D1" "BTA20" 50 570 1 100 0x00)
+(
+
+# I have been unable to locate the JEDEC drawing.  However, refering
+# to  http://www.zetex.com/3.0/pdf/TO220.pdf which claims to be JEDEC
+# compliant, I see that the pins are rectangular with dimensions:
+#
+# 15-40 mils X 16-20 mils which gives a diagonal of
+# 21.9 to 44.7 mils
+#
+# The pin pitch is 90 to 110 mils.
+#
+# The mounting hole is 139 to 160 mils diameter
+	Pin(100 800 90 60 "1" 0x101)
+	Pin(200 800 90 60 "2" 0x01)
+	Pin(300 800 90 60 "3" 0x01)
+
+	# Befestigungsbohrung
+	Pin(200 130 150 130 "4" 0x01)
+
+	# Anschlussdraehte
+	ElementLine(100 800 100 620 30)
+	ElementLine(200 800 200 620 30)
+	ElementLine(300 800 300 620 30)
+
+	# Gehaeuse
+	ElementLine(  0 620 400 620 20)
+	ElementLine(400 620 400 245 20)
+	ElementLine(400 245   0 245 20)
+	ElementLine(  0 245   0 620 20)
+
+	# Kuehlfahne mit Kerben
+	ElementLine(  0 245 400 245 20)
+	ElementLine(400 245 400 120 20)
+	ElementLine(400 120 385 120 20)
+	ElementLine(385 120 385  50 20)
+	ElementLine(385  50 400  50 20)
+	ElementLine(400  50 400  10 20)
+	ElementLine(400  10   0  10 20)
+	ElementLine(  0  10   0  50 20)
+	ElementLine(  0  50  15  50 20)
+	ElementLine( 15  50  15 120 20)
+	ElementLine( 15 120   0 120 20)
+	ElementLine(  0 120   0 245 20)
+
+	Mark(200 800)
+)
+
+	
+	
+	
+	
+	
+	
+	
+	
+Element(0x00 "ACY300" "C2" "10n" 245 70 0 100 0x00)
+(
+	Pin(0 25 55 30 "1" 0x101)
+	Pin(300 25 55 30 "2" 0x01)
+
+	ElementLine(0 25 75 25 10)
+	ElementLine(225 25 300 25 10)
+
+	ElementLine(75 0 225 0 10)
+	ElementLine(225 0 225 50 10)
+	ElementLine(225 50 75 50 10)
+	ElementLine(75 50 75 0 10)
+
+	
+
+#	ElementArc(X1 Y 50 50 270 180 10)
+#	ElementArc(X2 Y 50 50 90 180 10)
+
+	Mark(0 25)
+)
+
+	
+	
+	
+	
+	
+	
+	
+	
+Element(0x00 "ACY300" "C1" "47n" 245 70 0 100 0x00)
+(
+	Pin(0 25 55 30 "1" 0x101)
+	Pin(300 25 55 30 "2" 0x01)
+
+	ElementLine(0 25 75 25 10)
+	ElementLine(225 25 300 25 10)
+
+	ElementLine(75 0 225 0 10)
+	ElementLine(225 0 225 50 10)
+	ElementLine(225 50 75 50 10)
+	ElementLine(75 50 75 0 10)
+
+	
+
+#	ElementArc(X1 Y 50 50 270 180 10)
+#	ElementArc(X2 Y 50 50 90 180 10)
+
+	Mark(0 25)
+)
+
+	
+	
+	
+	
+	
+	
+	
+	
+Element(0x00 "ACY500" "R4" "39" 395 102 0 100 0x00)
+(
+	Pin(0 41 55 30 "1" 0x101)
+	Pin(500 41 55 30 "2" 0x01)
+
+	ElementLine(0 41 125 41 10)
+	ElementLine(375 41 500 41 10)
+
+	ElementLine(125 0 375 0 10)
+	ElementLine(375 0 375 82 10)
+	ElementLine(375 82 125 82 10)
+	ElementLine(125 82 125 0 10)
+
+	
+
+#	ElementArc(X1 Y 50 50 270 180 10)
+#	ElementArc(X2 Y 50 50 90 180 10)
+
+	Mark(0 41)
+)
+
+	
+	
+	
+	
+	
+	
+	
+	
+Element(0x00 "ACY500" "R3" "470" 395 102 0 100 0x00)
+(
+	Pin(0 41 55 30 "1" 0x101)
+	Pin(500 41 55 30 "2" 0x01)
+
+	ElementLine(0 41 125 41 10)
+	ElementLine(375 41 500 41 10)
+
+	ElementLine(125 0 375 0 10)
+	ElementLine(375 0 375 82 10)
+	ElementLine(375 82 125 82 10)
+	ElementLine(125 82 125 0 10)
+
+	
+
+#	ElementArc(X1 Y 50 50 270 180 10)
+#	ElementArc(X2 Y 50 50 90 180 10)
+
+	Mark(0 41)
+)
+
+	
+	
+	
+	
+	
+	
+	
+	
+Element(0x00 "ACY500" "R2" "360" 395 102 0 100 0x00)
+(
+	Pin(0 41 55 30 "1" 0x101)
+	Pin(500 41 55 30 "2" 0x01)
+
+	ElementLine(0 41 125 41 10)
+	ElementLine(375 41 500 41 10)
+
+	ElementLine(125 0 375 0 10)
+	ElementLine(375 0 375 82 10)
+	ElementLine(375 82 125 82 10)
+	ElementLine(125 82 125 0 10)
+
+	
+
+#	ElementArc(X1 Y 50 50 270 180 10)
+#	ElementArc(X2 Y 50 50 90 180 10)
+
+	Mark(0 41)
+)
+Layer(1 "component")
+(
+)
+Layer(2 "solder")
+(
+)
+Layer(3 "outline")
+(
+)
+Layer(4 "GND")
+(
+)
+Layer(5 "power")
+(
+)
+Layer(6 "signal1")
+(
+)
+Layer(7 "signal2")
+(
+)
+Layer(8 "signal3")
+(
+)
+Layer(9 "silk")
+(
+)
+Layer(10 "silk")
+(
+)

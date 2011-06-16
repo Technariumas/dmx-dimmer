@@ -6,7 +6,7 @@ device=MOC3023
 T 53800 53300 5 10 1 1 0 6 1
 refdes=U1
 T 52300 53750 5 10 0 0 0 0 1
-footprint=smd6
+footprint=SMD6
 T 52300 53300 5 10 1 1 0 0 1
 value=MOC3023
 }
@@ -19,7 +19,7 @@ refdes=R2
 T 54700 52600 5 10 1 1 0 0 1
 value=360
 T 54400 52800 5 10 0 1 0 0 1
-footprint=0805
+footprint=ACY500
 }
 C 55900 52800 1 0 0 resistor-2.sym
 {
@@ -30,7 +30,7 @@ refdes=R3
 T 56200 52600 5 10 1 1 0 0 1
 value=470
 T 55900 52800 5 10 0 1 0 0 1
-footprint=0805
+footprint=ACY500
 }
 C 58300 53000 1 180 0 resistor-2.sym
 {
@@ -40,6 +40,8 @@ T 57700 53100 5 10 1 1 0 0 1
 refdes=R4
 T 57900 52700 5 10 1 1 180 0 1
 value=39
+T 58300 53000 5 10 1 1 0 0 1
+footprint=ACY500
 }
 C 55800 52000 1 90 0 capacitor-1.sym
 {
@@ -51,6 +53,8 @@ T 54900 52200 5 10 0 0 90 0 1
 symversion=0.1
 T 56000 52300 5 10 1 1 180 0 1
 value=47n
+T 55800 52000 5 10 1 1 0 0 1
+footprint=ACY300
 }
 C 58800 52000 1 90 0 capacitor-1.sym
 {
@@ -62,6 +66,8 @@ T 57900 52200 5 10 0 0 90 0 1
 symversion=0.1
 T 58900 52300 5 10 1 1 180 0 1
 value=10n
+T 58800 52000 5 10 1 1 0 0 1
+footprint=ACY300
 }
 C 57400 52500 1 90 1 triac-1.sym
 {
@@ -144,6 +150,8 @@ T 57700 51100 5 10 0 0 270 0 1
 symversion=0.1
 T 57300 50600 5 10 1 1 0 0 1
 value=100u
+T 57100 51300 5 10 1 1 0 0 1
+footprint=BIGINDUCT
 }
 N 57100 50300 57100 49200 4
 N 57100 50000 58600 50000 4
