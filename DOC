@@ -33,9 +33,9 @@ then HIGH (MARK after BREAK, MAB), then data transmission begins. It is
 therefore possible to detect a new DMX packet when the line changes
 state from HIGH to LOW after an MBB.
 
-Data is transmitted in slots
-of 11 bytes (L DDDD DDDD HH), up to 513 slots. The first one is always
-a START CODE. It is followed by slots of data for DMX channels.
+Data is transmitted in slots of 11 bytes (L DDDD DDDD HH), up to 513
+slots. The first one is always a START CODE. It is followed by slots of
+data for DMX channels.
 
 The data byte is ordered least significant bit first.
 
