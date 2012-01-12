@@ -12,7 +12,8 @@ inline void adc_init (void) {
     adc_channel_preheat();
 
     // disable unused digital inputs (lower power consumption)
-    DIDR0 = _BV(ADC5D) | _BV(ADC4D);
+    DIDR0 = _BV(ADC5D) | _BV(ADC4D) | _BV(ADC3D) |
+	_BV(ADC2D) | _BV(ADC1D) | _BV(ADC0D);
 
     /* slow ADC down 128 times (compared to system clock) - if trigger
      * source in ADCSRB is left default (i.e. free running mode), this
