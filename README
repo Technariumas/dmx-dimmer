@@ -1,20 +1,28 @@
-This is the documentation for an open-source 12-channel DMX512 dimmer,
-currently known as dmx-dimmer. Name will change to something less
-meaningful by production time. It is based on Hendrik Hoelscher's
-dimmer. See [1] on the latter.
+This is an open-source 12-channel DMX512 dimmer, currently known as
+dmx-dimmer. The name will change to something less meaningful by
+production time. It is based on Hendrik Hoelscher's dimmer. See [1] on
+the latter.
 
-Certain modifications have been made, most importantly:
+Many modifications have been made, but most importantly:
+
 - support up to 12 channels;
 - use 3-phase mains power, 4 channels per phase;
 - more common AVR microcontroller, ATMega168;
 - complete code rewrite in C.
 
 This is a work in progress, currently in late design stage.
-
 Documentation is basically unavailable, but might become so if anyone is
 interested.
 
+It is probably impossible to use this git project for now, since some
+custom symbols/footprints are missing from the tree. I will try to
+include them ASAP.
+
+gEDA [2] was chosen to do the design work. As to why is a topic for a whole article. Mainly, I wanted to see whether it's good enough for big projects. The short answer is no. Then again, I might be doing something wrong.
+
+
 [1] http://www.hoelscher-hi.de/hendrik/english/dimmer.htm
+[2] http://www.gpleda.org/index.html
 
 
 
