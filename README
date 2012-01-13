@@ -10,11 +10,15 @@ Certain modifications have been made, most importantly:
 - complete code rewrite in C.
 
 This is a work in progress, currently in late design stage.
+
 Documentation is basically unavailable, but might become so if anyone is
 interested.
 
-
 [1] http://www.hoelscher-hi.de/hendrik/english/dimmer.htm
+
+
+
+NOTE: everything below is grossly outdated and should not be read. At all.
 
 
 ===== INTERFACES =====
@@ -62,10 +66,10 @@ so this feature is not implemented.
 
 ----- Zero-crossing -----
 
-To avoid EMI and high-amplitude voltage spikes, zero-crossing power
-switching is used. That is, outputs are switched on and off at moments
-when mains' AC voltage, which is sinusoidal, is at its minimum amplitude,
-0 volts.
+To partially avoid EMI and high-amplitude voltage spikes, zero-crossing
+power switching is used. That is, outputs are switched off at moments
+when mains' AC voltage, which is sinusoidal, is at its minimum
+amplitude, 0 volts. This is standard for SCR-based dimmers.
 
 ZC detection is accomplished externally. The output of the detector is
 received on header ZC1, pin 1, and connected to PD3, which is U1's pin for
