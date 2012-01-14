@@ -18,8 +18,10 @@ It is probably impossible to use this git project for now, since some
 custom symbols/footprints are missing from the tree. I will try to
 include them ASAP.
 
-gEDA [2] was chosen to do the design work. As to why is a topic for a whole article. Mainly, I wanted to see whether it's good enough for big projects. The short answer is no. Then again, I might be doing something wrong.
-
+gEDA [2] was chosen to do the design work. As to why is a topic for a
+whole article. Mainly, I wanted to see whether it's good enough for big
+projects. The short answer is no. Then again, I might be doing something
+wrong.
 
 [1] http://www.hoelscher-hi.de/hendrik/english/dimmer.htm
 [2] http://www.gpleda.org/index.html
