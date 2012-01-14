@@ -1,13 +1,30 @@
 # Pin name action command file
 
-# Start of element PD5
-ChangePinName(PD5, 1, terminal)
+# Start of element CONN_OUT11
+ChangePinName(CONN_OUT11, 9, 9)
+ChangePinName(CONN_OUT11, 10, 10)
+ChangePinName(CONN_OUT11, 7, 7)
+ChangePinName(CONN_OUT11, 5, 5)
+ChangePinName(CONN_OUT11, 3, 3)
+ChangePinName(CONN_OUT11, 1, 1)
+ChangePinName(CONN_OUT11, 8, 8)
+ChangePinName(CONN_OUT11, 6, 6)
+ChangePinName(CONN_OUT11, 4, 4)
+ChangePinName(CONN_OUT11, 2, 2)
 
-# Start of element PC5
-ChangePinName(PC5, 1, terminal)
-
-# Start of element PC4
-ChangePinName(PC4, 1, terminal)
+# Start of element CONN_PANEL11
+ChangePinName(CONN_PANEL11, 11, 11)
+ChangePinName(CONN_PANEL11, 9, 9)
+ChangePinName(CONN_PANEL11, 12, 12)
+ChangePinName(CONN_PANEL11, 10, 10)
+ChangePinName(CONN_PANEL11, 7, 7)
+ChangePinName(CONN_PANEL11, 5, 5)
+ChangePinName(CONN_PANEL11, 3, 3)
+ChangePinName(CONN_PANEL11, 1, 1)
+ChangePinName(CONN_PANEL11, 8, 8)
+ChangePinName(CONN_PANEL11, 6, 6)
+ChangePinName(CONN_PANEL11, 4, 4)
+ChangePinName(CONN_PANEL11, 2, 2)
 
 # Start of element R7
 ChangePinName(R7, 1, 1)
@@ -111,24 +128,6 @@ ChangePinName(ISP1, 2, 2)
 ChangePinName(C5, 2, 2)
 ChangePinName(C5, 1, 1)
 
-# Start of element CONN_PANEL11
-ChangePinName(CONN_PANEL11, 15, 15)
-ChangePinName(CONN_PANEL11, 13, 13)
-ChangePinName(CONN_PANEL11, 11, 11)
-ChangePinName(CONN_PANEL11, 9, 9)
-ChangePinName(CONN_PANEL11, 16, 16)
-ChangePinName(CONN_PANEL11, 14, 14)
-ChangePinName(CONN_PANEL11, 12, 12)
-ChangePinName(CONN_PANEL11, 10, 10)
-ChangePinName(CONN_PANEL11, 7, 7)
-ChangePinName(CONN_PANEL11, 5, 5)
-ChangePinName(CONN_PANEL11, 3, 3)
-ChangePinName(CONN_PANEL11, 1, 1)
-ChangePinName(CONN_PANEL11, 8, 8)
-ChangePinName(CONN_PANEL11, 6, 6)
-ChangePinName(CONN_PANEL11, 4, 4)
-ChangePinName(CONN_PANEL11, 2, 2)
-
 # Start of element L1
 ChangePinName(L1, 2, 2)
 ChangePinName(L1, 1, 1)
@@ -173,49 +172,9 @@ ChangePinName(CONN_OUT21, 2, 2)
 ChangePinName(J1, 1, 1)
 ChangePinName(J1, 2, 2)
 
-# Start of element CONN_OUT11
-ChangePinName(CONN_OUT11, 9, 9)
-ChangePinName(CONN_OUT11, 10, 10)
-ChangePinName(CONN_OUT11, 7, 7)
-ChangePinName(CONN_OUT11, 5, 5)
-ChangePinName(CONN_OUT11, 3, 3)
-ChangePinName(CONN_OUT11, 1, 1)
-ChangePinName(CONN_OUT11, 8, 8)
-ChangePinName(CONN_OUT11, 6, 6)
-ChangePinName(CONN_OUT11, 4, 4)
-ChangePinName(CONN_OUT11, 2, 2)
-
 # Start of element C2
 ChangePinName(C2, 2, 2)
 ChangePinName(C2, 1, 1)
-
-# Start of element C1
-ChangePinName(C1, 2, -)
-ChangePinName(C1, 1, +)
-
-# Start of element R5
-ChangePinName(R5, 1, 1)
-ChangePinName(R5, 2, 2)
-
-# Start of element R4
-ChangePinName(R4, 1, 1)
-ChangePinName(R4, 2, 2)
-
-# Start of element R3
-ChangePinName(R3, 1, 1)
-ChangePinName(R3, 2, 2)
-
-# Start of element R2
-ChangePinName(R2, 1, 1)
-ChangePinName(R2, 2, 2)
-
-# Start of element Z2
-ChangePinName(Z2, 1, 1)
-ChangePinName(Z2, 2, 2)
-
-# Start of element Z1
-ChangePinName(Z1, 1, 1)
-ChangePinName(Z1, 2, 2)
 
 # Start of element R1
 ChangePinName(R1, 1, 1)
