@@ -108,10 +108,6 @@ ChangePinName(U1, 31, "PD1 (PCINT17/TXD)")
 ChangePinName(U1, 30, "PD0 (PCINT16/RXD)")
 ChangePinName(U1, 29, "PC6 (PCINT14/RESET)")
 
-# Start of element ISP_EN1
-ChangePinName(ISP_EN1, 1, 1)
-ChangePinName(ISP_EN1, 2, 2)
-
 # Start of element ISP1
 ChangePinName(ISP1, 6, 6)
 ChangePinName(ISP1, 7, 7)
