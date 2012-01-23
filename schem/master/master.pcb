@@ -6,7 +6,7 @@ FileVersion[20070407]
 PCB["master" 600000 500000]
 
 Grid[1000.0 0 0 1]
-Cursor[169000 133000 0.000000]
+Cursor[257000 311000 0.000000]
 PolyArea[200000000.000000]
 Thermal[0.500000]
 DRC[1000 1000 1000 1000 254 1000]
@@ -1389,7 +1389,7 @@ Layer(4 "GND")
 	Line[425000 169000 425000 279000 1600 3000 ""]
 	Line[264000 293000 369000 293000 1600 3000 ""]
 	Line[221000 283000 221000 228914 1500 3000 ""]
-	Text[238000 302000 0 100 "wemakethings.net / dmx-dimmer / master v1" "clearline,onsolder"]
+	Text[237000 301000 0 100 "wemakethings.net / dmx-dimmer / master v1" "clearline,onsolder"]
 	Polygon("clearpoly")
 	(
 		[277000 211000] [344000 211000] [344000 263000] [277000 263000] 
