@@ -62,16 +62,16 @@ int main (void) {
     /* cfg_deselect(); */
     /* cfg_reset_enable(); */
 
-    adc_init();
+    /* adc_init(); */
     usart_init();
     sei();
 
     while (1) {
 	// see if preheat/maxval on panel changed
-	if ( !(adc_running()) ) {
-	    adc_channel_toggle();
-	    adc_start();
-	}
+	/* if ( !(adc_running()) ) { */
+	/*     adc_channel_toggle(); */
+	/*     adc_start(); */
+	/* } */
 
 	// iterate over DMX channels
 	for (c = 0; c < DMX_CHANNELS; c++) {
@@ -122,7 +122,6 @@ int main (void) {
 
 // interrupt: usart receive complete
 ISR (USART_RX_vect, ISR_BLOCK) {
-
     // reading data clears status flags, so read status first
     dmx.status = UCSR0A;
     dmx.data = UDR0;
@@ -158,9 +157,9 @@ ISR (USART_RX_vect, ISR_BLOCK) {
 }
 
 // interrupt: ADC conversion complete
-ISR (ADC_vect, ISR_NOBLOCK) {
-    if (adc_channel_get())
-	dmx.maxval = ADCH/2 + 128;
-    else
-	dmx.preheat = ADCH/2;
-}
+/* ISR (ADC_vect, ISR_NOBLOCK) { */
+/*     if (adc_channel_get()) */
+/* 	dmx.maxval = ADCH/2 + 128; */
+/*     else */
+/* 	dmx.preheat = ADCH/2; */
+/* } */
