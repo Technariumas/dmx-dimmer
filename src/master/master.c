@@ -10,7 +10,6 @@
 
 #include "iocontrol.h"
 #include "fakedelay.h"  // TODO: remove?
-#include "metaboard.h"  // TODO: remove
 #include "dmx.h"
 #include "spi.h"
 #include "adc.h"
@@ -27,14 +26,6 @@ int main (void) {
     uint8_t retval;
 
     wdt_disable();
-
-    // leds are outputs
-    leds_init();
-
-    // led blink: devboard ok
-    ledon(0); ledon(1); ledon(2);
-    delay_ms(500);
-    ledoff(0); ledoff(1); ledoff(2);
 
     /* to read in configuration from panel's DIP switches, a single
      * pulse must be sent on the SCK line prior to enabling SPI
@@ -62,14 +53,10 @@ int main (void) {
 
     // TODO: cfg_read()
     /* // read in first octet */
-    /* ledon(0); */
     /* confl = spi_master_transmit(SPI_TRANSMIT_DUMMY); */
-    /* ledoff(0); */
 
     /* // read in second octet */
-    /* ledon(0); */
     /* confh = spi_master_transmit(SPI_TRANSMIT_DUMMY); */
-    /* ledoff(0); */
 
     /* output_high(SPI_PORT, SPI_SCK);  // TODO: is this needed? */
     /* cfg_deselect(); */
@@ -80,8 +67,6 @@ int main (void) {
     sei();
 
     while (1) {
-	ledon(2);  // debug: start transmit
-
 	// see if preheat/maxval on panel changed
 	if ( !(adc_running()) ) {
 	    adc_channel_toggle();
@@ -127,12 +112,9 @@ int main (void) {
 		// check if transmission not successful
 		if (retval != SPI_TRANSMIT_DUMMY) {
 		    dmx.dataisnew |= ((uint16_t)1 << c);
-		    ledtoggle(1);
 		}
 	    }  // if (new chan data)
 	}  // for (channel iterate)
-
-	ledoff(2);  // debug: transmitted
     }  // while (1)
 
     return 1;
@@ -140,7 +122,6 @@ int main (void) {
 
 // interrupt: usart receive complete
 ISR (USART_RX_vect, ISR_BLOCK) {
-    ledon(0);  // debug: int start
 
     // reading data clears status flags, so read status first
     dmx.status = UCSR0A;
@@ -174,8 +155,6 @@ ISR (USART_RX_vect, ISR_BLOCK) {
 	    break;
 	}
     }
-
-    ledoff(0);  // debug: int stop
 }
 
 // interrupt: ADC conversion complete
