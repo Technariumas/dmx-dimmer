@@ -29,11 +29,12 @@
 #####
 ##### It supports C, C++ and Assembly source files.
 #####
-##### Customize the values as indicated below and :
+##### Customize the values as indicated below and:
 ##### make
 ##### make disasm 
 ##### make stats 
 ##### make hex
+##### make writefuses
 ##### make writeflash
 ##### make gdbinit
 ##### or make clean
@@ -118,6 +119,32 @@ AVRDUDE_PROGRAMMERID=usbasp
 # hardware programmer is attached
 #
 AVRDUDE_PORT=/dev/ttyS1
+
+# fuse settings (modified diagram lifted from USBasp Makefile)
+#---------------------------------------------------------------------
+# ATMega168
+#---------------------------------------------------------------------
+# Fuse extended byte:
+# 0x00 = 0 0 0 0   0 0 0 1 <-- BOOTRST (boot reset vector at 0x0000)
+#                    \+/
+#                     +------- BOOTSZ (00 = 2k bytes, but unused)
+# Fuse high byte:
+# 0xd6 = 1 1 0 1   0 1 1 0
+#        ^ ^ ^ ^   ^ \-+-/
+#        | | | |   |   +------ BODLEVEL 0..2 (110 = 1.8 V)
+#        | | | |   + --------- EESAVE (preserve EEPROM over chip erase)
+#        | | | +-------------- WDTON (if 0: watchdog always on)
+#        | | +---------------- SPIEN (allow serial programming)
+#        | +------------------ DWEN (debug wire enable)
+#        +-------------------- RSTDISBL (reset pin is enabled)
+# Fuse low byte:
+# 0xdf = 1 1 0 1   1 1 1 1
+#        ^ ^ \ /   \--+--/
+#        | |  |       +------- CKSEL 3..0 (external >8M crystal)
+#        | |  +--------------- SUT 1..0 (crystal osc, BOD enabled)
+#        | +------------------ CKOUT (if 0: Clock output enabled)
+#        +-------------------- CKDIV8 (if 0: divide by 8)
+FUSECOMMAND = -U hfuse:w:0xd6:m -U lfuse:w:0xdf:m -U efuse:w:0x01:m
 
 
 ####################################################
@@ -213,7 +240,7 @@ GENASMFILES=$(filter %.s, $(OBJDEPS:.o=.s))
 .PHONY: writeflash clean stats gdbinit stats
 
 # Make targets:
-# all, disasm, stats, hex, writeflash/install, clean
+# all, disasm, stats, hex, writefuses, writeflash/install, clean
 all: $(TRG)
 
 disasm: $(DUMPTRG) stats
@@ -224,10 +251,14 @@ stats: $(TRG)
 
 hex: $(HEXTRG)
 
+writefuses:
+	$(AVRDUDE) -c $(AVRDUDE_PROGRAMMERID) \
+	-p $(PROGRAMMER_MCU) -P $(AVRDUDE_PORT) \
+	$(FUSECOMMAND)
 
 writeflash: hex
-	$(AVRDUDE) -c $(AVRDUDE_PROGRAMMERID)   \
-	 -p $(PROGRAMMER_MCU) -P $(AVRDUDE_PORT) -e        \
+	$(AVRDUDE) -c $(AVRDUDE_PROGRAMMERID) \
+	 -p $(PROGRAMMER_MCU) -P $(AVRDUDE_PORT) -e \
 	 -U flash:w:$(HEXROMTRG)
 
 install: writeflash
