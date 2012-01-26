@@ -12,20 +12,20 @@ Many modifications have been made, but most importantly:
 
 - support up to 12 channels;
 - use 3-phase mains power, 4 channels per phase;
-- more common AVR microcontroller, ATMega168;
+- more modern AVR microcontrollers, ATMega168 and ATTiny2313;
 - complete code rewrite in C.
 
-This is a work in progress, currently in late design stage.
+This is a work in progress, currently in early testing stage.
 Documentation is basically unavailable, but might become so if anyone is
 interested. Most of what exists is in the git log.
 
 It is probably impossible to use this git project for now, since some
 custom symbols are missing from the tree. I will try to include them ASAP.
+Which means, when someone asks.
 
 gEDA [2] was chosen to do the design work. As to why is a topic for a
 whole article. Mainly, I wanted to see whether it's good enough for
-big projects. The short answer is maybe. Then again, I might be doing
-something wrong.
+medium-sized projects. The short answer is maybe, if you're stubborn as I.
 
 [1] http://www.hoelscher-hi.de/hendrik/english/dimmer.htm
 [2] http://www.gpleda.org/index.html
