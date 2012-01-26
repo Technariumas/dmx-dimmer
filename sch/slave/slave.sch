@@ -2,27 +2,33 @@ v 20110115 2
 C 38500 43100 1 90 0 diode-bridge-1.sym
 {
 T 37600 44125 5 10 1 1 180 0 1
-refdes=U?
+refdes=U1
 T 38425 44300 5 8 0 0 90 0 1
 device=DIODE-BRIDGE
+T 38500 43100 5 10 1 1 0 0 1
+footprint=HDDF.fp
 }
 C 41200 40400 1 0 0 lm339-1.sym
 {
 T 42025 40550 5 8 0 0 0 0 1
 device=LM339
 T 41400 41300 5 10 1 1 0 0 1
-refdes=U?
+refdes=U2
 T 42100 42225 5 8 0 0 0 0 1
 symversion=1.0
 T 41200 40400 5 10 0 0 0 0 1
 slot=2
+T 41200 40400 5 10 1 1 0 0 1
+footprint=SO14
 }
 C 33600 40400 1 0 0 transformer-1.sym
 {
 T 33900 41700 5 10 1 1 0 0 1
-refdes=T?
+refdes=T1
 T 33900 41700 5 10 0 0 0 0 1
 device=transformer
+T 33600 40400 5 10 1 1 0 0 1
+footprint=BV030_7270.fp
 }
 C 31600 40400 1 0 0 mains-entry-1.sym
 {
@@ -42,9 +48,11 @@ N 33600 40600 33600 40500 4
 C 38500 40000 1 90 0 diode-bridge-1.sym
 {
 T 37600 41025 5 10 1 1 180 0 1
-refdes=U?
+refdes=U3
 T 38425 41200 5 8 0 0 90 0 1
 device=DIODE-BRIDGE
+T 38500 40000 5 10 1 1 0 0 1
+footprint=HDDF.fp
 }
 N 37500 40000 35100 40000 4
 N 35100 40000 35100 40500 4
@@ -62,9 +70,11 @@ C 39200 39800 1 90 0 resistor-2.sym
 T 38850 40200 5 10 0 0 90 0 1
 device=RESISTOR
 T 38900 40400 5 10 1 1 180 0 1
-refdes=R?
+refdes=R1
 T 38900 40200 5 10 1 1 180 0 1
 value=10k
+T 39200 39800 5 10 1 1 0 0 1
+footprint=0805
 }
 N 36200 40700 36200 41000 4
 N 36200 41000 36500 41000 4
@@ -72,159 +82,129 @@ N 38500 41000 41200 41000 4
 C 40400 38400 1 270 1 trimpot-2.sym
 {
 T 40350 38900 5 10 1 1 180 2 1
-refdes=R?
+refdes=R2
 T 41300 39200 5 10 0 1 90 2 1
 device=VARIABLE_RESISTOR
 T 40100 38700 5 10 1 1 0 0 1
 value=10k
+T 40400 38400 5 10 1 1 0 0 1
+footprint=TO126SW
 }
 N 39100 39500 39100 39800 4
 N 42200 40800 42500 40800 4
 N 39100 40700 39100 41000 4
-C 41500 41500 1 0 0 generic-power.sym
-{
-T 41700 41750 5 10 1 1 0 3 1
-net=Vcc_ZC
-}
-C 36700 43800 1 180 0 generic-power.sym
-{
-T 36500 43550 5 10 1 1 180 3 1
-net=GND_ZC
-}
-C 36400 40700 1 180 0 generic-power.sym
-{
-T 36200 40450 5 10 1 1 180 3 1
-net=GND_ZC
-}
-C 39300 39500 1 180 0 generic-power.sym
-{
-T 39100 39250 5 10 1 1 180 3 1
-net=GND_ZC
-}
-C 40700 38400 1 180 0 generic-power.sym
-{
-T 40500 38150 5 10 1 1 180 3 1
-net=GND_ZC
-}
-C 41900 40100 1 180 0 generic-power.sym
-{
-T 41700 39850 5 10 1 1 180 3 1
-net=GND_ZC
-}
 C 39100 43500 1 0 0 lm7805-1.sym
 {
 T 40700 44800 5 10 0 0 0 0 1
 device=7805
 T 40400 44500 5 10 1 1 0 6 1
-refdes=U?
+refdes=U4
+T 39100 43500 5 10 1 1 0 0 1
+footprint=DPAK.fp
 }
 C 40800 44100 1 270 0 capacitor-2.sym
 {
 T 41500 43900 5 10 0 0 270 0 1
 device=POLARIZED_CAPACITOR
 T 41400 43800 5 10 1 1 0 0 1
-refdes=C?
+refdes=C1
 T 41700 43900 5 10 0 0 270 0 1
 symversion=0.1
 T 40500 43300 5 10 1 1 0 0 1
 value=100u
+T 40800 44100 5 10 1 1 0 0 1
+footprint=NICHICON_WT_CAP_6p3_5p8
 }
 C 38600 44100 1 270 0 capacitor-2.sym
 {
 T 39300 43900 5 10 0 0 270 0 1
 device=POLARIZED_CAPACITOR
 T 38700 43900 5 10 1 1 180 0 1
-refdes=C?
+refdes=C2
 T 39500 43900 5 10 0 0 270 0 1
 symversion=0.1
 T 38700 43500 5 10 1 1 180 0 1
 value=1200u
+T 38600 44100 5 10 1 1 0 0 1
+footprint=NICHICON_14.fp
 }
 C 41900 43200 1 90 0 capacitor-1.sym
 {
 T 41200 43400 5 10 0 0 90 0 1
 device=CAPACITOR
 T 40900 44000 5 10 1 1 180 0 1
-refdes=C?
+refdes=C3
 T 41000 43400 5 10 0 0 90 0 1
 symversion=0.1
 T 41300 43300 5 10 1 1 0 0 1
 value=100n
+T 41900 43200 5 10 1 1 0 0 1
+footprint=0805
 }
 N 38800 43200 41700 43200 4
 N 40700 44100 41700 44100 4
 N 39900 43500 39900 43200 4
 N 41700 42900 41700 43200 4
 N 41700 44100 41700 44400 4
-C 41500 44400 1 0 0 generic-power.sym
-{
-T 41700 44650 5 10 1 1 0 3 1
-net=Vcc_ZC
-}
-C 41900 42900 1 180 0 generic-power.sym
-{
-T 41700 42650 5 10 1 1 180 3 1
-net=GND_ZC
-}
 C 42500 40700 1 0 0 resistor-2.sym
 {
 T 42900 41050 5 10 0 0 0 0 1
 device=RESISTOR
 T 42700 41000 5 10 1 1 0 0 1
-refdes=R?
+refdes=R3
 T 42700 40500 5 10 1 1 0 0 1
 value=1k
-}
-C 38600 44400 1 0 0 generic-power.sym
-{
-T 38800 44650 5 10 1 1 0 3 1
-net=Vcc_ZC_12V
+T 42500 40700 5 10 1 1 0 0 1
+footprint=0805
 }
 N 38800 44400 38800 44100 4
-C 40300 40500 1 0 0 generic-power.sym
-{
-T 40500 40750 5 10 1 1 0 3 1
-net=Vcc_ZC_12V
-}
 C 50400 42200 1 0 0 attiny2313_dip_so_1.sym
 {
 T 54200 46600 5 10 1 1 0 6 1
-refdes=U?
+refdes=U5
 T 50700 46900 5 10 0 0 0 0 1
 device=ATtiny2313
+T 50400 42200 5 10 1 1 0 0 1
+footprint=SO20W
 }
 C 48900 45700 1 90 0 crystal-1.sym
 {
 T 48400 45900 5 10 0 0 90 0 1
 device=CRYSTAL
 T 49000 46200 5 10 1 1 180 6 1
-refdes=Q?
+refdes=Q1
 T 48200 45900 5 10 0 0 90 0 1
 symversion=0.1
 T 49000 45800 5 10 1 1 0 0 1
 value=6MHz
+T 48900 45700 5 10 1 1 0 0 1
+footprint=HC49U
 }
 C 47900 46200 1 0 0 capacitor-1.sym
 {
 T 48100 46900 5 10 0 0 0 0 1
 device=CAPACITOR
 T 48000 46500 5 10 1 1 0 0 1
-refdes=C?
+refdes=C4
 T 48100 47100 5 10 0 0 0 0 1
 symversion=0.1
 T 47900 46200 5 10 1 1 0 0 1
 value=22p
+T 47900 46200 5 10 1 1 0 0 1
+footprint=0805
 }
 C 47900 45500 1 0 0 capacitor-1.sym
 {
 T 48100 46200 5 10 0 0 0 0 1
 device=CAPACITOR
 T 48000 45800 5 10 1 1 0 0 1
-refdes=C?
+refdes=C5
 T 48100 46400 5 10 0 0 0 0 1
 symversion=0.1
 T 47900 45500 5 10 1 1 0 0 1
 value=22p
+T 47900 45500 5 10 1 1 0 0 1
+footprint=0805
 }
 N 47900 45700 47600 45700 4
 N 47600 45700 47600 46400 4
@@ -235,9 +215,11 @@ C 49900 46300 1 90 0 resistor-2.sym
 T 49550 46700 5 10 0 0 90 0 1
 device=RESISTOR
 T 49600 46900 5 10 1 1 180 0 1
-refdes=R?
+refdes=R4
 T 49600 46700 5 10 1 1 180 0 1
 value=10k
+T 49900 46300 5 10 1 1 0 0 1
+footprint=0805
 }
 N 50400 46000 49800 46000 4
 N 54500 45400 59200 45400 4
@@ -250,6 +232,8 @@ T 57200 41500 5 10 0 0 0 6 1
 device=CONNECTOR_2
 T 57400 41300 5 10 1 1 0 6 1
 refdes=CONN_DIM41
+T 57400 40500 5 10 1 1 0 0 1
+footprint=MTA_100 2
 }
 C 57400 39400 1 0 1 connector2-1.sym
 {
@@ -257,6 +241,8 @@ T 57200 40400 5 10 0 0 0 6 1
 device=CONNECTOR_2
 T 57400 40200 5 10 1 1 0 6 1
 refdes=CONN_DIM31
+T 57400 39400 5 10 1 1 0 0 1
+footprint=MTA_100 2
 }
 C 57400 38300 1 0 1 connector2-1.sym
 {
@@ -264,6 +250,8 @@ T 57200 39300 5 10 0 0 0 6 1
 device=CONNECTOR_2
 T 57400 39100 5 10 1 1 0 6 1
 refdes=CONN_DIM21
+T 57400 38300 5 10 1 1 0 0 1
+footprint=MTA_100 2
 }
 C 57400 37200 1 0 1 connector2-1.sym
 {
@@ -271,6 +259,8 @@ T 57200 38200 5 10 0 0 0 6 1
 device=CONNECTOR_2
 T 57400 38000 5 10 1 1 0 6 1
 refdes=CONN_DIM11
+T 57400 37200 5 10 1 1 0 0 1
+footprint=MTA_100 2
 }
 N 50400 43000 50400 41000 4
 N 50400 41000 55700 41000 4
@@ -283,50 +273,10 @@ N 49500 37700 49500 43900 4
 N 55700 39900 50100 39900 4
 N 55700 38800 49800 38800 4
 N 55700 37700 49500 37700 4
-C 47800 45700 1 180 0 generic-power.sym
-{
-T 47600 45450 5 10 1 1 180 3 1
-net=GND_ZC
-}
-C 52700 42200 1 180 0 generic-power.sym
-{
-T 52500 41950 5 10 1 1 180 3 1
-net=GND_ZC
-}
-C 59400 43600 1 180 0 generic-power.sym
-{
-T 59200 43350 5 10 1 1 180 3 1
-net=GND_ZC
-}
-C 55900 40700 1 180 0 generic-power.sym
-{
-T 55700 40450 5 10 1 1 180 3 1
-net=GND_ZC
-}
-C 55900 39600 1 180 0 generic-power.sym
-{
-T 55700 39350 5 10 1 1 180 3 1
-net=GND_ZC
-}
-C 55900 38500 1 180 0 generic-power.sym
-{
-T 55700 38250 5 10 1 1 180 3 1
-net=GND_ZC
-}
-C 55900 37400 1 180 0 generic-power.sym
-{
-T 55700 37150 5 10 1 1 180 3 1
-net=GND_ZC
-}
-C 49600 47500 1 0 0 generic-power.sym
-{
-T 49600 47750 5 10 1 1 0 3 1
-net=Vcc_ZC
-}
 C 52300 47700 1 0 0 generic-power.sym
 {
 T 52500 47950 5 10 1 1 0 3 1
-net=Vcc_ZC
+net=Vcc_ZC:1
 }
 N 50400 45700 49500 45700 4
 N 49500 45700 49500 46400 4
@@ -353,28 +303,25 @@ value=ZC_INT
 }
 N 49200 44200 50400 44200 4
 N 43700 40800 43400 40800 4
-C 56100 46900 1 0 0 generic-power.sym
-{
-T 56300 47150 5 10 1 1 0 3 1
-net=Vcc_ZC
-}
 N 52500 46800 52500 47700 4
 C 53700 47600 1 180 0 capacitor-1.sym
 {
 T 53500 46900 5 10 0 0 180 0 1
 device=CAPACITOR
 T 53300 47800 5 10 1 1 180 0 1
-refdes=C?
+refdes=C6
 T 53500 46700 5 10 0 0 180 0 1
 symversion=0.1
 T 53400 47100 5 10 1 1 180 0 1
 value=100n
+T 53700 47600 5 10 1 1 0 0 1
+footprint=0805
 }
 N 52800 47400 52500 47400 4
 C 54200 47400 1 180 0 generic-power.sym
 {
 T 54000 47150 5 10 1 1 180 3 1
-net=GND_ZC
+net=GND_ZC:1
 }
 N 54000 47400 53700 47400 4
 N 40500 39300 40500 39600 4
@@ -385,9 +332,11 @@ C 40600 39600 1 90 0 resistor-2.sym
 T 40250 40000 5 10 0 0 90 0 1
 device=RESISTOR
 T 40300 40200 5 10 1 1 180 0 1
-refdes=R?
+refdes=R5
 T 40300 40000 5 10 1 1 180 0 1
 value=10k
+T 40600 39600 5 10 1 1 0 0 1
+footprint=0805
 }
 N 56300 46900 56300 46600 4
 N 56300 46600 59200 46600 4
@@ -397,9 +346,11 @@ C 48000 44700 1 0 0 resistor-2.sym
 T 48400 45050 5 10 0 0 0 0 1
 device=RESISTOR
 T 48600 45100 5 10 1 1 180 0 1
-refdes=R?
+refdes=R6
 T 48600 44700 5 10 1 1 180 0 1
 value=680
+T 48000 44700 5 10 1 1 0 0 1
+footprint=0805
 }
 N 48900 44800 50400 44800 4
 C 48000 44100 1 0 0 resistor-2.sym
@@ -407,31 +358,37 @@ C 48000 44100 1 0 0 resistor-2.sym
 T 48400 44450 5 10 0 0 0 0 1
 device=RESISTOR
 T 48600 44500 5 10 1 1 180 0 1
-refdes=R?
+refdes=R7
 T 48600 44100 5 10 1 1 180 0 1
 value=680
+T 48000 44100 5 10 1 1 0 0 1
+footprint=0805
 }
 C 47700 44400 1 180 0 led-1.sym
 {
 T 46900 43800 5 10 0 0 180 0 1
 device=LED
 T 47400 44300 5 10 1 1 0 0 1
-refdes=LED?
+refdes=LED1
 T 46900 43600 5 10 0 0 180 0 1
 symversion=0.1
 T 46600 44300 5 10 1 1 0 0 1
 value=green
+T 47700 44400 5 10 1 1 0 0 1
+footprint=0805
 }
 C 47700 45000 1 180 0 led-1.sym
 {
 T 46900 44400 5 10 0 0 180 0 1
 device=LED
 T 47400 44900 5 10 1 1 0 0 1
-refdes=LED?
+refdes=LED2
 T 46900 44200 5 10 0 0 180 0 1
 symversion=0.1
 T 46800 44900 5 10 1 1 0 0 1
 value=red
+T 47700 45000 5 10 1 1 0 0 1
+footprint=0805
 }
 N 49200 44200 49200 43500 4
 N 48900 44200 48900 44500 4
@@ -439,11 +396,6 @@ N 48900 44500 50400 44500 4
 N 47700 44800 48000 44800 4
 N 48000 44200 47700 44200 4
 N 46500 44200 46500 45400 4
-C 46300 45400 1 0 0 generic-power.sym
-{
-T 46500 45650 5 10 1 1 0 3 1
-net=Vcc_ZC
-}
 N 46500 44200 46800 44200 4
 N 46800 44800 46500 44800 4
 C 38600 46700 1 0 1 connector2-1.sym
@@ -452,6 +404,8 @@ T 38400 47700 5 10 0 0 0 6 1
 device=CONNECTOR_2
 T 38600 47500 5 10 1 1 0 6 1
 refdes=CONN_FAN11
+T 38600 46700 5 10 1 1 0 0 1
+footprint=MTA_100 2
 }
 C 38900 46700 1 0 0 connector2-1.sym
 {
@@ -459,26 +413,13 @@ T 39100 47700 5 10 0 0 0 0 1
 device=CONNECTOR_2
 T 38900 47500 5 10 1 1 0 0 1
 refdes=CONN_FAN21
+T 38900 46700 5 10 1 1 0 0 1
+footprint=MTA_100 2
 }
 C 36400 47500 1 0 0 generic-power.sym
 {
 T 36600 47750 5 10 1 1 0 3 1
-net=Vcc_ZC_12V
-}
-C 40700 47500 1 0 0 generic-power.sym
-{
-T 40900 47750 5 10 1 1 0 3 1
-net=Vcc_ZC_12V
-}
-C 41100 46600 1 180 0 generic-power.sym
-{
-T 40900 46350 5 10 1 1 180 3 1
-net=GND_ZC
-}
-C 36800 46600 1 180 0 generic-power.sym
-{
-T 36600 46350 5 10 1 1 180 3 1
-net=GND_ZC
+net=Vcc_ZC_12V:1
 }
 N 40600 47200 40900 47200 4
 N 40900 47200 40900 47500 4
@@ -514,17 +455,9 @@ C 52300 48700 1 0 0 header10-2.sym
 T 52300 50700 5 10 0 1 0 0 1
 device=HEADER10
 T 52900 50800 5 10 1 1 0 0 1
-refdes=J?
-}
-C 53800 50900 1 0 0 generic-power.sym
-{
-T 54000 51150 5 10 1 1 0 3 1
-net=Vcc_ZC
-}
-C 54200 48600 1 180 0 generic-power.sym
-{
-T 54000 48350 5 10 1 1 180 3 1
-net=GND_ZC
+refdes=J1
+T 52300 48700 5 10 1 1 0 0 1
+footprint=CONNECTOR 5 2
 }
 N 53700 50100 54000 50100 4
 N 54000 50100 54000 48600 4
@@ -642,4 +575,131 @@ T 59000 46700 5 10 0 0 0 6 1
 device=CONNECTOR_10
 T 60800 46900 5 10 1 1 0 6 1
 refdes=CONN_OUT12
+T 60900 43700 5 10 1 1 0 0 1
+footprint=MTA_100 10
+}
+C 54200 48600 1 180 0 generic-power.sym
+{
+T 54000 48350 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 47800 45700 1 180 0 generic-power.sym
+{
+T 47600 45450 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 40700 38400 1 180 0 generic-power.sym
+{
+T 40500 38150 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 41900 40100 1 180 0 generic-power.sym
+{
+T 41700 39850 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 39300 39500 1 180 0 generic-power.sym
+{
+T 39100 39250 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 36700 43800 1 180 0 generic-power.sym
+{
+T 36500 43550 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 41900 42900 1 180 0 generic-power.sym
+{
+T 41700 42650 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 41100 46600 1 180 0 generic-power.sym
+{
+T 40900 46350 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 36800 46600 1 180 0 generic-power.sym
+{
+T 36600 46350 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 40700 47500 1 0 0 generic-power.sym
+{
+T 40900 47750 5 10 1 1 0 3 1
+net=Vcc_ZC_12V:1
+}
+C 38600 44400 1 0 0 generic-power.sym
+{
+T 38800 44650 5 10 1 1 0 3 1
+net=Vcc_ZC_12V:1
+}
+C 40300 40500 1 0 0 generic-power.sym
+{
+T 40500 40750 5 10 1 1 0 3 1
+net=Vcc_ZC_12V:1
+}
+C 53800 50900 1 0 0 generic-power.sym
+{
+T 54000 51150 5 10 1 1 0 3 1
+net=Vcc_ZC:1
+}
+C 56100 46900 1 0 0 generic-power.sym
+{
+T 56300 47150 5 10 1 1 0 3 1
+net=Vcc_ZC:1
+}
+C 46300 45400 1 0 0 generic-power.sym
+{
+T 46500 45650 5 10 1 1 0 3 1
+net=Vcc_ZC:1
+}
+C 49600 47500 1 0 0 generic-power.sym
+{
+T 49700 47750 5 10 1 1 0 3 1
+net=Vcc_ZC:1
+}
+C 59400 43600 1 180 0 generic-power.sym
+{
+T 59200 43350 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 55900 40700 1 180 0 generic-power.sym
+{
+T 55700 40450 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 55900 39600 1 180 0 generic-power.sym
+{
+T 55700 39350 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 55900 38500 1 180 0 generic-power.sym
+{
+T 55700 38250 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 55900 37500 1 180 0 generic-power.sym
+{
+T 55700 37250 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 52700 42200 1 180 0 generic-power.sym
+{
+T 52500 41950 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 36400 40700 1 180 0 generic-power.sym
+{
+T 36200 40450 5 10 1 1 180 3 1
+net=GND_ZC:1
+}
+C 41500 44400 1 0 0 generic-power.sym
+{
+T 41700 44650 5 10 1 1 0 3 1
+net=Vcc_ZC:1
+}
+C 41500 41500 1 0 0 generic-power.sym
+{
+T 41700 41750 5 10 1 1 0 3 1
+net=Vcc_ZC:1
 }
