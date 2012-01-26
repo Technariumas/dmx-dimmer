@@ -5,7 +5,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include "dimmer.h"
+#include "slave.h"
 #include "iocontrol.h"
 
 inline void spi_slave_init (void) {

@@ -1,6 +1,6 @@
 // dmx dimmer, slave module
 
-#include "dimmer.h"
+#include "slave.h"
 
 #include <inttypes.h>
 #include <avr/io.h>

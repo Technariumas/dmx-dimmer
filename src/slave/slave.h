@@ -1,4 +1,4 @@
-// dimmer.h
+// slave.h
 // 
 
 #ifndef _DIMMER_H_
