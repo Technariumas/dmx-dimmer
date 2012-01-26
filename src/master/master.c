@@ -1,6 +1,6 @@
 // dmx dimmer, transceiver module
 
-#include "transceiver.h"
+#include "master.h"
 
 #include <inttypes.h>
 #include <avr/io.h>

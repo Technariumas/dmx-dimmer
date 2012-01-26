@@ -9,7 +9,7 @@
 #include <inttypes.h>
 
 #include "iocontrol.h"
-#include "transceiver.h"
+#include "master.h"
 
 // data to transmit if you only really want to read data
 #define SPI_TRANSMIT_DUMMY 0b01010101

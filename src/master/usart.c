@@ -4,7 +4,7 @@
 
 #include <avr/io.h>
 
-#include "transceiver.h"
+#include "master.h"
 #include "iocontrol.h"
 
 void usart_init (void) {
