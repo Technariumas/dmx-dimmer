@@ -178,7 +178,7 @@ symversion=0.1
 T 49000 45800 5 10 1 1 0 0 1
 value=6MHz
 T 48900 45700 5 10 1 1 0 0 1
-footprint=HC49U
+footprint=HC49smt.fp
 }
 C 47900 46200 1 0 0 capacitor-1.sym
 {
