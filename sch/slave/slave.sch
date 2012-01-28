@@ -678,9 +678,9 @@ C 55900 38500 1 180 0 generic-power.sym
 T 55700 38250 5 10 1 1 180 3 1
 net=GND_ZC:1
 }
-C 55900 37500 1 180 0 generic-power.sym
+C 55900 37400 1 180 0 generic-power.sym
 {
-T 55700 37250 5 10 1 1 180 3 1
+T 55700 37150 5 10 1 1 180 3 1
 net=GND_ZC:1
 }
 C 52700 42200 1 180 0 generic-power.sym
