@@ -6,7 +6,7 @@ refdes=U1
 T 38425 44300 5 8 0 0 90 0 1
 device=DIODE-BRIDGE
 T 38500 43100 5 10 1 1 0 0 1
-footprint=HDDF.fp
+footprint=DF_S.fp
 }
 C 41200 40400 1 0 0 lm339-1.sym
 {
@@ -52,7 +52,7 @@ refdes=U3
 T 38425 41200 5 8 0 0 90 0 1
 device=DIODE-BRIDGE
 T 38500 40000 5 10 1 1 0 0 1
-footprint=HDDF.fp
+footprint=DF_S.fp
 }
 N 37500 40000 35100 40000 4
 N 35100 40000 35100 40500 4
