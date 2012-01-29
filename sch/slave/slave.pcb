@@ -6,7 +6,7 @@ FileVersion[20070407]
 PCB["power+slave" 600000 133000]
 
 Grid[1000.0 0 0 1]
-Cursor[4000 44000 0.000000]
+Cursor[421000 68000 0.000000]
 PolyArea[200000000.000000]
 Thermal[0.500000]
 DRC[1000 1000 1000 1000 1500 1000]
@@ -905,7 +905,7 @@ Element["" "TO126SW" "R2" "10k" 234914 95000 17000 7000 0 100 ""]
 
 	)
 
-Element["selected,onsolder" "0805" "R5" "10k" 241457 81000 -7393 3693 3 100 "auto"]
+Element["onsolder" "0805" "R5" "10k" 241457 81000 -7393 3693 3 100 "auto"]
 (
 	Pad[3543 -393 3543 393 5118 2000 5718 "1" "1" "onsolder,square"]
 	Pad[-3543 -393 -3543 393 5118 2000 5718 "2" "2" "onsolder,square"]
@@ -914,7 +914,7 @@ Element["selected,onsolder" "0805" "R5" "10k" 241457 81000 -7393 3693 3 100 "aut
 
 	)
 
-Element["selected,onsolder" "0805" "C3" "100n" 312000 96457 3779 7307 2 100 "auto"]
+Element["onsolder" "0805" "C3" "100n" 312000 96457 3779 7307 2 100 "auto"]
 (
 	Pad[-393 -3543 393 -3543 5118 2000 5718 "1" "1" "onsolder,square"]
 	Pad[-393 3543 393 3543 5118 2000 5718 "2" "2" "onsolder,square"]
@@ -923,7 +923,7 @@ Element["selected,onsolder" "0805" "C3" "100n" 312000 96457 3779 7307 2 100 "aut
 
 	)
 
-Element["selected,onsolder" "0805" "R3" "1k" 312000 116543 -9150 1764 1 100 "auto"]
+Element["onsolder" "0805" "R3" "1k" 312000 116543 -9150 1764 1 100 "auto"]
 (
 	Pad[-393 3543 393 3543 5118 2000 5718 "1" "1" "onsolder,square"]
 	Pad[-393 -3543 393 -3543 5118 2000 5718 "2" "2" "onsolder,square"]
@@ -965,7 +965,7 @@ Element["onsolder" "DPAK.fp" "U4" "unknown" 301000 22937 19622 1874 3 100 "auto"
 
 	)
 
-Element["selected,onsolder" "0805" "R1" "10k" 245000 121000 -11607 -2521 1 100 "auto"]
+Element["onsolder" "0805" "R1" "10k" 245000 121000 -11607 -2521 1 100 "auto"]
 (
 	Pad[-3543 -393 -3543 393 5118 2000 5718 "1" "1" "onsolder,square"]
 	Pad[3543 -393 3543 393 5118 2000 5718 "2" "2" "onsolder,square"]
@@ -1063,7 +1063,7 @@ Element["onsolder" "HC49smt.fp" "Q1" "6MHz" 358000 63300 -17500 0 1 100 "auto"]
 
 	)
 
-Element["selected,onsolder" "0805" "C5" "22p" 338457 51000 -3150 3150 0 100 "auto"]
+Element["onsolder" "0805" "C5" "22p" 338457 51000 -3150 3150 0 100 "auto"]
 (
 	Pad[-3543 -393 -3543 393 5118 2000 5718 "1" "1" "onsolder,square"]
 	Pad[3543 -393 3543 393 5118 2000 5718 "2" "2" "onsolder,square"]
@@ -1072,7 +1072,7 @@ Element["selected,onsolder" "0805" "C5" "22p" 338457 51000 -3150 3150 0 100 "aut
 
 	)
 
-Element["selected,onsolder" "0805" "C4" "22p" 338457 79000 -3150 3150 0 100 "auto"]
+Element["onsolder" "0805" "C4" "22p" 338457 79000 -3150 3150 0 100 "auto"]
 (
 	Pad[-3543 -393 -3543 393 5118 2000 5718 "1" "1" "onsolder,square"]
 	Pad[3543 -393 3543 393 5118 2000 5718 "2" "2" "onsolder,square"]
@@ -1081,7 +1081,7 @@ Element["selected,onsolder" "0805" "C4" "22p" 338457 79000 -3150 3150 0 100 "aut
 
 	)
 
-Element["selected,onsolder" "0805" "LED1" "green" 340543 98000 -3150 3150 0 100 "auto"]
+Element["onsolder" "0805" "LED1" "green" 340543 98000 -3150 3150 0 100 "auto"]
 (
 	Pad[-3543 -393 -3543 393 5118 2000 5718 "1" "1" "onsolder,square"]
 	Pad[3543 -393 3543 393 5118 2000 5718 "2" "2" "onsolder,square"]
@@ -1090,7 +1090,7 @@ Element["selected,onsolder" "0805" "LED1" "green" 340543 98000 -3150 3150 0 100 
 
 	)
 
-Element["selected,onsolder" "0805" "R7" "680" 360543 98000 -3150 3150 0 100 "auto"]
+Element["onsolder" "0805" "R7" "680" 360543 98000 -3150 3150 0 100 "auto"]
 (
 	Pad[-3543 -393 -3543 393 5118 2000 5718 "1" "1" "onsolder,square"]
 	Pad[3543 -393 3543 393 5118 2000 5718 "2" "2" "onsolder,square"]
@@ -1099,7 +1099,7 @@ Element["selected,onsolder" "0805" "R7" "680" 360543 98000 -3150 3150 0 100 "aut
 
 	)
 
-Element["selected,onsolder" "0805" "R6" "680" 360543 106000 -3150 3150 0 100 "auto"]
+Element["onsolder" "0805" "R6" "680" 360543 106000 -3150 3150 0 100 "auto"]
 (
 	Pad[-3543 -393 -3543 393 5118 2000 5718 "1" "1" "onsolder,square"]
 	Pad[3543 -393 3543 393 5118 2000 5718 "2" "2" "onsolder,square"]
@@ -1165,7 +1165,7 @@ Element["" "CONNECTOR-5-2" "J1" "unknown" 433000 99000 5000 21000 2 100 ""]
 
 	)
 
-Element["selected,onsolder" "0805" "C6" "100n" 448000 87543 693 -12693 2 100 "auto"]
+Element["onsolder" "0805" "C6" "100n" 448000 87543 693 -12693 2 100 "auto"]
 (
 	Pad[-393 3543 393 3543 5118 2000 5718 "1" "1" "onsolder,square"]
 	Pad[-393 -3543 393 -3543 5118 2000 5718 "2" "2" "onsolder,square"]
@@ -1174,7 +1174,7 @@ Element["selected,onsolder" "0805" "C6" "100n" 448000 87543 693 -12693 2 100 "au
 
 	)
 
-Element["selected,onsolder" "0805" "LED2" "red" 340457 106000 -3150 3150 0 100 "auto"]
+Element["onsolder" "0805" "LED2" "red" 340457 106000 -3150 3150 0 100 "auto"]
 (
 	Pad[-3543 -393 -3543 393 5118 2000 5718 "1" "1" "onsolder,square"]
 	Pad[3543 -393 3543 393 5118 2000 5718 "2" "2" "onsolder,square"]
@@ -1183,7 +1183,7 @@ Element["selected,onsolder" "0805" "LED2" "red" 340457 106000 -3150 3150 0 100 "
 
 	)
 
-Element["selected,onsolder" "0805" "R4" "10k" 376000 102000 3521 -12607 2 100 "auto"]
+Element["onsolder" "0805" "R4" "10k" 376000 102000 3521 -12607 2 100 "auto"]
 (
 	Pad[-393 -3543 393 -3543 5118 2000 5718 "1" "1" "onsolder,square"]
 	Pad[-393 3543 393 3543 5118 2000 5718 "2" "2" "onsolder,square"]
@@ -1470,11 +1470,11 @@ Layer(4 "GND")
 	Text[20000 112000 3 120 "slave+power v1" "clearline,onsolder"]
 	Polygon("clearpoly")
 	(
-		[322591 132717] [489591 132717] [489591 1717] [322591 1717] 
+		[376000 130000] [486000 130000] [486000 76000] [376000 76000] 
 	)
 	Polygon("clearpoly")
 	(
-		[376000 130000] [486000 130000] [486000 76000] [376000 76000] 
+		[323000 1000] [490000 1000] [490000 133000] [323000 133000] 
 	)
 )
 Layer(5 "power")
@@ -1515,7 +1515,6 @@ Layer(5 "power")
 	Line[312000 79000 312000 71000 2000 2000 "clearline"]
 	Line[426000 88500 440500 88500 2000 2000 "clearline"]
 	Line[445000 84000 440500 88500 1500 2000 "clearline"]
-	Line[482000 92000 461000 92000 1000 2000 "clearline"]
 	Line[461000 92000 453000 84000 1500 2000 "clearline"]
 	Line[445000 84000 453000 84000 1500 2000 "clearline"]
 	Line[372000 127000 376000 123000 2000 2000 "clearline"]
@@ -1525,6 +1524,8 @@ Layer(5 "power")
 	Line[407000 124000 402000 129000 1500 2000 "clearline"]
 	Line[402000 129000 382000 129000 1500 2000 "clearline"]
 	Line[382000 129000 376000 123000 1500 2000 "clearline"]
+	Line[461000 92000 474000 92000 1500 3200 "clearline"]
+	Line[474000 92000 482000 92000 1000 3200 "clearline"]
 )
 Layer(6 "signal1")
 (
