@@ -3,10 +3,10 @@
 # To read pcb files, the pcb version (or the git source date) must be >= the file version
 FileVersion[20070407]
 
-PCB["" 600000 133000]
+PCB["power+slave" 600000 133000]
 
 Grid[1000.0 0 0 1]
-Cursor[310000 70750 0.000000]
+Cursor[4000 44000 0.000000]
 PolyArea[200000000.000000]
 Thermal[0.500000]
 DRC[1000 1000 1000 1000 1500 1000]
