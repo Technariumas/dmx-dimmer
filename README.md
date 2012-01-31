@@ -28,3 +28,4 @@ medium-sized projects. The short answer is maybe, if you're stubborn as I.
 
 [hoelscher]: http://www.hoelscher-hi.de/hendrik/english/dimmer.htm
 [geda]: http://www.gpleda.org/index.html
+
