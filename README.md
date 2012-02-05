@@ -18,11 +18,11 @@ This is a work in progress, currently in early testing stage.
 Documentation is basically unavailable, but might become so if anyone is
 interested. Most of what exists is in the git log.
 
-Custom [symbols][gedasym] and [footprints][gedafoot] are used.
-
 [gEDA][geda] was chosen to do the design work. As to why is a topic for a
 whole article. Mainly, I wanted to see whether it's good enough for
 medium-sized projects. The short answer is maybe, if you're stubborn as I.
+
+Custom [symbols][gedasym] and [footprints][gedafoot] are used.
 
 [hoelscher]: http://www.hoelscher-hi.de/hendrik/english/dimmer.htm
 [geda]: http://www.gpleda.org/index.html
