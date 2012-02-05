@@ -126,7 +126,7 @@ symversion=0.1
 T 38700 43500 5 10 1 1 180 0 1
 value=1200u
 T 38600 44100 5 10 1 1 0 0 1
-footprint=NICHICON_14.fp
+footprint=RCY200P
 }
 C 41900 43200 1 90 0 capacitor-1.sym
 {
