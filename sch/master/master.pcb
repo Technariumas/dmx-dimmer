@@ -1440,7 +1440,7 @@ Layer(4 "GND")
 	Line[387000 214000 363000 190000 1600 3000 ""]
 	Line[363000 190000 317000 190000 1600 3000 ""]
 	Line[131000 318000 131000 263914 1500 3000 ""]
-	Text[145000 338000 0 100 "wemakethings.net / dmx-dimmer / master v1" "clearline,onsolder"]
+	Text[145000 338000 0 100 "wemakethings.net / dmx-dimmer / master v2" "clearline,onsolder"]
 	Polygon("clearpoly")
 	(
 		[187000 246000] [254000 246000] [254000 298000] [187000 298000] 
