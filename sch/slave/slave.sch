@@ -375,7 +375,7 @@ symversion=0.1
 T 46600 44300 5 10 1 1 0 0 1
 value=green
 T 47700 44400 5 10 1 1 0 0 1
-footprint=0805
+footprint=LED3
 }
 C 47700 45000 1 180 0 led-1.sym
 {
@@ -388,7 +388,7 @@ symversion=0.1
 T 46800 44900 5 10 1 1 0 0 1
 value=red
 T 47700 45000 5 10 1 1 0 0 1
-footprint=0805
+footprint=LED3
 }
 N 49200 44200 49200 43500 4
 N 48900 44200 48900 44500 4
