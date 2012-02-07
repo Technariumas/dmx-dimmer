@@ -40,20 +40,20 @@
 #define SPI_USCK PB7
 
 #define SPI_OUT_DDR       DDRB  // link to SPI Master
-#define SPI_OUT_SS_DDR    DDB0  // PCINT0
-#define SPI_OUT_CHAN0_DDR DDB1
-#define SPI_OUT_CHAN1_DDR DDB2
-#define SPI_OUT_OK_DDR    DDB3  // ok to transmit
+#define SPI_OUT_OK_DDR    DDB0  // ok to transmit
+#define SPI_OUT_CHAN1_DDR DDB1
+#define SPI_OUT_CHAN0_DDR DDB2
+#define SPI_OUT_SS_DDR    DDB3  // PCINT3
 
 #define SPI_OUT_PORT  PORTB
-#define SPI_OUT_SS    PB0
-#define SPI_OUT_CHAN0 PB1
-#define SPI_OUT_CHAN1 PB2
-#define SPI_OUT_OK    PB3
+#define SPI_OUT_OK    PB0
+#define SPI_OUT_CHAN1 PB1
+#define SPI_OUT_CHAN0 PB2
+#define SPI_OUT_SS    PB3
 
 #define SPI_OUT_PIN       PINB
-#define SPI_OUT_CHAN0_PIN PINB1
-#define SPI_OUT_CHAN1_PIN PINB2
+#define SPI_OUT_CHAN1_PIN PINB1
+#define SPI_OUT_CHAN0_PIN PINB2
 
 // channel dimming
 #define DIMMERS_DDR DDRD
