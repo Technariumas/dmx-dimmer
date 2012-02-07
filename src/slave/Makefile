@@ -119,6 +119,30 @@ AVRDUDE_PROGRAMMERID=usbasp
 #
 AVRDUDE_PORT=/dev/ttyS1
 
+# fuse settings (modified diagram lifted from USBasp Makefile)
+#---------------------------------------------------------------------
+# ATTiny2313
+#---------------------------------------------------------------------
+# Fuse extended byte (left at default):
+# 0xff = 1 1 1 1   1 1 1 1 <-- SELFFPRGEN (self programming not enabled)
+# Fuse high byte:
+# 0x9f = 1 0 0 1   1 1 1 1 <-- RSTDISBL (reset pin is enabled)
+#        ^ ^ ^ ^   \-+-/
+#        | | | |     +-------- BODLEVEL 0..2 (110 = 1.8 V)
+#        | | | |
+#        | | | +-------------- WDTON (if 0: watchdog always on)
+#        | | +---------------- SPIEN (allow serial programming)
+#        | +------------------ EESAVE (preserve EEPROM over chip erase)
+#        +-------------------- DWEN (debug wire disabled)
+# Fuse low byte:
+# 0xdd = 1 1 0 1   1 1 0 1
+#        ^ ^ \ /   \--+--/
+#        | |  |       +------- CKSEL 3..0 (external 3-8M crystal)
+#        | |  +--------------- SUT 1..0 (crystal osc, BOD enabled)
+#        | +------------------ CKOUT (if 0: Clock output enabled)
+#        +-------------------- CKDIV8 (if 0: divide by 8)
+FUSECOMMAND = -U hfuse:w:0x9f:m -U lfuse:w:0xdd:m
+
 
 ####################################################
 #####                Config Done               #####
@@ -224,6 +248,11 @@ stats: $(TRG)
 
 hex: $(HEXTRG)
 
+
+writefuses:
+	$(AVRDUDE) -c $(AVRDUDE_PROGRAMMERID) \
+	-p $(PROGRAMMER_MCU) -P $(AVRDUDE_PORT) \
+	$(FUSECOMMAND)
 
 writeflash: hex
 	$(AVRDUDE) -c $(AVRDUDE_PROGRAMMERID)   \
