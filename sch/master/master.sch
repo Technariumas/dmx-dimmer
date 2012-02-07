@@ -545,7 +545,7 @@ device=RESISTOR
 T 43100 42700 5 10 1 1 0 0 1
 refdes=R6
 T 43100 42300 5 10 1 1 0 0 1
-value=100
+value=120
 T 42900 42500 5 10 1 1 0 0 1
 footprint=0805
 }
