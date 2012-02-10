@@ -31,7 +31,7 @@ inline void fire_channels (uint8_t angle) {
 
     for (c = 0; c < DMX_CHANNELS; c++) {
 	if (chanval[c] >= angle) {
-	    output_high(DIMMERS_PORT, DIMMERBASE + c);
+	    output_high(DIMMERS_PORT, (DIMMERBASE + c));
 	    /* led_toggle(1); */
 	}
     }
@@ -73,13 +73,15 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     uint8_t tcntl;
     uint8_t tcnth;
 
-    // disable counter0 ASAP
+    // time-critical: disable counter0 ASAP and turn off all outputs
     TCCR0B &= ~(_BV(CS00));
     TIMSK &= ~(_BV(OCIE0A));
 
-    // turn off outputs
     DIMMERS_PORT &= ~( _BV(DIMMER0) | _BV(DIMMER1) | 
 		       _BV(DIMMER2) | _BV(DIMMER3) );
+
+    // even if some ZCs were missed before, they aren't now
+    led_off(0);
 
     // read counter (used later)
     // low byte must be read first
@@ -131,14 +133,8 @@ ISR (TIMER0_COMPA_vect, ISR_BLOCK) {
 // interrupt: maximum counter value reached, time interval between two
 // ZCs too long
 ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
-    /* while (1) { */
-    /* 	output_low(PORTB, PB4); */
-    /* 	delay_ms(500); */
-    /* 	output_high(PORTB, PB4); */
-    /* 	delay_ms(500); */
-    /* } */
-
-    led_toggle(0);
+    // this is an unwanted situation, turn red led on
+    led_on(0);
 }
 
 // interrupt: master has new dmx data
@@ -148,7 +144,7 @@ ISR (PCINT_vect, ISR_NOBLOCK) {
     led_toggle(1);
 
     // read CHAN0/CHAN1
-    chan = (_BV(SPI_OUT_CHAN0_PIN)) + (_BV(SPI_OUT_CHAN1_PIN) << 1);
+    chan = _BV(SPI_OUT_CHAN0_PIN) + (_BV(SPI_OUT_CHAN1_PIN) << 1);
 
     USIDR = SPI_TRANSMIT_DUMMY;
     USISR = _BV(USIOIF);                   // clear overflow flag
