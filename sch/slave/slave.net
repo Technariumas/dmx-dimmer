@@ -1,34 +1,34 @@
 unnamed_net26	U2-13 U2-10 
 unnamed_net25	U2-14 U2-8 
 unnamed_net24	U2-1 U2-6 
-unnamed_net23	U2-11 U2-9 R9-2 R8-1 U2-7 
-unnamed_net22	LED1-2 R7-1 
-unnamed_net21	LED2-2 R6-1 
-unnamed_net20	CONN_OUT12-5 U5-12 
-unnamed_net19	CONN_DIM41-1 U5-11 
-unnamed_net18	CONN_DIM31-1 U5-9 
-unnamed_net17	CONN_DIM21-1 U5-8 
-unnamed_net16	CONN_DIM11-1 U5-7 
-unnamed_net15	R7-2 U5-3 
-unnamed_net14	R6-2 U5-2 
-unnamed_net13	C5-2 Q1-1 U5-5 
-unnamed_net12	C4-2 Q1-2 U5-4 
+unnamed_net23	LED1-2 R7-1 
+unnamed_net22	LED2-2 R6-1 
+unnamed_net21	CONN_OUT12-5 U5-12 
+unnamed_net20	CONN_DIM41-1 U5-11 
+unnamed_net19	CONN_DIM31-1 U5-9 
+unnamed_net18	CONN_DIM21-1 U5-8 
+unnamed_net17	CONN_DIM11-1 U5-7 
+unnamed_net16	R7-2 U5-3 
+unnamed_net15	R6-2 U5-2 
+unnamed_net14	C5-2 Q1-1 U5-5 
+unnamed_net13	C4-2 Q1-2 U5-4 
 SLAVE_RESET	CONN_OUT12-9 J1-5 R4-1 U5-1 
 SLAVE_SCK	CONN_OUT12-4 J1-7 U5-19 
 SLAVE_MISO	CONN_OUT12-3 J1-9 U5-18 
 SLAVE_MOSI	CONN_OUT12-2 J1-1 U5-17 
-unnamed_net11	CONN_OUT12-8 U5-15 
-unnamed_net10	CONN_OUT12-7 U5-14 
-unnamed_net9	CONN_OUT12-6 U5-13 
+unnamed_net12	CONN_OUT12-8 U5-15 
+unnamed_net11	CONN_OUT12-7 U5-14 
+unnamed_net10	CONN_OUT12-6 U5-13 
 ZC_INT	U5-6 R3-2 
-unnamed_net8	R5-1 R2-2 
+unnamed_net9	U2-11 U2-9 U2-7 R5-1 R2-2 
+unnamed_net8	R8-2 U3-3 
 unnamed_net7	CONN_MAINS1-1 T1-1 
 unnamed_net6	CONN_MAINS1-2 T1-2 
-Vcc_ZC	R8-2 CONN_OUT12-1 J1-2 LED2-1 LED1-1 R4-2 C6-2 U5-20 C3-2 C1-1 U4-3 R10-2 U2-3 
-unnamed_net5	R10-1 R3-1 U2-2 
+Vcc_ZC	CONN_OUT12-1 J1-2 LED2-1 LED1-1 R4-2 C6-2 U5-20 C3-2 C1-1 U4-3 R9-2 U2-3 
+unnamed_net5	R9-1 R3-1 U2-2 
 unnamed_net4	R2-3 U2-4 
-unnamed_net3	R1-2 U3-3 U2-5 
-GND_ZC	R9-1 CONN_OUT12-10 J1-10 J1-8 J1-6 J1-4 CONN_FAN21-2 CONN_FAN11-2 C6-1 CONN_DIM11-2 CONN_DIM21-2 CONN_DIM31-2 CONN_DIM41-2 C5-1 C4-1 U5-10 C3-1 C2-2 C1-2 U4-2 R2-1 R1-1 U3-4 U2-12 U1-4 
+unnamed_net3	R8-1 R1-2 U2-5 
+GND_ZC	CONN_OUT12-10 J1-10 J1-8 J1-6 J1-4 CONN_FAN21-2 CONN_FAN11-2 C6-1 CONN_DIM11-2 CONN_DIM21-2 CONN_DIM31-2 CONN_DIM41-2 C5-1 C4-1 U5-10 C3-1 C2-2 C1-2 U4-2 R2-1 R1-1 U3-4 U2-12 U1-4 
 Vcc_ZC_12V	CONN_FAN21-1 CONN_FAN11-1 R5-2 C2-1 U4-1 U1-3 
 unnamed_net2	U3-2 T1-3 U1-2 
 unnamed_net1	T1-4 U3-1 U1-1 

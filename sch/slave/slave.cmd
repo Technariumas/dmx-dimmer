@@ -1,16 +1,12 @@
 # Pin name action command file
 
-# Start of element R10
-ChangePinName(R10, 1, 1)
-ChangePinName(R10, 2, 2)
+# Start of element R8
+ChangePinName(R8, 1, 1)
+ChangePinName(R8, 2, 2)
 
 # Start of element R9
 ChangePinName(R9, 1, 1)
 ChangePinName(R9, 2, 2)
-
-# Start of element R8
-ChangePinName(R8, 1, 1)
-ChangePinName(R8, 2, 2)
 
 # Start of element CONN_OUT12
 ChangePinName(CONN_OUT12, 9, 9)
