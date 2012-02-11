@@ -348,7 +348,7 @@ device=RESISTOR
 T 48600 45100 5 10 1 1 180 0 1
 refdes=R6
 T 48600 44700 5 10 1 1 180 0 1
-value=680
+value=1k
 T 48000 44700 5 10 1 1 0 0 1
 footprint=0805
 }
@@ -360,7 +360,7 @@ device=RESISTOR
 T 48600 44500 5 10 1 1 180 0 1
 refdes=R7
 T 48600 44100 5 10 1 1 180 0 1
-value=680
+value=1k
 T 48000 44100 5 10 1 1 0 0 1
 footprint=0805
 }
