@@ -85,6 +85,4 @@
 // fire all channels with at least value 'angle'
 inline void fire_channels (uint8_t angle);
 
-//int main (void);
-
 #endif /* _DIMMER_H_ */

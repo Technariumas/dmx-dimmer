@@ -31,8 +31,8 @@ inline void fire_channels (uint8_t angle) {
 
     for (c = 0; c < DMX_CHANNELS; c++) {
 	if (chanval[c] >= angle) {
-	    output_high(DIMMERS_PORT, (DIMMERBASE + c));
-	    /* led_toggle(1); */
+//	    dimmer_on(c); // BREAKS
+	    led_toggle(1);
 	}
     }
 }
@@ -77,8 +77,11 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     TCCR0B &= ~(_BV(CS00));
     TIMSK &= ~(_BV(OCIE0A));
 
-    DIMMERS_PORT &= ~( _BV(DIMMER0) | _BV(DIMMER1) | 
-		       _BV(DIMMER2) | _BV(DIMMER3) );
+    // BREAKS
+//    dimmer_off(0);
+//    dimmer_off(1);
+//    dimmer_off(2);
+//    dimmer_off(3);
 
     // even if some ZCs were missed before, they aren't now
     led_off(0);
@@ -141,15 +144,15 @@ ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
 ISR (PCINT_vect, ISR_NOBLOCK) {
     uint8_t chan = 0;
 
-    led_toggle(1);
-
     // read CHAN0/CHAN1
     chan = _BV(SPI_OUT_CHAN0_PIN) + (_BV(SPI_OUT_CHAN1_PIN) << 1);
 
     USIDR = SPI_TRANSMIT_DUMMY;
     USISR = _BV(USIOIF);                   // clear overflow flag
     output_high(SPI_OUT_PORT, SPI_OUT_OK); // i'm ready!
+
     while ( !(USISR & _BV(USIOIF)) );      // wait for reception complete
+
     output_low(SPI_OUT_PORT, SPI_OUT_OK);
 
     chanval[chan] = USIDR;
