@@ -27,6 +27,10 @@ int main (void) {
 
     wdt_disable();
 
+    /* TODO: make sure master starts up later than slave
+     * otherwise slave doesn't get first interrupt
+     * perhaps this won't happen when master takes time to read settings
+     */
     delay_ms(200);
     delay_ms(200);
     delay_ms(200);
