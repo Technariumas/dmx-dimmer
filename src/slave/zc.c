@@ -10,8 +10,11 @@
 
 inline uint16_t zc_calibrate (uint16_t old, uint16_t new) {
     if (old == new) return old;
-    /* if (old > new)  return (old - (old-new)/8); */
-    /* if (old < new) return (old + (new-old)/8); */
+
+    // if there was a counter overflow, then new will be very small, so
+    // don't push towards an even smaller return value
+    //if (old/2 > new) return old;
+
     if (old > new) return --old;
     if (old < new) return ++old;
     return new;  // should never happen

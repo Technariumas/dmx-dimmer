@@ -67,7 +67,7 @@
 #define DIMMER1      PD4
 #define DIMMER2      PD5
 #define DIMMER3      PD6
-#define DIMMERBASE   DIMMER0
+#define DIMMERBASE   PD3
 
 // ===== FUNCTIONS =====
 

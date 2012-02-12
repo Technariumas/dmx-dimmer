@@ -31,8 +31,13 @@ inline void fire_channels (uint8_t angle) {
 
     for (c = 0; c < DMX_CHANNELS; c++) {
 	if (chanval[c] >= angle) {
-//	    dimmer_on(c); // BREAKS
-	    led_toggle(1);
+	    // dimmer_on is a define, not a function, can't use variable
+	    switch (c) {
+	    case 0: output_high(DIMMERS_PORT, DIMMER0); break;
+	    case 1: output_high(DIMMERS_PORT, DIMMER1); break;
+	    case 2: output_high(DIMMERS_PORT, DIMMER2); break;
+	    case 3: output_high(DIMMERS_PORT, DIMMER3); break;
+	    }
 	}
     }
 }
@@ -51,7 +56,11 @@ int main (void) {
     for (i = 0; i < DMX_CHANNELS; i++) chanval[i] = 0;
 
     // output channels
-    dimmers_init();
+    //dimmers_init();
+    set_output(DIMMERS_DDR, DIMMER0_DDR);
+    set_output(DIMMERS_DDR, DIMMER1_DDR);
+    set_output(DIMMERS_DDR, DIMMER2_DDR);
+    set_output(DIMMERS_DDR, DIMMER3_DDR);
 
     // submit to slavery
     spi_slave_init();
@@ -77,11 +86,10 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     TCCR0B &= ~(_BV(CS00));
     TIMSK &= ~(_BV(OCIE0A));
 
-    // BREAKS
-//    dimmer_off(0);
-//    dimmer_off(1);
-//    dimmer_off(2);
-//    dimmer_off(3);
+    output_low(DIMMERS_PORT, DIMMER0);
+    output_toggle(DIMMERS_PORT, DIMMER1);
+    output_low(DIMMERS_PORT, DIMMER2);
+    output_low(DIMMERS_PORT, DIMMER3);
 
     // even if some ZCs were missed before, they aren't now
     led_off(0);
@@ -99,7 +107,7 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     // reset current angle counter 
     zc.angle = 255;
 
-    //
+    // save old value for calibration
     zc.old_dur = zc.dur;
 
     // read two ints into long int
@@ -128,7 +136,7 @@ ISR (INT0_vect, ISR_NOBLOCK) {
 // interrupt: new firing angle reached
 ISR (TIMER0_COMPA_vect, ISR_BLOCK) {
     fire_channels(zc.angle);
-    if (zc.angle > 1) zc.angle--;  // FIXME: had glitches with ">0"
+    if (zc.angle > 1) zc.angle--;
 
     TCNT0 = 0;  // reset counter
 }
@@ -143,17 +151,23 @@ ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
 // interrupt: master has new dmx data
 ISR (PCINT_vect, ISR_NOBLOCK) {
     uint8_t chan = 0;
+    uint8_t tmp = 0;
+
+    led_on(1);
 
     // read CHAN0/CHAN1
-    chan = _BV(SPI_OUT_CHAN0_PIN) + (_BV(SPI_OUT_CHAN1_PIN) << 1);
+    //chan = _BV(SPI_OUT_CHAN0_PIN) + (_BV(SPI_OUT_CHAN1_PIN) << 1);
+    /* tmp = SPI_OUT_PIN; */
+    /* if (tmp & _BV(SPI_OUT_CHAN0_PIN)) chan += 0b01; */
+    /* if (tmp & _BV(SPI_OUT_CHAN1_PIN)) chan += 0b10; */
 
     USIDR = SPI_TRANSMIT_DUMMY;
     USISR = _BV(USIOIF);                   // clear overflow flag
     output_high(SPI_OUT_PORT, SPI_OUT_OK); // i'm ready!
-
     while ( !(USISR & _BV(USIOIF)) );      // wait for reception complete
-
     output_low(SPI_OUT_PORT, SPI_OUT_OK);
 
     chanval[chan] = USIDR;
+
+    led_off(1);
 }

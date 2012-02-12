@@ -90,11 +90,9 @@ int main (void) {
 	// iterate over DMX channels
 	for (c = 0; c < DMX_CHANNELS; c++) {
 	    // check if new data present for this channel
-//	    if (dmx.dataisnew & ((uint16_t)1 << c)) {
-		/* even newer data may come in the time frame between
-		 * transmission and checking if it was successful, so
-		 * unset the channel's flag now and set it back on later
-		 * if needed
+	    if (dmx.dataisnew & ((uint16_t)1 << c)) {
+		/* even newer data may come while transmitting current
+		 * value, so unset the channel's flag asap
 		 */
 		dmx.dataisnew &= ~((uint16_t)1 << c);
 
@@ -115,9 +113,9 @@ int main (void) {
 		spi_request_interrupt(c/4);
 
 		// wait 'till slave ready
-		while ( !(SPI_SLAVES_PIN & _BV(SPI_OUT_OK_PIN)) ){
-		    led_toggle(1);
-		}
+		led_on(1);
+		while ( !(SPI_SLAVES_PIN & _BV(SPI_OUT_OK_PIN)) );
+		led_off(1);
 		
 		// transmit channel's value
 		retval = spi_master_transmit(chanval);
@@ -130,7 +128,7 @@ int main (void) {
 		    dmx.dataisnew |= ((uint16_t)1 << c);
 		}
 		
-//	    }  // if (new chan data)
+	    }  // if (new chan data)
 	}  // for (channel iterate)
     }  // while (1)
 

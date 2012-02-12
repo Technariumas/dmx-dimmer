@@ -6,7 +6,7 @@
 
 #include <inttypes.h>
 
-#define DMX_CHANNELS 4
+#define DMX_CHANNELS 1
 
 // DMX state machine possible states
 enum dmx_state_t {IDLE, BREAK, SKIP, DATA};
