@@ -17,6 +17,9 @@ inline void spi_slave_init (void) {
     output_high(SPI_OUT_PORT, SPI_OUT_CHAN0);
     output_high(SPI_OUT_PORT, SPI_OUT_CHAN1);
 
+    // debug: pull-up to remove noise on interrupt pin
+    output_high(SPI_OUT_PORT, SPI_OUT_SS);
+
     // enable external interrupt PCINT3 on PB3
     PCMSK |= _BV(PCINT3);
     GIMSK |= _BV(PCIE);
