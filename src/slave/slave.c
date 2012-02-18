@@ -28,19 +28,13 @@ uint8_t chanval[DMX_CHANNELS];
 
 
 inline void fire_channels (uint8_t angle) {
-    uint8_t c;
-
-    for (c = 0; c < DMX_CHANNELS; c++) {
-	if (chanval[c] >= angle) {
-	    // dimmer_on is a define, not a function, can't use variable
-	    switch (c) {
-	    case 0: output_high(DIMMERS_PORT, DIMMER0); break;
-	    case 1: output_high(DIMMERS_PORT, DIMMER1); break;
-	    case 2: output_high(DIMMERS_PORT, DIMMER2); break;
-	    case 3: output_high(DIMMERS_PORT, DIMMER3); break;
-	    }
-	}
-    }
+    /* time-critical: don't use any variables or cycles, it is important
+     * this is run in as few cycles as possible
+     */
+    if (chanval[0] >= angle) dimmer_on(0);
+    if (chanval[1] >= angle) dimmer_on(1);
+    if (chanval[2] >= angle) dimmer_on(2);
+    if (chanval[3] >= angle) dimmer_on(3);
 }
 
 int main (void) {
