@@ -17,6 +17,7 @@
 #define CYCLES_ZC  F_CPU/(2*F_MAINS)
 #define CYCLES_ANG CYCLES_ZC/256
 
+// {dur, old_dur, deg_dur, angle}
 zc_t zc = {CYCLES_ZC, CYCLES_ZC, CYCLES_ANG, 255};
 
 #undef CYCLES_ZC
@@ -52,7 +53,7 @@ int main (void) {
     led_off(0);
     led_off(1);
 
-    // init data structure
+    // default channel values to zero
     for (i = 0; i < DMX_CHANNELS; i++) chanval[i] = 0;
 
     // output channels
@@ -66,8 +67,8 @@ int main (void) {
     spi_slave_init();
 
     // 
-    counter0_init(zc.deg_dur);
-    counter1_init();
+    degree_duration_counter_init(zc.deg_dur);
+    zc_duration_counter_init();
     zc_init();
 
     sei();

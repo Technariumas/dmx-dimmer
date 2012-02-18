@@ -28,14 +28,14 @@ inline void zc_init (void) {
     GIMSK |= _BV(INT0);        // enable INT0 interrupt
 }
 
-inline void counter0_init (uint8_t deg_dur) {
+inline void degree_duration_counter_init (uint8_t deg_dur) {
     TCNT0 = 0;            // reset counter
     OCR0A = deg_dur;
     TIMSK |= _BV(OCIE0A); // Output Compare A int
     TCCR0B |= _BV(CS00);  // no prescaler
 }
 
-inline void counter1_init (void) {
+inline void zc_duration_counter_init (void) {
     // reset counter
     // high byte must be written first
     TCNT1H = 0;

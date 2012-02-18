@@ -19,10 +19,10 @@ inline void zc_init (void);
 // push old value of zc duration towards new value
 inline uint16_t zc_calibrate (uint16_t old, uint16_t new);
 
-// degree duration counter
-inline void counter0_init (uint8_t deg_dur);
+// 
+inline void degree_duration_counter_init (uint8_t deg_dur);
 
-// zc duration counter
-inline void counter1_init (void);
+//
+inline void zc_duration_counter_init (void);
 
 #endif /* _ZC_H_ */
