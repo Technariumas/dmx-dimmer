@@ -106,7 +106,7 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     TCNT1H = 0;
     TCNT1L = 0;
 
-    // reset current angle counter 
+    // reset current-angle counter 
     zc.angle = 255;
 
     // save old value for calibration
