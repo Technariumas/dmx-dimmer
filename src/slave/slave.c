@@ -83,24 +83,25 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     uint8_t tcntl;
     uint8_t tcnth;
 
-    // time-critical: disable counter0 ASAP and turn off all outputs
+    // time-critical: disable angle duration counter
     TCCR0B &= ~(_BV(CS00));
     TIMSK &= ~(_BV(OCIE0A));
 
+    // time-critical: turn off all outputs
     output_low(DIMMERS_PORT, DIMMER0);
     output_toggle(DIMMERS_PORT, DIMMER1);
     output_low(DIMMERS_PORT, DIMMER2);
     output_low(DIMMERS_PORT, DIMMER3);
 
-    // even if some ZCs were missed before, they aren't now
+    // if some ZCs were missed before, this would be on
     led_off(0);
 
-    // read counter (used later)
+    // see how many cycles passed since previous ZC (used later)
     // low byte must be read first
     tcntl = TCNT1L;
     tcnth = TCNT1H;
 
-    // reset counter1
+    // reset counter
     // high byte must be written first
     TCNT1H = 0;
     TCNT1L = 0;
@@ -123,10 +124,8 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     zc.deg_dur = zc.dur/256;
     OCR0A = zc.deg_dur;
 
-    // reset timer0
+    // reset and re-enable degree duration timer/counter
     TCNT0 = 0;
-
-    // re-enable counter0
     TIMSK |= _BV(OCIE0A);
     TCCR0B |= _BV(CS00);
 
