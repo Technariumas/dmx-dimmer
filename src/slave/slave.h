@@ -49,11 +49,11 @@
 #define SPI_OUT_OK    PB0
 #define SPI_OUT_CHAN1 PB1
 #define SPI_OUT_CHAN0 PB2
-#define SPI_OUT_SS    PB3
 
 #define SPI_OUT_PIN       PINB
 #define SPI_OUT_CHAN1_PIN PINB1
 #define SPI_OUT_CHAN0_PIN PINB2
+#define SPI_OUT_SS_PIN    PB3
 
 // channel dimming
 #define DIMMERS_DDR DDRD
