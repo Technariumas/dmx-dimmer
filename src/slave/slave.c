@@ -135,10 +135,10 @@ ISR (INT0_vect, ISR_NOBLOCK) {
 
 // interrupt: new firing angle reached
 ISR (TIMER0_COMPA_vect, ISR_BLOCK) {
+    TCNT0 = 0;  // reset counter ASAP
+
     fire_channels(zc.angle);
     if (zc.angle > 1) zc.angle--;
-
-    TCNT0 = 0;  // reset counter
 }
 
 // interrupt: maximum counter value reached, time interval between two
