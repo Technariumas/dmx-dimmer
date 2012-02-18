@@ -3,9 +3,9 @@ dmx-dimmer. The name will change to something less meaningful by
 production time. It is based on [Hendrik Hoelscher's dimmer][hoelscher].
 
 The goal is to produce schematics, PCB layouts and code, all available
-in a form that allows modification and homebrew manufacture. This is
-important, since tool/material/component availability varies from place
-to place.
+in a form that allows modification and (even homebrew) manufacture. This
+is important, since tool/material/component availability varies from
+place to place.
 
 Many modifications have been made, but most importantly:
 
