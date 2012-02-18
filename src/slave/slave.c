@@ -28,7 +28,7 @@ uint8_t chanval[DMX_CHANNELS];
 
 
 inline void fire_channels (uint8_t angle) {
-    /* time-critical: don't use any variables or cycles, it is important
+    /* time-critical: don't use any variables or loops, it is important
      * this is run in as few cycles as possible
      */
     if (chanval[0] >= angle) dimmer_on(0);
