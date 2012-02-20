@@ -23,6 +23,9 @@ inline uint16_t zc_calibrate (uint16_t old, uint16_t new);
 inline void degree_duration_counter_init (uint8_t deg_dur);
 
 //
+inline void degree_duration_counter_stop (void);
+
+//
 inline void zc_duration_counter_init (void);
 
 #endif /* _ZC_H_ */

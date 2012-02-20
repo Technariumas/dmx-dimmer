@@ -28,9 +28,6 @@ uint8_t chanval[DMX_CHANNELS];
 
 
 inline void fire_channels (uint8_t angle) {
-    /* time-critical: don't use any variables or loops, it is important
-     * this is run in as few cycles as possible
-     */
     if (chanval[0] >= angle) dimmer_on(0);
     if (chanval[1] >= angle) dimmer_on(1);
     if (chanval[2] >= angle) dimmer_on(2);
@@ -51,11 +48,7 @@ int main (void) {
     for (i = 0; i < DMX_CHANNELS; i++) chanval[i] = 0;
 
     // output channels
-    //dimmers_init();
-    set_output(DIMMERS_DDR, DIMMER0_DDR);
-    set_output(DIMMERS_DDR, DIMMER1_DDR);
-    set_output(DIMMERS_DDR, DIMMER2_DDR);
-    set_output(DIMMERS_DDR, DIMMER3_DDR);
+    dimmers_init();
 
     // submit to slavery
     spi_slave_init();
@@ -67,7 +60,8 @@ int main (void) {
 
     sei();
 
-    while (1) i++;  // everything else is interrupt-driven
+    // everything else is interrupt-driven
+    while (1) asm volatile("nop\n\t"::);
 
     return 1;
 }
@@ -77,17 +71,16 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     uint8_t tcntl;
     uint8_t tcnth;
 
-    // time-critical: disable angle duration counter
-    TCCR0B &= ~(_BV(CS00));
-    TIMSK &= ~(_BV(OCIE0A));
+    // time-critical: disable degree duration counter
+    degree_duration_counter_stop();
 
     // time-critical: turn off all outputs
-    output_low(DIMMERS_PORT, DIMMER0);
-    output_toggle(DIMMERS_PORT, DIMMER1);
-    output_low(DIMMERS_PORT, DIMMER2);
-    output_low(DIMMERS_PORT, DIMMER3);
+    dimmer_off(0);
+    dimmer_off(1);
+    dimmer_off(2);
+    dimmer_off(3);
 
-    // if some ZCs were missed before, this would be on
+    // if some ZCs were missed before, led would be on
     led_off(0);
 
     // see how many cycles passed since previous ZC (used later)
@@ -100,9 +93,6 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     TCNT1H = 0;
     TCNT1L = 0;
 
-    // reset current-angle counter 
-    zc.angle = 255;
-
     // save old value for calibration
     zc.old_dur = zc.dur;
 
@@ -114,14 +104,17 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     // push old zc_dur towards new
     zc.dur = zc_calibrate(zc.old_dur, zc.dur);
 
-    // determine degree duration (there are 256 degrees between 2 ZCs)
-    zc.deg_dur = zc.dur/256;
-    OCR0A = zc.deg_dur;
+    /* determine degree duration (there are 256 degrees between 2 ZCs);
+     * if some low-value angles were not reached due to duration being
+     * too long, take them into account and reduce the duration further
+     */
+    zc.deg_dur = zc.dur/256 /* - 45 */; // debug: -XX
+
+    // reset current-angle counter
+    zc.angle = 255;
 
     // reset and re-enable degree duration timer/counter
-    TCNT0 = 0;
-    TIMSK |= _BV(OCIE0A);
-    TCCR0B |= _BV(CS00);
+    degree_duration_counter_init(zc.deg_dur);
 
     // first angle interrupt will happen on '254', so do '255' now
     fire_channels(255);
@@ -129,10 +122,8 @@ ISR (INT0_vect, ISR_NOBLOCK) {
 
 // interrupt: new firing angle reached
 ISR (TIMER0_COMPA_vect, ISR_BLOCK) {
-    TCNT0 = 0;  // reset counter ASAP
-
     fire_channels(zc.angle);
-    if (zc.angle > 1) zc.angle--;
+    if (zc.angle > 0) zc.angle--;
 }
 
 // interrupt: maximum counter value reached, time interval between two
@@ -140,6 +131,10 @@ ISR (TIMER0_COMPA_vect, ISR_BLOCK) {
 ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
     // this is an unwanted situation, turn red led on
     led_on(0);
+    /* dimmer_off(0); */
+    /* dimmer_off(1); */
+    /* dimmer_off(2); */
+    /* dimmer_off(3); */
 }
 
 // interrupt: master has new dmx data

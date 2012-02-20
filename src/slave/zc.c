@@ -32,7 +32,13 @@ inline void degree_duration_counter_init (uint8_t deg_dur) {
     TCNT0 = 0;            // reset counter
     OCR0A = deg_dur;
     TIMSK |= _BV(OCIE0A); // Output Compare A int
+    TCCR0A |= _BV(WGM01); // Clear Timer on Compare Match
     TCCR0B |= _BV(CS00);  // start counting, no prescaler
+}
+
+inline void degree_duration_counter_stop (void) {
+    TCCR0B &= ~(_BV(CS00));   // stop counter
+    TIMSK &= ~(_BV(OCIE0A));  // disable interrupt
 }
 
 inline void zc_duration_counter_init (void) {
