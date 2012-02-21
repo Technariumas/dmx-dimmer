@@ -107,7 +107,7 @@ int main (void) {
 		/*     chanval = dmx.maxval; */
 
 		// for any slave, set which of the 4 dmx channels t'is for
-		spi_chan_select(c);
+		spi_chan_select(c%4);
 
 		// select one of three slave arbiters
 		spi_request_interrupt(c/4);

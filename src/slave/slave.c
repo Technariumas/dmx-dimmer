@@ -145,10 +145,14 @@ ISR (PCINT_vect, ISR_NOBLOCK) {
     led_on(1);
 
     // read CHAN0/CHAN1
-    //chan = _BV(SPI_OUT_CHAN0_PIN) + (_BV(SPI_OUT_CHAN1_PIN) << 1);
-    /* tmp = SPI_OUT_PIN; */
-    /* if (tmp & _BV(SPI_OUT_CHAN0_PIN)) chan += 0b01; */
-    /* if (tmp & _BV(SPI_OUT_CHAN1_PIN)) chan += 0b10; */
+    tmp = SPI_OUT_PIN;
+    tmp &= 0b00000110;
+    switch (tmp) {
+    case 0b000: chan=0; break;
+    case 0b010: chan=2; break;
+    case 0b100: chan=1; break;
+    case 0b110: chan=3; break;
+    }
 
     USIDR = SPI_TRANSMIT_DUMMY;
     USISR = _BV(USIOIF);                   // clear overflow flag

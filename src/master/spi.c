@@ -32,13 +32,24 @@ uint8_t spi_master_transmit (uint8_t data) {
 }
 
 inline void spi_chan_select (uint8_t c) {
-    // 0, 2, 4, ...
-    if (!(c%2))	output_low(SPI_SLAVES_PORT, SPI_OUT_CHAN0);
-    else        output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN0);
-
-    // 0, 1, 4, 5, ..
-    if (c%4 <= 1) output_low(SPI_SLAVES_PORT, SPI_OUT_CHAN1);
-    else          output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN1);
+    switch (c) {
+    case 0:
+	output_low(SPI_SLAVES_PORT, SPI_OUT_CHAN0);
+	output_low(SPI_SLAVES_PORT, SPI_OUT_CHAN1);
+	break;
+    case 1:
+	output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN0);
+	output_low(SPI_SLAVES_PORT, SPI_OUT_CHAN1);
+	break;
+    case 2:
+	output_low(SPI_SLAVES_PORT, SPI_OUT_CHAN0);
+	output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN1);
+	break;
+    case 3:
+	output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN0);
+	output_high(SPI_SLAVES_PORT, SPI_OUT_CHAN1);
+	break;
+    }
 }
 
 inline void spi_request_interrupt (uint8_t slave) {
