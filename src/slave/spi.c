@@ -14,15 +14,16 @@ inline void spi_slave_init (void) {
     set_input(SPI_OUT_DDR, SPI_OUT_CHAN1_DDR);
     set_input(SPI_OUT_DDR, SPI_OUT_SS_DDR);
     set_output(SPI_OUT_DDR, SPI_OUT_OK_DDR);
-    output_high(SPI_OUT_PORT, SPI_OUT_CHAN0);
-    output_high(SPI_OUT_PORT, SPI_OUT_CHAN1);
 
     // pull-ups on inputs (hi-z otherwise)
     input_pullup(SPI_OUT_PORT, SPI_OUT_CHAN0);
     input_pullup(SPI_OUT_PORT, SPI_OUT_CHAN1);
     input_pullup(SPI_OUT_PORT, SPI_OUT_SS);
+    /* output_high(SPI_OUT_PORT, SPI_OUT_CHAN0); */
+    /* output_high(SPI_OUT_PORT, SPI_OUT_CHAN1); */
+    /* output_high(SPI_OUT_PORT, SPI_OUT_SS); */
 
-    // enable external interrupt PCINT3 on PB3
+    // enable external interrupt PCINT3 on PB3 (SPI_OUT_SS)
     PCMSK |= _BV(PCINT3);
     GIMSK |= _BV(PCIE);
 
