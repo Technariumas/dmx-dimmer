@@ -101,10 +101,10 @@ int main (void) {
 		 * interrupt might change it back again
 		 */
 		chanval = dmx.chanval[c];
-		if (chanval < dmx.preheat)
-		    chanval = dmx.preheat;
-		if (chanval > dmx.maxval)
-		    chanval = dmx.maxval;
+		/* if (chanval < dmx.preheat) */
+		/*     chanval = dmx.preheat; */
+		/* if (chanval > dmx.maxval) */
+		/*     chanval = dmx.maxval; */
 
 		// for any slave, set which of the 4 dmx channels t'is for
 		spi_chan_select(c);
