@@ -14,7 +14,7 @@ Many modifications have been made, but most importantly:
 - more modern AVR microcontrollers, ATMega168 and ATTiny2313;
 - complete code rewrite in C.
 
-This is a work in progress, currently in early testing stage.
+This is a work in progress, currently in late testing stage.
 Documentation is basically unavailable, but might become so if anyone is
 interested. Most of what exists is in the git log.
 
