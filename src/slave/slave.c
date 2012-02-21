@@ -108,7 +108,7 @@ ISR (INT0_vect, ISR_NOBLOCK) {
      * if some low-value angles were not reached due to duration being
      * too long, take them into account and reduce the duration further
      */
-    zc.deg_dur = zc.dur/256 /* - 45 */; // debug: -XX
+    zc.deg_dur = zc.dur/256;
 
     // reset current-angle counter
     zc.angle = 255;
