@@ -35,16 +35,16 @@
 
 #define SPI_SLAVES_DDR    DDRC  // ~ slave select (real)
 #define SPI_OUT_OK_DDR    DDC0
-#define SPI_OUT_CHAN0_DDR DDC1
-#define SPI_OUT_CHAN1_DDR DDC2
+#define SPI_OUT_CHAN1_DDR DDC1
+#define SPI_OUT_CHAN0_DDR DDC2
 #define SPI_OUT_SS1_DDR   DDC3
 #define SPI_OUT_SS2_DDR   DDC5
 #define SPI_OUT_SS3_DDR   DDC4
 
 #define SPI_SLAVES_PORT PORTC
 #define SPI_OUT_OK      PC0
-#define SPI_OUT_CHAN0   PC1
-#define SPI_OUT_CHAN1   PC2
+#define SPI_OUT_CHAN1   PC1
+#define SPI_OUT_CHAN0   PC2
 #define SPI_OUT_SS1     PC3
 #define SPI_OUT_SS2     PC5
 #define SPI_OUT_SS3     PC4
