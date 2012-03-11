@@ -607,7 +607,7 @@ C 63600 45500 1 0 0 switch-dip6-1.sym
 T 64700 47675 5 8 0 0 0 0 1
 device=SWITCH_DIP6
 T 63900 47750 5 10 1 1 0 0 1
-refdes=HEAD_CONF1
+refdes=SW_CONF1
 T 63600 45500 5 10 0 0 0 0 1
 footprint=DIP20
 }
@@ -618,5 +618,5 @@ footprint=SWITCH_DIP10
 T 63800 55575 5 8 0 0 0 0 1
 device=SWITCH_DIP10
 T 63800 54350 5 10 1 1 0 0 1
-refdes=S?
+refdes=SW_ADDR1
 }
