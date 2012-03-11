@@ -609,12 +609,12 @@ device=SWITCH_DIP6
 T 63900 47750 5 10 1 1 0 0 1
 refdes=SW_CONF1
 T 63600 45500 5 10 0 0 0 0 1
-footprint=DIP20
+footprint=DIP12.fp
 }
 C 63500 51000 1 0 0 switch-dip10.sym
 {
 T 63800 54600 5 10 0 1 0 0 1
-footprint=SWITCH_DIP10
+footprint=DIP20
 T 63800 55575 5 8 0 0 0 0 1
 device=SWITCH_DIP10
 T 63800 54350 5 10 1 1 0 0 1
