@@ -654,7 +654,7 @@ device=RESISTOR
 T 52000 46600 5 10 1 1 180 6 1
 refdes=R21
 T 52000 46100 5 10 1 1 180 6 1
-value=100
+value=1k
 T 51700 46200 5 10 0 1 90 0 1
 footprint=0805
 }
@@ -665,7 +665,7 @@ device=RESISTOR
 T 52000 44000 5 10 1 1 180 6 1
 refdes=R22
 T 52000 43500 5 10 1 1 180 6 1
-value=100
+value=1k
 T 51700 43600 5 10 0 1 90 0 1
 footprint=0805
 }
