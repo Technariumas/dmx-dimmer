@@ -27,6 +27,12 @@ int main (void) {
 
     wdt_disable();
 
+    leds_init();
+    delay_ms(200);
+    led_off(0);
+    delay_ms(200);
+    led_off(1);
+
     /* TODO: make sure master starts up later than slave
      * otherwise slave doesn't get first interrupt
      * perhaps this won't happen when master takes time to read settings
@@ -36,8 +42,6 @@ int main (void) {
     delay_ms(200);
     delay_ms(200);
     delay_ms(200);
-
-    leds_init();
 
     /* to read in configuration from panel's DIP switches, a single
      * pulse must be sent on the SCK line prior to enabling SPI
@@ -85,8 +89,6 @@ int main (void) {
 	/*     adc_start(); */
 	/* } */
 
-	led_toggle(1);
-
 	// iterate over DMX channels
 	for (c = 0; c < DMX_CHANNELS; c++) {
 	    // check if new data present for this channel
@@ -106,11 +108,15 @@ int main (void) {
 		/* if (chanval > dmx.maxval) */
 		/*     chanval = dmx.maxval; */
 
+		led_on(0); // debug
+
 		// for any slave, set which of the 4 dmx channels t'is for
 		spi_chan_select(c%4);
 
 		// select one of three slave arbiters
 		spi_request_interrupt(c/4);
+
+		led_off(0); // debug
 
 		// wait 'till slave ready
 		led_on(1);
@@ -141,6 +147,8 @@ ISR (USART_RX_vect, ISR_BLOCK) {
     dmx.status = UCSR0A;
     dmx.data = UDR0;
 
+    led_on(0);
+
     // data overrun or frame error (break condition)
     if ( dmx.status & (_BV(DOR0)|_BV(FE0)) ) {
 	dmx.state = BREAK;
@@ -170,7 +178,7 @@ ISR (USART_RX_vect, ISR_BLOCK) {
 	}
     }
 
-    led_toggle(0);
+    led_off(0);
 }
 
 // interrupt: ADC conversion complete
