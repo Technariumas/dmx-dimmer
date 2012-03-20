@@ -1,9 +1,9 @@
-unnamed_net11	CONN_LOAD1-2 CONN_MAINS2-2 
-unnamed_net10	CONN_DIM12-1 R1-1 
-unnamed_net9	L1-1 D1-2 
-unnamed_net8	C2-1 L1-2 CONN_LOAD1-1 C1-1 
+unnamed_net11	T4-1 T3-1 
+unnamed_net10	D1-1 L1-1 
+unnamed_net9	CONN_DIM12-1 R1-1 
+unnamed_net8	C2-1 L1-2 T1-1 C1-1 
 unnamed_net7	C2-2 R4-1 
-unnamed_net6	CONN_MAINS2-1 R4-2 D1-1 R3-2 
+unnamed_net6	D1-2 T2-1 R4-2 R3-2 
 unnamed_net5	C1-2 R3-1 R2-2 
 unnamed_net4	R2-1 U1-6 
 unnamed_net3	D1-3 U1-4 
