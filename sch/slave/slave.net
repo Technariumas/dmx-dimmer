@@ -22,8 +22,8 @@ unnamed_net10	CONN_OUT12-6 U5-13
 ZC_INT	U5-6 R3-2 
 unnamed_net9	U2-11 U2-9 U2-7 R5-1 R2-2 
 unnamed_net8	R8-2 U3-3 
-unnamed_net7	CONN_MAINS1-1 T1-1 
-unnamed_net6	CONN_MAINS1-2 T1-2 
+unnamed_net7	CONN_MAINS1-2 T1-1 
+unnamed_net6	CONN_MAINS1-1 T1-2 
 Vcc_ZC	CONN_OUT12-1 J1-2 LED2-1 LED1-1 R4-2 C6-2 U5-20 C3-2 C1-1 U4-3 R9-2 U2-3 
 unnamed_net5	R9-1 R3-1 U2-2 
 unnamed_net4	R2-3 U2-4 
