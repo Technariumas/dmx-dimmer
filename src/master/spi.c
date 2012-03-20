@@ -5,6 +5,11 @@
 #include "master.h"
 
 inline void spi_master_init (void) {
+    // debug: pull up so no fake interrupt occurs
+    output_high(SPI_SLAVES_PORT, SPI_OUT_SS1);
+    /* output_high(SPI_SLAVES_PORT, SPI_OUT_SS2); */
+    /* output_high(SPI_SLAVES_PORT, SPI_OUT_SS3); */
+
     // set up custom communication lines (not handled by hardware SPI)
     set_output(SPI_SLAVES_DDR, SPI_OUT_CHAN0_DDR);
     set_output(SPI_SLAVES_DDR, SPI_OUT_CHAN1_DDR);
