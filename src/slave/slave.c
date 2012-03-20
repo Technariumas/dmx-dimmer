@@ -142,8 +142,6 @@ ISR (PCINT_vect, ISR_NOBLOCK) {
     uint8_t chan = 0;
     uint8_t tmp = 0;
 
-    led_on(1);
-
     // read CHAN0/CHAN1
     tmp = SPI_OUT_PIN;
     tmp &= 0b00000110;
@@ -153,6 +151,8 @@ ISR (PCINT_vect, ISR_NOBLOCK) {
     case 0b100: chan=1; break;
     case 0b110: chan=3; break;
     }
+
+    led_on(1);
 
     USIDR = SPI_TRANSMIT_DUMMY;
     USISR = _BV(USIOIF);                   // clear overflow flag
