@@ -522,7 +522,7 @@ device=CONNECTOR_5
 T 47500 43800 5 10 1 1 0 6 1
 refdes=CONN_DMX_IN
 T 47600 42100 5 10 1 1 0 0 1
-footprint=CONNECTOR 3 1
+footprint=MTA100_3
 }
 C 43500 44000 1 180 0 capacitor-1.sym
 {
