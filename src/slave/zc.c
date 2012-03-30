@@ -22,7 +22,7 @@ inline uint16_t zc_calibrate (uint16_t old, uint16_t new) {
 
 inline void zc_init (void) {
     set_input(ZC_DDR, ZC);     // interrupt input pin
-    output_high(ZC_PORT, ZC);  // pullup
+    input_pullup(ZC_PORT, ZC);
 
     MCUCR |= _BV(ISC01);       // int on falling edge
     GIMSK |= _BV(INT0);        // enable INT0 interrupt
