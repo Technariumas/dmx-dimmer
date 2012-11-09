@@ -15,7 +15,7 @@
 #include "adc.h"
 #include "usart.h"
 
-dmx_t dmx = {IDLE, 1, 0, 0, 0, 0, 0, 255};
+volatile dmx_t dmx = {IDLE, 1, 0, 0, 0, 0, 0, 255};
 
 
 int main (void) {
