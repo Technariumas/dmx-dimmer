@@ -1,23 +1,23 @@
 Modularisation is best shown in a diagram.
 
          DMX-DIMMER
-panel
-  |
-  |
-master --+- slave --+- dimmer
-         |          +- dimmer
-         |          +- dimmer
-         |          +- dimmer
-         |
-         +- slave --+- dimmer
-         |          +- dimmer
-         |          +- dimmer
-         |          +- dimmer
-         |
-         +- slave --+- dimmer
-                    +- dimmer
-                    +- dimmer
-                    +- dimmer
+    panel
+      |
+      |
+    master --+- slave --+- dimmer
+             |          +- dimmer
+             |          +- dimmer
+             |          +- dimmer
+             |
+             +- slave --+- dimmer
+             |          +- dimmer
+             |          +- dimmer
+             |          +- dimmer
+             |
+             +- slave --+- dimmer
+                        +- dimmer
+                        +- dimmer
+                        +- dimmer
 
 There are currently four non-optional modules. Further division can be
 carried out, if desired.
