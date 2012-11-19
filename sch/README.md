@@ -1,6 +1,6 @@
 Modularisation is best shown in a diagram.
 
-         DMX-DIMMER
+             DMX-DIMMER
     panel
       |
       |
