@@ -41,8 +41,8 @@ int main (void) {
 
     // debug leds
     leds_init();
-    led_off(0);
-    led_off(1);
+    led_on(0);   // red - error (TODO: use #define)
+    led_off(1);  // green - data transmission (TODO: use #define)
 
     // default channel values to zero
     for (i = 0; i < DMX_CHANNELS; i++) chanval[i] = 0;
