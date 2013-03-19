@@ -117,7 +117,8 @@ AVRDUDE_PROGRAMMERID=usbasp
 # port--serial or parallel port to which your 
 # hardware programmer is attached
 #
-AVRDUDE_PORT=/dev/ttyS1
+#AVRDUDE_PORT=/dev/ttyS1
+AVRDUDE_PORT=/dev/ptmx
 
 # fuse settings (modified diagram lifted from USBasp Makefile)
 #---------------------------------------------------------------------
