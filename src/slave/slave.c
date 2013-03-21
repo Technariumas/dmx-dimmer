@@ -41,7 +41,7 @@ int main (void) {
 
     // debug leds
     leds_init();
-    led_on(0);   // red - error (TODO: use #define)
+    led_off(0);  // red - error (TODO: use #define)
     led_off(1);  // green - data transmission (TODO: use #define)
 
     // default channel values to zero
@@ -152,7 +152,8 @@ ISR (PCINT_vect, ISR_NOBLOCK) {
     case 0b110: chan=3; break;
     }
 
-    led_on(1);
+    led_toggle(1);
+    /* led_on(1); */
 
     USIDR = SPI_TRANSMIT_DUMMY;
     USISR = _BV(USIOIF);                   // clear overflow flag
@@ -162,5 +163,6 @@ ISR (PCINT_vect, ISR_NOBLOCK) {
 
     chanval[chan] = USIDR;
 
-    led_off(1);
+    /* led_off(1); */
+    /* led_toggle(1); */
 }

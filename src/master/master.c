@@ -33,16 +33,6 @@ int main (void) {
     delay_ms(200);
     led_off(1);
 
-    /* TODO: make sure master starts up later than slave
-     * otherwise slave doesn't get first interrupt
-     * perhaps this won't happen when master takes time to read settings
-     */
-    delay_ms(200);
-    delay_ms(200);
-    delay_ms(200);
-    delay_ms(200);
-    delay_ms(200);
-
     /* to read in configuration from panel's DIP switches, a single
      * pulse must be sent on the SCK line prior to enabling SPI
      * properly; this is due to 74166's mode of operation and is not
@@ -82,6 +72,16 @@ int main (void) {
     usart_init();
     sei();
 
+    /* TODO: make sure master starts up later than slave
+     * otherwise slave doesn't get first interrupt
+     * perhaps this won't happen when master takes time to read settings
+     */
+    delay_ms(200);
+    delay_ms(200);
+    delay_ms(200);
+    delay_ms(200);
+    delay_ms(200);
+
     while (1) {
 	// see if preheat/maxval on panel changed
 	/* if ( !(adc_running()) ) { */
@@ -98,7 +98,7 @@ int main (void) {
 		 */
 		dmx.dataisnew &= ~((uint16_t)1 << c);
 
-		/* make sure chanval is in [preheat; maxval] range, but
+		/* TODO: make sure chanval is in [preheat; maxval] range, but
 		 * use a temporary var for this - otherwise the USART
 		 * interrupt might change it back again
 		 */
@@ -108,23 +108,23 @@ int main (void) {
 		/* if (chanval > dmx.maxval) */
 		/*     chanval = dmx.maxval; */
 
-		led_on(0); // debug
+		/* led_on(0); */
 
 		// for any slave, set which of the 4 dmx channels t'is for
 		spi_chan_select(c%4);
 
-		// select one of three slave arbiters
+		// select one of three slaves (TODO: remove hard-coded?)
 		spi_request_interrupt(c/4);
 
-		led_off(0); // debug
-
 		// wait 'till slave ready
-		led_on(1);
+		led_on(0);  // debug
 		while ( !(SPI_SLAVES_PIN & _BV(SPI_OUT_OK_PIN)) );
-		led_off(1);
+		led_off(0); // debug
 		
 		// transmit channel's value
 		retval = spi_master_transmit(chanval);
+
+		/* led_off(1); */
 
 		// pull-ups on other end, reduce power consumption
 		spi_chan_select(SPI_CHAN_RESET);
@@ -133,7 +133,6 @@ int main (void) {
 		if (retval != SPI_TRANSMIT_DUMMY) {
 		    dmx.dataisnew |= ((uint16_t)1 << c);
 		}
-		
 	    }  // if (new chan data)
 	}  // for (channel iterate)
     }  // while (1)
@@ -147,7 +146,7 @@ ISR (USART_RX_vect, ISR_BLOCK) {
     dmx.status = UCSR0A;
     dmx.data = UDR0;
 
-    led_on(0);
+    led_on(1);
 
     // data overrun or frame error (break condition)
     if ( dmx.status & (_BV(DOR0)|_BV(FE0)) ) {
@@ -178,7 +177,7 @@ ISR (USART_RX_vect, ISR_BLOCK) {
 	}
     }
 
-    led_off(0);
+    led_off(1);
 }
 
 // interrupt: ADC conversion complete

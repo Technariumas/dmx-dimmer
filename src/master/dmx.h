@@ -6,12 +6,12 @@
 
 #include <inttypes.h>
 
-#define DMX_CHANNELS 4
+#define DMX_CHANNELS 12
 
 // DMX state machine possible states
 enum dmx_state_t {IDLE, BREAK, SKIP, DATA};
 
-// information about DMX data (but not the data itself)
+// information about DMX data and the data itself
 typedef struct {
     enum dmx_state_t state;      // state machine
     uint16_t         address;    // dmx address (of first channel)

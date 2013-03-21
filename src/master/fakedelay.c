@@ -1,4 +1,5 @@
 // fakedelay.c
+// TODO: replace with true delay
 
 #include "fakedelay.h"
 
@@ -14,6 +15,7 @@ void delay_ms (uint16_t ms) {
     }
 }
 
+// TODO: shouldn't this be called delay_us()?
 void delay_ns (uint16_t ns) {
     uint16_t delay_count = 1;  // cpu cycles in one ms?
     volatile uint16_t i;
