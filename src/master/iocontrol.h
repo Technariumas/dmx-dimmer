@@ -9,8 +9,8 @@
 #define set_output(portdir,pindir) portdir |=  (1<<pindir)
 
 // port: PORTx, pin: Pxn
-#define input_nopullup(port,pin) port &= ~(1<<pin)
-#define input_pullup(port,pin)   port |= (1<<pin)
+#define input_hiz(port,pin)    port &= ~(1<<pin)
+#define input_pullup(port,pin) port |= (1<<pin)
 
 // port: PORTx, pin: Pxn
 #define output_low(port,pin)    port &= ~(1<<pin)
