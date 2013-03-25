@@ -21,7 +21,7 @@
 
 
 #define SPI_DDR      DDRB
-#define SPI_SS_DDR   DDB2  // ~ slave select (atm unused)
+#define SPI_SS_DDR   DDB2  // ~ slave select (used with panel)
 #define SPI_MOSI_DDR DDB3  // 
 #define SPI_MISO_DDR DDB4  // 
 #define SPI_SCK_DDR  DDB5  // clock
@@ -60,7 +60,6 @@
 #define SPI_OUT_OK1_PIN      PINC0
 #define SPI_OUT_OK2_PIN      PIND3  // hack: need separate OK lines :(
 #define SPI_OUT_OK3_PIN      PIND4  // hack: need separate OK lines :(
-
 
 #define SPI_CFG_DDR       DDRD
 #define SPI_CFG_MODE_DDR  DDD6
