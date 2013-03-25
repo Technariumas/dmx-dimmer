@@ -17,18 +17,20 @@ inline void spi_slave_init (void) {
 
     output_low(SPI_OUT_PORT, SPI_OUT_OK);
 
-    // pull-ups on inputs (hi-z otherwise)
+    // pull-ups on inputs (hi-z doesn't work with 3 slaves)
     input_pullup(SPI_OUT_PORT, SPI_OUT_CHAN0);
     input_pullup(SPI_OUT_PORT, SPI_OUT_CHAN1);
     input_pullup(SPI_OUT_PORT, SPI_OUT_SS);
 
-    // DI and USCK are inputs, DO is output
+    // DI and USCK are inputs. DO is an output, but has to be set as Hi-Z
+    // input to prevent muliple slaves driving one line.
     set_input(SPI_DDR, SPI_DI_DDR);
     set_input(SPI_DDR, SPI_USCK_DDR);
-    set_output(SPI_DDR, SPI_DO_DDR);
+    set_input(SPI_DDR, SPI_DO_DDR);
 
     input_pullup(SPI_PORT, SPI_DI);
     input_pullup(SPI_PORT, SPI_USCK);
+    input_hiz(SPI_PORT, SPI_DO);
 
     // enable external interrupt PCINT3 on PB3 (SPI_OUT_SS)
     PCMSK |= _BV(PCINT3);

@@ -152,6 +152,9 @@ ISR (PCINT_vect, ISR_NOBLOCK) {
     case 0b110: chan=3; break;
     }
 
+    // chosen slave gets to talk on MISO line
+    set_output(SPI_DDR, SPI_DO_DDR);
+
     led_toggle(1);
     /* led_on(1); */
 
@@ -164,6 +167,10 @@ ISR (PCINT_vect, ISR_NOBLOCK) {
     /* led_toggle(1); */
 
     chanval[chan] = USIDR;
+
+    // release MISO line
+    set_input(SPI_DDR, SPI_DO_DDR);
+    input_hiz(SPI_PORT, SPI_DO);
 
     output_low(SPI_OUT_PORT, SPI_OUT_OK);
 }
