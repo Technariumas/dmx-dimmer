@@ -42,7 +42,7 @@ int main (void) {
     // debug leds
     leds_init();
     led_off(0);  // red - error (TODO: use #define)
-    led_off(1);  // green - data transmission (TODO: use #define)
+    led_on(1);   // green - data transmission (TODO: use #define)
 
     // default channel values to zero
     for (i = 0; i < DMX_CHANNELS; i++) chanval[i] = 0;
@@ -159,10 +159,11 @@ ISR (PCINT_vect, ISR_NOBLOCK) {
     USISR = _BV(USIOIF);                   // clear overflow flag
     output_high(SPI_OUT_PORT, SPI_OUT_OK); // i'm ready!
     while ( !(USISR & _BV(USIOIF)) );      // wait for reception complete
-    output_low(SPI_OUT_PORT, SPI_OUT_OK);
-
-    chanval[chan] = USIDR;
 
     /* led_off(1); */
     /* led_toggle(1); */
+
+    chanval[chan] = USIDR;
+
+    output_low(SPI_OUT_PORT, SPI_OUT_OK);
 }

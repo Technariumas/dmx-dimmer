@@ -16,7 +16,14 @@ inline void spi_master_init (void) {
     set_output(SPI_SLAVES_DDR, SPI_OUT_SS1_DDR);
     set_output(SPI_SLAVES_DDR, SPI_OUT_SS2_DDR);
     set_output(SPI_SLAVES_DDR, SPI_OUT_SS3_DDR);
-    set_input(SPI_SLAVES_DDR, SPI_OUT_OK_DDR);
+    set_input(SPI_SLAVES_DDR, SPI_OUT_OK1_DDR);
+    set_input(SPI_SLAVES_OUTOK_DDR, SPI_OUT_OK2_DDR);
+    set_input(SPI_SLAVES_OUTOK_DDR, SPI_OUT_OK3_DDR);
+
+    // pull-ups on inputs (hi-z otherwise)
+    input_pullup(SPI_SLAVES_PORT, SPI_OUT_OK1);
+    input_pullup(SPI_SLAVES_OUTOK_PORT, SPI_OUT_OK2);
+    input_pullup(SPI_SLAVES_OUTOK_PORT, SPI_OUT_OK3);
 
     // there are pull-ups on slave end, pull high here, too, so no
     // current flows pointlessly

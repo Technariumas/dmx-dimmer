@@ -18,6 +18,31 @@
 volatile dmx_t dmx = {IDLE, 1, 0, 0, 0, 0, 0, 255};
 
 
+// hack: separate slave OK lines are needed :(
+uint8_t slave_is_available (uint8_t s) {
+    /* if ((s == 0) && (SPI_SLAVES_PIN & _BV(SPI_OUT_OK1_PIN))) return 1; */
+    /* if ((s == 1) && (SPI_SLAVES_OUTOK_PIN & _BV(SPI_OUT_OK2_PIN))) return 1; */
+    /* if ((s == 2) && (SPI_SLAVES_OUTOK_PIN & _BV(SPI_OUT_OK3_PIN))) return 1; */
+
+    switch (s) {
+    case 0:
+    	if (SPI_SLAVES_PIN & _BV(SPI_OUT_OK1_PIN)) return 0;
+    	break;
+    case 1:
+    	if (SPI_SLAVES_OUTOK_PIN & _BV(SPI_OUT_OK2_PIN)) return 0;
+    	break;
+    case 2:
+    	if (SPI_SLAVES_OUTOK_PIN & _BV(SPI_OUT_OK3_PIN)) return 0;
+    	break;
+    default:
+    	return 0;
+    	break;
+    } // switch
+
+    return 1;
+}
+
+
 int main (void) {
     /* uint8_t confl = 0; */
     /* uint8_t confh = 0; */
@@ -91,6 +116,10 @@ int main (void) {
 
 	// iterate over DMX channels
 	for (c = 0; c < DMX_CHANNELS; c++) {
+	    // skip if slave is busy
+	    /* while (slave_is_ready(c/4)); */
+	    if ( !(slave_is_available(c/4)) ) continue;
+
 	    // check if new data present for this channel
 	    if (dmx.dataisnew & ((uint16_t)1 << c)) {
 		/* even newer data may come while transmitting current
@@ -113,12 +142,14 @@ int main (void) {
 		// for any slave, set which of the 4 dmx channels t'is for
 		spi_chan_select(c%4);
 
-		// select one of three slaves (TODO: remove hard-coded?)
+		// select one of three slaves (TODO: remove hard-coded 4?)
 		spi_request_interrupt(c/4);
 
-		// wait 'till slave ready
+		// wait till slave says OK (marks itself busy/unavailable)
 		led_on(0);  // debug
-		while ( !(SPI_SLAVES_PIN & _BV(SPI_OUT_OK_PIN)) );
+		if (c == 11) led_on(1);
+		while (slave_is_available(c/4));
+		if (c == 11) led_off(1);
 		led_off(0); // debug
 		
 		// transmit channel's value
@@ -129,7 +160,8 @@ int main (void) {
 		// pull-ups on other end, reduce power consumption
 		spi_chan_select(SPI_CHAN_RESET);
 
-		// check if transmission not successful
+		// check if transmission not successful or even newer
+		// data arrived
 		if (retval != SPI_TRANSMIT_DUMMY) {
 		    dmx.dataisnew |= ((uint16_t)1 << c);
 		}
@@ -146,7 +178,7 @@ ISR (USART_RX_vect, ISR_BLOCK) {
     dmx.status = UCSR0A;
     dmx.data = UDR0;
 
-    led_on(1);
+    /* led_on(1); */
 
     // data overrun or frame error (break condition)
     if ( dmx.status & (_BV(DOR0)|_BV(FE0)) ) {
@@ -177,7 +209,7 @@ ISR (USART_RX_vect, ISR_BLOCK) {
 	}
     }
 
-    led_off(1);
+    /* led_off(1); */
 }
 
 // interrupt: ADC conversion complete

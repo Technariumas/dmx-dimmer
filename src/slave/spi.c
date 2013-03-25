@@ -9,11 +9,13 @@
 #include "iocontrol.h"
 
 inline void spi_slave_init (void) {
-    // slave select, dmx channel select, transmit ok line
+    // slave select, dmx channel select, ready to transmit (ok) line
     set_input(SPI_OUT_DDR, SPI_OUT_CHAN0_DDR);
     set_input(SPI_OUT_DDR, SPI_OUT_CHAN1_DDR);
     set_input(SPI_OUT_DDR, SPI_OUT_SS_DDR);
     set_output(SPI_OUT_DDR, SPI_OUT_OK_DDR);
+
+    output_low(SPI_OUT_PORT, SPI_OUT_OK);
 
     // pull-ups on inputs (hi-z otherwise)
     input_pullup(SPI_OUT_PORT, SPI_OUT_CHAN0);
