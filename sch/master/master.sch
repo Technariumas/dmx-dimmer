@@ -1,4 +1,4 @@
-v 20110115 2
+v 20121203 2
 C 37000 39900 1 0 0 vcc-2.sym
 C 29300 43500 1 0 0 vcc-2.sym
 N 33600 38600 37200 38600 4
@@ -32,7 +32,7 @@ net=OUT_OK:1
 T 33800 40400 5 10 0 0 0 0 1
 device=none
 T 34500 39800 5 10 1 1 0 1 1
-value=OUT_OK
+value=OUT_OK1
 }
 C 33600 40900 1 0 0 output-2.sym
 {
@@ -615,7 +615,7 @@ net=OUT_OK:1
 T 51000 38600 5 10 0 0 0 0 1
 device=none
 T 50900 38000 5 10 1 1 0 7 1
-value=OUT_OK
+value=OUT_OK1
 }
 C 50400 37600 1 0 0 input-2.sym
 {
@@ -693,11 +693,11 @@ footprint=MTA100_10
 C 50400 41600 1 0 0 input-2.sym
 {
 T 51600 41500 5 10 0 0 180 0 1
-net=OUT_OK:1
+net=OUT_OK:2
 T 51000 42300 5 10 0 0 0 0 1
 device=none
 T 50900 41700 5 10 1 1 0 7 1
-value=OUT_OK
+value=OUT_OK2
 }
 C 50400 41300 1 0 0 input-2.sym
 {
@@ -765,11 +765,11 @@ value=OUT_SS2
 C 50400 45300 1 0 0 input-2.sym
 {
 T 51600 45200 5 10 0 0 180 0 1
-net=OUT_OK:1
+net=OUT_OK:3
 T 51000 46000 5 10 0 0 0 0 1
 device=none
 T 50900 45400 5 10 1 1 0 7 1
-value=OUT_OK
+value=OUT_OK3
 }
 C 50400 45000 1 0 0 input-2.sym
 {
@@ -851,4 +851,22 @@ T 33800 40800 5 10 0 0 180 6 1
 device=none
 T 34500 41400 5 10 1 1 180 7 1
 value=OUT_SS3
+}
+C 30200 40500 1 180 0 output-2.sym
+{
+T 30000 40200 5 10 0 0 180 0 1
+net=OUT_OK:2
+T 30000 39800 5 10 0 0 180 0 1
+device=none
+T 29300 40400 5 10 1 1 180 1 1
+value=OUT_OK2
+}
+C 30200 40100 1 180 0 output-2.sym
+{
+T 30000 39800 5 10 0 0 180 0 1
+net=OUT_OK:3
+T 30000 39400 5 10 0 0 180 0 1
+device=none
+T 29300 40000 5 10 1 1 180 1 1
+value=OUT_OK3
 }
