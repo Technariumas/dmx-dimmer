@@ -20,10 +20,6 @@ volatile dmx_t dmx = {IDLE, 1, 0, 0, 0, 0, 0, 255};
 
 // hack: separate slave OK lines are needed :(
 uint8_t slave_is_available (uint8_t s) {
-    /* if ((s == 0) && (SPI_SLAVES_PIN & _BV(SPI_OUT_OK1_PIN))) return 1; */
-    /* if ((s == 1) && (SPI_SLAVES_OUTOK_PIN & _BV(SPI_OUT_OK2_PIN))) return 1; */
-    /* if ((s == 2) && (SPI_SLAVES_OUTOK_PIN & _BV(SPI_OUT_OK3_PIN))) return 1; */
-
     switch (s) {
     case 0:
     	if (SPI_SLAVES_PIN & _BV(SPI_OUT_OK1_PIN)) return 0;
