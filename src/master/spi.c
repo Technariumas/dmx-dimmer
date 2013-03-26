@@ -35,7 +35,6 @@ inline void spi_master_init (void) {
     /* set_output(SPI_DDR, SPI_MOSI_DDR); */
     /* set_output(SPI_DDR, SPI_SCK_DDR); */
     /* set_output(SPI_DDR, SPI_SS_DDR); */
-    /* set_input(SPI_DDR, SPI_OUT_OK_DDR); */
     output_high(SPI_PORT, SPI_SS);  // ~SS inactive
 
     // Enable SPI, Master, SCK=fosc/128 (TODO: increase SCK)
