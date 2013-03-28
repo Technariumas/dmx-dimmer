@@ -19,8 +19,8 @@
 
 #define cfg_reset_enable()  output_low(SPI_CFG_PORT, SPI_CFG_RESET)
 #define cfg_reset_disable() output_high(SPI_CFG_PORT, SPI_CFG_RESET)
-#define cfg_select()        output_low(SPI_PORT, SPI_CFG_SS)
-#define cfg_deselect()      output_high(SPI_PORT, SPI_CFG_SS)
+#define cfg_select()        output_low(SPI_PORT, SPI_SS)
+#define cfg_deselect()      output_high(SPI_PORT, SPI_SS)
 #define cfg_mode_parallel() output_low(SPI_CFG_PORT, SPI_CFG_MODE)
 #define cfg_mode_serial()   output_high(SPI_CFG_PORT, SPI_CFG_MODE)
 

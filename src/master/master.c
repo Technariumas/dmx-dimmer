@@ -40,9 +40,9 @@ uint8_t slave_is_available (uint8_t s) {
 
 
 int main (void) {
-    /* uint8_t confl = 0; */
-    /* uint8_t confh = 0; */
-    uint8_t c;      // channel iterator
+    uint8_t confl = 0;  // configuration from panel (low byte)
+    uint8_t confh = 0;  // configuration from panel (high byte)
+    uint8_t c;          // channel iterator
     uint8_t chanval;
     uint8_t retval;
 
@@ -61,35 +61,48 @@ int main (void) {
      */
     cfg_init();
 
-    /* cfg_select(); */
-    /* delay_ms(1);   // maybe redundant, should be one set-up time */
+    cfg_reset_disable();
+    cfg_select();
+    delay_ms(1);   // maybe redundant, should be one set-up time
 
-    /* cfg_mode_parallel(); */
-    /* delay_ms(1); */
+    cfg_mode_parallel();
+    delay_ms(1);
 
-    /* // pulse to read in bits */
-    /* output_low(SPI_PORT, SPI_SCK); */
-    /* output_high(SPI_PORT, SPI_SCK); */
+    // hack: pulse clock line for 74166 to read in bits from switches
+    // (not needed for 74165?)
+    output_low(SPI_PORT, SPI_SCK);
+    delay_ms(1);
+    output_high(SPI_PORT, SPI_SCK);
+    delay_ms(1);
 
-    /* cfg_mode_serial(); */
-    /* delay_ms(1); */
+    cfg_mode_serial();
+    delay_ms(1);
 
     // proceed with proper SPI operation
     spi_master_init();
-    //SPCR |= (1<<CPOL);  // otherwise can't read first bit
+    cfg_select();
+    /* SPCR |= _BV(CPOL);  // otherwise can't read first bit */
 
-    // TODO: cfg_read()
-    /* // read in first octet */
-    /* confl = spi_master_transmit(SPI_TRANSMIT_DUMMY); */
-
-    /* // read in second octet */
-    /* confh = spi_master_transmit(SPI_TRANSMIT_DUMMY); */
+    /* read in configuration (address and 6 binary settings)
+     * reading is performed by pushing bogus data to dumb shift
+     * registers; those push back the real deal
+     */
+    confh = spi_master_transmit(SPI_TRANSMIT_DUMMY);
+    confl = spi_master_transmit(SPI_TRANSMIT_DUMMY);
 
     /* output_high(SPI_PORT, SPI_SCK);  // TODO: is this needed? */
-    /* cfg_deselect(); */
-    /* cfg_reset_enable(); */
+    cfg_deselect();
+    cfg_reset_enable();
+
+    // push in address' low byte
+    dmx.address = (uint16_t)confl;
+    // hack: hardware bug, address pins 9 and 10 are in reversed order
+    // address pin 10 sets address >= 512, good for soft-blocking device
+    if (confh & 0b10) dmx.address |= 0b0100000000;
+    if (confh & 0b01) dmx.address |= 0b1000000000;
 
     /* adc_init(); */
+
     usart_init();
     sei();
 
