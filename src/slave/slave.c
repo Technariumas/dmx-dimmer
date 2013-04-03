@@ -122,7 +122,7 @@ ISR (INT0_vect, ISR_NOBLOCK) {
 
 // interrupt: new firing angle reached
 ISR (TIMER0_COMPA_vect, ISR_BLOCK) {
-    fire_channels(zc.angle);
+    if (zc.angle != 0) fire_channels(zc.angle);
     if (zc.angle > 0) zc.angle--;
 }
 
