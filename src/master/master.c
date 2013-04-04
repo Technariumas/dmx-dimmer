@@ -5,14 +5,14 @@
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/wdt.h>      // TODO: disable with fuses and remove refs
-//#include <util/delay.h>  // TODO: use or remove
+//#include <util/delay.h> // TODO: use or remove
 #include <avr/interrupt.h>
 
 #include "iocontrol.h"
-#include "fakedelay.h"  // TODO: remove?
+#include "fakedelay.h"    // TODO: replace with util/delay.h?
 #include "dmx.h"
 #include "spi.h"
-#include "adc.h"
+/* #include "adc.h" */
 #include "usart.h"
 
 volatile dmx_t dmx = {IDLE, 1, 0, 0, 0, 0, 0, 255};
@@ -101,14 +101,15 @@ int main (void) {
     if (confh & 0b10) dmx.address |= 0b0100000000;
     if (confh & 0b01) dmx.address |= 0b1000000000;
 
+    /* // set up for getting data from PREHEAT/MAXVAL pots */
     /* adc_init(); */
 
+    // start talking to slaves
     usart_init();
     sei();
 
-    /* TODO: make sure master starts up later than slave
+    /* make sure master starts up later than slave
      * otherwise slave doesn't get first interrupt
-     * perhaps this won't happen when master takes time to read settings
      */
     delay_ms(200);
     delay_ms(200);
@@ -117,8 +118,8 @@ int main (void) {
     delay_ms(200);
 
     while (1) {
-	// see if preheat/maxval on panel changed
-	/* if ( !(adc_running()) ) { */
+	/* // see if preheat/maxval (one of the two) on panel changed */
+	/* if ( !adc_is_running() ) { */
 	/*     adc_channel_toggle(); */
 	/*     adc_start(); */
 	/* } */
@@ -136,17 +137,13 @@ int main (void) {
 		 */
 		dmx.dataisnew &= ~((uint16_t)1 << c);
 
-		/* TODO: make sure chanval is in [preheat; maxval] range, but
-		 * use a temporary var for this - otherwise the USART
-		 * interrupt might change it back again
-		 */
+		// use a local var: dmx structure is global, USART
+		// interrupt has access to it and might change it
 		chanval = dmx.chanval[c];
-		/* if (chanval < dmx.preheat) */
-		/*     chanval = dmx.preheat; */
-		/* if (chanval > dmx.maxval) */
-		/*     chanval = dmx.maxval; */
 
-		/* led_on(0); */
+		// TODO: make sure chanval is in [preheat; maxval] range
+		/* if (chanval < dmx.preheat) chanval = dmx.preheat; */
+		/* if (chanval > dmx.maxval) chanval = dmx.maxval; */
 
 		// for any slave, set which of the 4 dmx channels t'is for
 		spi_chan_select(c%4);
@@ -155,16 +152,12 @@ int main (void) {
 		spi_request_interrupt(c/4);
 
 		// wait till slave says OK (marks itself busy/unavailable)
-		led_on(0);  // debug
-		if (c == 11) led_on(1);
+		led_on(0);
 		while (slave_is_available(c/4));
-		if (c == 11) led_off(1);
-		led_off(0); // debug
+		led_off(0);
 		
 		// transmit channel's value
 		retval = spi_master_transmit(chanval);
-
-		/* led_off(1); */
 
 		// pull-ups on other end, reduce power consumption
 		spi_chan_select(SPI_CHAN_RESET);
@@ -223,8 +216,11 @@ ISR (USART_RX_vect, ISR_BLOCK) {
 
 // interrupt: ADC conversion complete
 /* ISR (ADC_vect, ISR_NOBLOCK) { */
-/*     if (adc_channel_get()) */
-/* 	dmx.maxval = ADCH/2 + 128; */
-/*     else */
-/* 	dmx.preheat = ADCH/2; */
+/*     // 0:maxval (50-100%); 1: preheat (0-50%) */
+/*     if (adc_channel_which()) { */
+/*     dmx.preheat = adc_get_value()/2; */
+/*     } */
+/*     else { */
+/*     	dmx.maxval = adc_get_value()/2 + 128; */
+/*     } */
 /* } */
