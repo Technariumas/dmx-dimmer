@@ -4,7 +4,7 @@
 
 #include <inttypes.h>
 #include <avr/io.h>
-#include <avr/wdt.h>       // TODO: disable in hardware and remove
+#include <avr/wdt.h>
 #include <util/delay.h>    // TODO: use or remove
 #include <avr/interrupt.h>
 
@@ -18,13 +18,13 @@
 #define CYCLES_ANG CYCLES_ZC/256
 
 // {dur, old_dur, deg_dur, angle}
-zc_t zc = {CYCLES_ZC, CYCLES_ZC, CYCLES_ANG, 255};
+volatile zc_t zc = {CYCLES_ZC, CYCLES_ZC, CYCLES_ANG, 255};
 
 #undef CYCLES_ZC
 #undef CYCLES_ANG
 
 // DMX values received from Master
-uint8_t chanval[DMX_CHANNELS];
+volatile uint8_t chanval[DMX_CHANNELS];
 
 
 inline void fire_channels (uint8_t angle) {
@@ -59,7 +59,7 @@ int main (void) {
     zc_init();
 
     sei();
-
+    
     // everything else is interrupt-driven
     while (1) asm volatile("nop\n\t"::);
 
