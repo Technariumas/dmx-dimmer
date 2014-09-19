@@ -13,6 +13,9 @@
 #include "spi.h"
 #include "zc.h"
 
+#define LED_GREEN 0
+#define LED_RED 1
+
 // uC cycles between: two zero crossings, two firing angles
 #define CYCLES_ZC  F_CPU/(2*F_MAINS)
 #define CYCLES_ANG CYCLES_ZC/256
@@ -45,8 +48,8 @@ int main (void) {
 
     // debug leds
     leds_init();
-    led_off(0);  // red - error (TODO: use #define)
-    led_off(1);   // green - data transmission (TODO: use #define)
+    led_off(LED_RED);  // red - error (TODO: use #define)
+    led_off(LED_GREEN);   // green - data transmission (TODO: use #define)
 
     // default channel values to zero
     for (i = 0; i < DMX_CHANNELS; i++) chanval[i] = 0;
@@ -66,13 +69,13 @@ int main (void) {
     
     int previous_selected_state;
     while (1) {
-        led_off(0);
+        led_on(LED_RED);
 
         // Data transmission is started when 'selected state' changes.
         previous_selected_state = get_selected_state();
         while (previous_selected_state == get_selected_state());
 
-        led_on(0);
+        led_off(LED_RED);
 
         // read CHAN0/CHAN1
         uint8_t chan0 = !!(SPI_OUT_PIN & _BV(SPI_OUT_CHAN0_PIN));
@@ -82,14 +85,14 @@ int main (void) {
         // chosen slave gets to talk on MISO line
         set_output(SPI_DDR, SPI_DO_DDR);
 
-        led_on(1);
+        led_on(LED_GREEN);
 
         USIDR = SPI_TRANSMIT_DUMMY;
         USISR = _BV(USIOIF);                   // clear overflow flag
         output_high(SPI_OUT_PORT, SPI_OUT_OK); // i'm ready!
         while ( !(USISR & _BV(USIOIF)) );      // wait for reception complete
 
-        led_off(1);
+        led_off(LED_GREEN);
 
         chanval[chan] = USIDR;
 
@@ -116,9 +119,6 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     dimmer_off(1);
     dimmer_off(2);
     dimmer_off(3);
-
-    // if some ZCs were missed before, led would be on
-    led_off(0);
 
     // see how many cycles passed since previous ZC (used later)
     // low byte must be read first
