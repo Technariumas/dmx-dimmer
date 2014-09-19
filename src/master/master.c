@@ -105,7 +105,7 @@ int main (void) {
     /* adc_init(); */
 
     // start talking to slaves
-    // usart_init();
+    usart_init();
     sei();
 
     /* make sure master starts up later than slave
@@ -117,10 +117,6 @@ int main (void) {
     delay_ms(200);
     delay_ms(200);
 
-//    wdt_enable(WDTO_1S);
-
-    // FIXME: don't hardcode
-    dmx.dataisnew = 0b0000000100010001;
     while (1) {
 	/* // see if preheat/maxval (one of the two) on panel changed */
 	/* if ( !adc_is_running() ) { */
@@ -130,49 +126,47 @@ int main (void) {
 
 	// iterate over DMX channels
 	for (c = 0; c < DMX_CHANNELS; c++) {
-//	    wdt_reset();
 	    // skip if slave is busy
 	    /* while (slave_is_ready(c/4)); */
 	    if ( !(slave_is_available(c/4)) ) continue;
 
 	    // check if new data present for this channel
 	    if (dmx.dataisnew & ((uint16_t)1 << c)) {
-            /* even newer data may come while transmitting current
-             * value, so unset the channel's flag asap
-             */
-            dmx.dataisnew &= ~((uint16_t)1 << c);
+		/* even newer data may come while transmitting current
+		 * value, so unset the channel's flag asap
+		 */
+		dmx.dataisnew &= ~((uint16_t)1 << c);
 
-            // use a local var: dmx structure is global, USART
-            // interrupt has access to it and might change it
-            chanval = 64;//dmx.chanval[c];
+		// use a local var: dmx structure is global, USART
+		// interrupt has access to it and might change it
+		chanval = dmx.chanval[c];
 
-            // TODO: make sure chanval is in [preheat; maxval] range
-            /* if (chanval < dmx.preheat) chanval = dmx.preheat; */
-            /* if (chanval > dmx.maxval) chanval = dmx.maxval; */
+		// TODO: make sure chanval is in [preheat; maxval] range
+		/* if (chanval < dmx.preheat) chanval = dmx.preheat; */
+		/* if (chanval > dmx.maxval) chanval = dmx.maxval; */
 
-            // for any slave, set which of the 4 dmx channels t'is for
-            spi_chan_select(c%4);
+		// for any slave, set which of the 4 dmx channels t'is for
+		spi_chan_select(c%4);
 
-            // select one of three slaves (TODO: remove hard-coded 4?)
-            spi_request_interrupt(c/4);
+		// select one of three slaves (TODO: remove hard-coded 4?)
+		spi_request_interrupt(c/4);
 
-            // wait till slave says OK (marks itself busy/unavailable)
-            led_on(0);
-            while (slave_is_available(c/4));
-            led_off(0);
-            
-            // transmit channel's value
-            retval = spi_master_transmit(chanval);
+		// wait till slave says OK (marks itself busy/unavailable)
+		led_on(0);
+		while (slave_is_available(c/4));
+		led_off(0);
+		
+		// transmit channel's value
+		retval = spi_master_transmit(chanval);
 
-            // pull-ups on other end, reduce power consumption
-            spi_chan_select(SPI_CHAN_RESET);
+		// pull-ups on other end, reduce power consumption
+		spi_chan_select(SPI_CHAN_RESET);
 
-            // check if transmission not successful or even newer
-            // data arrived
-            if (retval != SPI_TRANSMIT_DUMMY) {
-                dmx.dataisnew |= ((uint16_t)1 << c);
-            }
-            dmx.dataisnew = 0b0000000000010000;
+		// check if transmission not successful or even newer
+		// data arrived
+		if (retval != SPI_TRANSMIT_DUMMY) {
+		    dmx.dataisnew |= ((uint16_t)1 << c);
+		}
 	    }  // if (new chan data)
 	}  // for (channel iterate)
     }  // while (1)
