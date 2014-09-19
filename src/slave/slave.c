@@ -97,6 +97,7 @@ ISR (INT0_vect, ISR_NOBLOCK) {
     zc.old_dur = zc.dur;
 
     // read two ints into long int
+    // typeof(tcnth) == uint8_t
     zc.dur = tcnth;
     zc.dur = zc.dur << 8;
     zc.dur += tcntl;
