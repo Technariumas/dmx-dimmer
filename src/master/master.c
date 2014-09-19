@@ -119,6 +119,7 @@ int main (void) {
 
 //    wdt_enable(WDTO_1S);
 
+    // FIXME: don't hardcode
     dmx.dataisnew = 0b0000000100010001;
     while (1) {
 	/* // see if preheat/maxval (one of the two) on panel changed */
@@ -129,7 +130,7 @@ int main (void) {
 
 	// iterate over DMX channels
 	for (c = 0; c < DMX_CHANNELS; c++) {
-//        wdt_reset();
+//	    wdt_reset();
 	    // skip if slave is busy
 	    /* while (slave_is_ready(c/4)); */
 	    if ( !(slave_is_available(c/4)) ) continue;
