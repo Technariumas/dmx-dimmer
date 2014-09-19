@@ -46,7 +46,7 @@ int main (void) {
     // debug leds
     leds_init();
     led_off(0);  // red - error (TODO: use #define)
-    led_on(1);   // green - data transmission (TODO: use #define)
+    led_off(1);   // green - data transmission (TODO: use #define)
 
     // default channel values to zero
     for (i = 0; i < DMX_CHANNELS; i++) chanval[i] = 0;
@@ -66,9 +66,13 @@ int main (void) {
     
     int previous_selected_state;
     while (1) {
+        led_off(0);
+
         // Data transmission is started when 'selected state' changes.
         previous_selected_state = get_selected_state();
         while (previous_selected_state == get_selected_state());
+
+        led_on(0);
 
         // read CHAN0/CHAN1
         uint8_t chan0 = !!(SPI_OUT_PIN & _BV(SPI_OUT_CHAN0_PIN));
@@ -78,16 +82,14 @@ int main (void) {
         // chosen slave gets to talk on MISO line
         set_output(SPI_DDR, SPI_DO_DDR);
 
-        led_toggle(1);
-        /* led_on(1); */
+        led_on(1);
 
         USIDR = SPI_TRANSMIT_DUMMY;
         USISR = _BV(USIOIF);                   // clear overflow flag
         output_high(SPI_OUT_PORT, SPI_OUT_OK); // i'm ready!
         while ( !(USISR & _BV(USIOIF)) );      // wait for reception complete
 
-        /* led_off(1); */
-        /* led_toggle(1); */
+        led_off(1);
 
         chanval[chan] = USIDR;
 
@@ -166,7 +168,6 @@ ISR (TIMER0_COMPA_vect, ISR_BLOCK) {
 // ZCs too long
 ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
     // this is an unwanted situation, turn red led on
-    led_on(0);
     /* dimmer_off(0); */
     /* dimmer_off(1); */
     /* dimmer_off(2); */
