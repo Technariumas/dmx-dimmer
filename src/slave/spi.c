@@ -32,10 +32,6 @@ inline void spi_slave_init (void) {
     input_pullup(SPI_PORT, SPI_USCK);
     input_hiz(SPI_PORT, SPI_DO);
 
-    // enable external interrupt PCINT3 on PB3 (SPI_OUT_SS)
-    PCMSK |= _BV(PCINT3);
-    GIMSK |= _BV(PCIE);
-
     // three-wire mode (SPI), external clock (SPI mode 0)
     USICR = _BV(USIWM0) | _BV(USICS1) /* | _BV(USICS0) */;
 }

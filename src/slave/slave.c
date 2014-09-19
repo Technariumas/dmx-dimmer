@@ -34,6 +34,10 @@ inline void fire_channels (uint8_t angle) {
     if (chanval[3] >= angle) dimmer_on(3);
 }
 
+int get_selected_state(void) {
+    return SPI_OUT_PIN & _BV(SPI_OUT_SS_PIN);
+}
+
 int main (void) {
     uint8_t i = 0;
 
@@ -60,8 +64,39 @@ int main (void) {
 
     sei();
     
-    // everything else is interrupt-driven
-    while (1) asm volatile("nop\n\t"::);
+    int previous_selected_state;
+    while (1) {
+        // Data transmission is started when 'selected state' changes.
+        previous_selected_state = get_selected_state();
+        while (previous_selected_state == get_selected_state());
+
+        // read CHAN0/CHAN1
+        uint8_t chan0 = !!(SPI_OUT_PIN & _BV(SPI_OUT_CHAN0_PIN));
+        uint8_t chan1 = !!(SPI_OUT_PIN & _BV(SPI_OUT_CHAN1_PIN));
+        uint8_t chan = (chan1 << 1) | chan0;
+
+        // chosen slave gets to talk on MISO line
+        set_output(SPI_DDR, SPI_DO_DDR);
+
+        led_toggle(1);
+        /* led_on(1); */
+
+        USIDR = SPI_TRANSMIT_DUMMY;
+        USISR = _BV(USIOIF);                   // clear overflow flag
+        output_high(SPI_OUT_PORT, SPI_OUT_OK); // i'm ready!
+        while ( !(USISR & _BV(USIOIF)) );      // wait for reception complete
+
+        /* led_off(1); */
+        /* led_toggle(1); */
+
+        chanval[chan] = USIDR;
+
+        // release MISO line
+        set_input(SPI_DDR, SPI_DO_DDR);
+        input_hiz(SPI_PORT, SPI_DO);
+
+        output_low(SPI_OUT_PORT, SPI_OUT_OK);
+    }
 
     return 1;
 }
@@ -136,42 +171,4 @@ ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
     /* dimmer_off(1); */
     /* dimmer_off(2); */
     /* dimmer_off(3); */
-}
-
-// interrupt: master has new dmx data
-ISR (PCINT_vect, ISR_NOBLOCK) {
-    uint8_t chan = 0;
-    uint8_t tmp = 0;
-
-    // read CHAN0/CHAN1
-    tmp = SPI_OUT_PIN;
-    tmp &= 0b00000110;
-    switch (tmp) {
-    case 0b000: chan=0; break;
-    case 0b010: chan=2; break;
-    case 0b100: chan=1; break;
-    case 0b110: chan=3; break;
-    }
-
-    // chosen slave gets to talk on MISO line
-    set_output(SPI_DDR, SPI_DO_DDR);
-
-    led_toggle(1);
-    /* led_on(1); */
-
-    USIDR = SPI_TRANSMIT_DUMMY;
-    USISR = _BV(USIOIF);                   // clear overflow flag
-    output_high(SPI_OUT_PORT, SPI_OUT_OK); // i'm ready!
-    while ( !(USISR & _BV(USIOIF)) );      // wait for reception complete
-
-    /* led_off(1); */
-    /* led_toggle(1); */
-
-    chanval[chan] = USIDR;
-
-    // release MISO line
-    set_input(SPI_DDR, SPI_DO_DDR);
-    input_hiz(SPI_PORT, SPI_DO);
-
-    output_low(SPI_OUT_PORT, SPI_OUT_OK);
 }
