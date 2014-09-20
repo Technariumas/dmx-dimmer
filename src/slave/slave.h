@@ -16,6 +16,8 @@
 // ===== PINOUT =====
 
 // leds
+#define LED_RED 0
+#define LED_GREEN 1
 #define LEDS_DDR DDRD
 #define LED0_DDR DDD0
 #define LED1_DDR DDD1

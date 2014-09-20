@@ -13,9 +13,6 @@
 #include "spi.h"
 #include "zc.h"
 
-#define LED_GREEN 0
-#define LED_RED 1
-
 // uC cycles between: two zero crossings, two firing angles
 #define CYCLES_ZC  F_CPU/(2*F_MAINS)
 #define CYCLES_ANG CYCLES_ZC/256
@@ -37,7 +34,7 @@ inline void fire_channels (uint8_t angle) {
     if (chanval[3] >= angle) dimmer_on(3);
 }
 
-int get_selected_state(void) {
+int is_requested(void) {
     return SPI_OUT_PIN & _BV(SPI_OUT_SS_PIN);
 }
 
@@ -67,14 +64,10 @@ int main (void) {
 
     sei();
     
-    int previous_selected_state;
     while (1) {
+        // Wait for request from master.
         led_on(LED_RED);
-
-        // Data transmission is started when 'selected state' changes.
-        previous_selected_state = get_selected_state();
-        while (previous_selected_state == get_selected_state());
-
+        while (!is_requested());
         led_off(LED_RED);
 
         // read CHAN0/CHAN1
@@ -107,7 +100,7 @@ int main (void) {
 }
 
 // interrupt: action to take on zero crossing
-ISR (INT0_vect, ISR_NOBLOCK) {
+ISR (INT0_vect, ISR_BLOCK) {
     uint8_t tcntl;
     uint8_t tcnth;
 
@@ -166,7 +159,7 @@ ISR (TIMER0_COMPA_vect, ISR_BLOCK) {
 
 // interrupt: maximum counter value reached, time interval between two
 // ZCs too long
-ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
+ISR (TIMER1_OVF_vect, ISR_BLOCK) {
     // this is an unwanted situation, turn red led on
     /* dimmer_off(0); */
     /* dimmer_off(1); */

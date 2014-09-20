@@ -5,17 +5,24 @@
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/wdt.h>      // TODO: disable with fuses and remove refs
-//#include <util/delay.h> // TODO: use or remove
 #include <avr/interrupt.h>
 
 #include "iocontrol.h"
 #include "fakedelay.h"    // TODO: replace with util/delay.h?
 #include "dmx.h"
 #include "spi.h"
-/* #include "adc.h" */
 #include "usart.h"
 
-volatile dmx_t dmx = {IDLE, 1, 0, 0, 0, 0, 0, 255};
+volatile dmx_t dmx = {
+    .state = IDLE,
+    .address = 1,
+    .slot = 0,
+    .status = 0,
+    .data = 0,
+    .preheat = 0,
+    .maxval = 255,
+    .chanval = { 0 }
+};
 
 
 // hack: separate slave OK lines are needed :(
@@ -42,17 +49,14 @@ uint8_t slave_is_available (uint8_t s) {
 int main (void) {
     uint8_t confl = 0;  // configuration from panel (low byte)
     uint8_t confh = 0;  // configuration from panel (high byte)
-    uint8_t c;          // channel iterator
-    uint8_t chanval;
-    uint8_t retval;
 
     wdt_disable();
 
     leds_init();
     delay_ms(200);
-    led_off(0);
+    led_off(LED_RED);
     delay_ms(200);
-    led_off(1);
+    led_off(LED_GREEN);
 
     /* to read in configuration from panel's DIP switches, a single
      * pulse must be sent on the SCK line prior to enabling SPI
@@ -81,7 +85,6 @@ int main (void) {
     // proceed with proper SPI operation
     spi_master_init();
     cfg_select();
-    /* SPCR |= _BV(CPOL);  // otherwise can't read first bit */
 
     /* read in configuration (address and 6 binary settings)
      * reading is performed by pushing bogus data to dumb shift
@@ -101,9 +104,6 @@ int main (void) {
     if (confh & 0b10) dmx.address |= 0b0100000000;
     if (confh & 0b01) dmx.address |= 0b1000000000;
 
-    /* // set up for getting data from PREHEAT/MAXVAL pots */
-    /* adc_init(); */
-
     // start talking to slaves
     usart_init();
     sei();
@@ -118,56 +118,42 @@ int main (void) {
     delay_ms(200);
 
     while (1) {
-	/* // see if preheat/maxval (one of the two) on panel changed */
-	/* if ( !adc_is_running() ) { */
-	/*     adc_channel_toggle(); */
-	/*     adc_start(); */
-	/* } */
-
 	// iterate over DMX channels
-	for (c = 0; c < DMX_CHANNELS; c++) {
+	for (uint8_t dmx_channel = 0; dmx_channel < DMX_CHANNELS; dmx_channel++) {
+            uint8_t slave = dmx_channel / 4;
+            uint8_t slave_channel = dmx_channel % 4;
+
 	    // skip if slave is busy
-	    /* while (slave_is_ready(c/4)); */
-	    if ( !(slave_is_available(c/4)) ) continue;
+	    /* while (slave_is_ready(dmx_channel/4)); */
+	    if ( !(slave_is_available(slave)) ) continue;
 
-	    // check if new data present for this channel
-	    if (dmx.dataisnew & ((uint16_t)1 << c)) {
-		/* even newer data may come while transmitting current
-		 * value, so unset the channel's flag asap
-		 */
-		dmx.dataisnew &= ~((uint16_t)1 << c);
+            // use a local var: dmx structure is global, USART
+            // interrupt has access to it and might change it
+            uint8_t chanval = dmx.chanval[dmx_channel];
 
-		// use a local var: dmx structure is global, USART
-		// interrupt has access to it and might change it
-		chanval = dmx.chanval[c];
+            // TODO: make sure chanval is in [preheat; maxval] range
+            /* if (chanval < dmx.preheat) chanval = dmx.preheat; */
+            /* if (chanval > dmx.maxval) chanval = dmx.maxval; */
 
-		// TODO: make sure chanval is in [preheat; maxval] range
-		/* if (chanval < dmx.preheat) chanval = dmx.preheat; */
-		/* if (chanval > dmx.maxval) chanval = dmx.maxval; */
+            // for any slave, set which of the 4 dmx channels t'is for
+            spi_chan_select(slave_channel);
 
-		// for any slave, set which of the 4 dmx channels t'is for
-		spi_chan_select(c%4);
+            // select one of three slaves
+            spi_request_slave(slave);
 
-		// select one of three slaves (TODO: remove hard-coded 4?)
-		spi_request_interrupt(c/4);
+            // wait till slave says OK (marks itself busy/unavailable)
+            led_on(LED_RED);
+            while (slave_is_available(slave));
+            led_off(LED_RED);
 
-		// wait till slave says OK (marks itself busy/unavailable)
-		led_on(0);
-		while (slave_is_available(c/4));
-		led_off(0);
-		
-		// transmit channel's value
-		retval = spi_master_transmit(chanval);
+            // Slave has answered the request, we can reset the pin to 0.
+            spi_finish_slave_request(slave);
+            
+            // transmit channel's value
+            spi_master_transmit(chanval);
 
-		// pull-ups on other end, reduce power consumption
-		spi_chan_select(SPI_CHAN_RESET);
-
-		// check if transmission not successful or even newer
-		// data arrived
-		if (retval != SPI_TRANSMIT_DUMMY) {
-		    dmx.dataisnew |= ((uint16_t)1 << c);
-		}
-	    }  // if (new chan data)
+            // pull-ups on other end, reduce power consumption
+            spi_chan_select(SPI_CHAN_RESET);
 	}  // for (channel iterate)
     }  // while (1)
 
@@ -179,8 +165,6 @@ ISR (USART_RX_vect, ISR_BLOCK) {
     // reading data clears status flags, so read status first
     dmx.status = UCSR0A;
     dmx.data = UDR0;
-
-    /* led_on(1); */
 
     // data overrun or frame error (break condition)
     if ( dmx.status & (_BV(DOR0)|_BV(FE0)) ) {
@@ -202,7 +186,6 @@ ISR (USART_RX_vect, ISR_BLOCK) {
 	case DATA:
 	    if (dmx.chanval[dmx.slot] != dmx.data) {
 		dmx.chanval[dmx.slot] = dmx.data;
-		dmx.dataisnew |= ((uint16_t)1 << dmx.slot);
 	    }
 	    if (++dmx.slot == DMX_CHANNELS) dmx.state = IDLE;
 	    break;
@@ -210,17 +193,4 @@ ISR (USART_RX_vect, ISR_BLOCK) {
 	    break;
 	}
     }
-
-    /* led_off(1); */
 }
-
-// interrupt: ADC conversion complete
-/* ISR (ADC_vect, ISR_NOBLOCK) { */
-/*     // 0:maxval (50-100%); 1: preheat (0-50%) */
-/*     if (adc_channel_which()) { */
-/*     dmx.preheat = adc_get_value()/2; */
-/*     } */
-/*     else { */
-/*     	dmx.maxval = adc_get_value()/2 + 128; */
-/*     } */
-/* } */
