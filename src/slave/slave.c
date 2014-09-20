@@ -104,7 +104,7 @@ int main (void) {
 }
 
 // interrupt: action to take on zero crossing
-ISR (INT0_vect, ISR_NOBLOCK) {
+ISR (INT0_vect, ISR_BLOCK) {
     uint8_t tcntl;
     uint8_t tcnth;
 
@@ -163,7 +163,7 @@ ISR (TIMER0_COMPA_vect, ISR_BLOCK) {
 
 // interrupt: maximum counter value reached, time interval between two
 // ZCs too long
-ISR (TIMER1_OVF_vect, ISR_NOBLOCK) {
+ISR (TIMER1_OVF_vect, ISR_BLOCK) {
     // this is an unwanted situation, turn red led on
     /* dimmer_off(0); */
     /* dimmer_off(1); */
