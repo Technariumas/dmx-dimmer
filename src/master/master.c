@@ -51,9 +51,6 @@ uint8_t slave_is_available (uint8_t s) {
 int main (void) {
     uint8_t confl = 0;  // configuration from panel (low byte)
     uint8_t confh = 0;  // configuration from panel (high byte)
-    uint8_t c;          // channel iterator
-    uint8_t chanval;
-    uint8_t retval;
 
     wdt_disable();
 
@@ -134,32 +131,35 @@ int main (void) {
 	/* } */
 
 	// iterate over DMX channels
-	for (c = 0; c < DMX_CHANNELS; c++) {
+	for (uint8_t dmx_channel = 0; dmx_channel < DMX_CHANNELS; dmx_channel++) {
+            uint8_t slave = dmx_channel / 4;
+            uint8_t slave_channel = dmx_channel % 4;
+
 	    // skip if slave is busy
-	    /* while (slave_is_ready(c/4)); */
-	    if ( !(slave_is_available(c/4)) ) continue;
+	    /* while (slave_is_ready(dmx_channel/4)); */
+	    if ( !(slave_is_available(slave)) ) continue;
 
             // use a local var: dmx structure is global, USART
             // interrupt has access to it and might change it
-            chanval = dmx.chanval[c];
+            uint8_t chanval = dmx.chanval[dmx_channel];
 
             // TODO: make sure chanval is in [preheat; maxval] range
             /* if (chanval < dmx.preheat) chanval = dmx.preheat; */
             /* if (chanval > dmx.maxval) chanval = dmx.maxval; */
 
             // for any slave, set which of the 4 dmx channels t'is for
-            spi_chan_select(c%4);
+            spi_chan_select(slave_channel);
 
             // select one of three slaves (TODO: remove hard-coded 4?)
-            spi_request_interrupt(c/4);
+            spi_request_interrupt(slave);
 
             // wait till slave says OK (marks itself busy/unavailable)
             led_on(LED_RED);
-            while (slave_is_available(c/4));
+            while (slave_is_available(slave));
             led_off(LED_RED);
             
             // transmit channel's value
-            retval = spi_master_transmit(chanval);
+            spi_master_transmit(chanval);
 
             // pull-ups on other end, reduce power consumption
             spi_chan_select(SPI_CHAN_RESET);
