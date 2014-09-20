@@ -89,14 +89,25 @@ inline void spi_chan_select (uint8_t c) {
 }
 
 // request interrupt on proper phase arbiter
-inline void spi_request_interrupt (uint8_t slave) {
+inline void spi_request_slave (uint8_t slave) {
     switch (slave) {
-    case 0: output_toggle(SPI_SLAVES_PORT, SPI_OUT_SS1); break;
-    case 1: output_toggle(SPI_SLAVES_PORT, SPI_OUT_SS2); break;
-    case 2: output_toggle(SPI_SLAVES_PORT, SPI_OUT_SS3); break;
+    case 0: output_high(SPI_SLAVES_PORT, SPI_OUT_SS1); break;
+    case 1: output_high(SPI_SLAVES_PORT, SPI_OUT_SS2); break;
+    case 2: output_high(SPI_SLAVES_PORT, SPI_OUT_SS3); break;
     default: break;
     }
 }
+
+// request interrupt on proper phase arbiter
+inline void spi_finish_slave_request (uint8_t slave) {
+    switch (slave) {
+    case 0: output_low(SPI_SLAVES_PORT, SPI_OUT_SS1); break;
+    case 1: output_low(SPI_SLAVES_PORT, SPI_OUT_SS2); break;
+    case 2: output_low(SPI_SLAVES_PORT, SPI_OUT_SS3); break;
+    default: break;
+    }
+}
+
 
 // this is not proper SPI, but a workaround for 74166's operation mode
 inline void cfg_init (void) {

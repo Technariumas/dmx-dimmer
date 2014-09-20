@@ -34,7 +34,7 @@ inline void fire_channels (uint8_t angle) {
     if (chanval[3] >= angle) dimmer_on(3);
 }
 
-int get_selected_state(void) {
+int is_requested(void) {
     return SPI_OUT_PIN & _BV(SPI_OUT_SS_PIN);
 }
 
@@ -64,14 +64,10 @@ int main (void) {
 
     sei();
     
-    int previous_selected_state = get_selected_state();
     while (1) {
+        // Wait for request from master.
         led_on(LED_RED);
-
-        // Data transmission is started when 'selected state' changes.
-        while (previous_selected_state == get_selected_state());
-        previous_selected_state = get_selected_state();
-
+        while (!is_requested());
         led_off(LED_RED);
 
         // read CHAN0/CHAN1

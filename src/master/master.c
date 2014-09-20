@@ -138,13 +138,16 @@ int main (void) {
             // for any slave, set which of the 4 dmx channels t'is for
             spi_chan_select(slave_channel);
 
-            // select one of three slaves (TODO: remove hard-coded 4?)
-            spi_request_interrupt(slave);
+            // select one of three slaves
+            spi_request_slave(slave);
 
             // wait till slave says OK (marks itself busy/unavailable)
             led_on(LED_RED);
             while (slave_is_available(slave));
             led_off(LED_RED);
+
+            // Slave has answered the request, we can reset the pin to 0.
+            spi_finish_slave_request(slave);
             
             // transmit channel's value
             spi_master_transmit(chanval);
