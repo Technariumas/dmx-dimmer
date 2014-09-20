@@ -13,8 +13,8 @@
 #include "spi.h"
 #include "zc.h"
 
-#define LED_GREEN 0
-#define LED_RED 1
+#define LED_RED 0
+#define LED_GREEN 1
 
 // uC cycles between: two zero crossings, two firing angles
 #define CYCLES_ZC  F_CPU/(2*F_MAINS)
@@ -67,13 +67,13 @@ int main (void) {
 
     sei();
     
-    int previous_selected_state;
+    int previous_selected_state = get_selected_state();
     while (1) {
         led_on(LED_RED);
 
         // Data transmission is started when 'selected state' changes.
-        previous_selected_state = get_selected_state();
         while (previous_selected_state == get_selected_state());
+        previous_selected_state = get_selected_state();
 
         led_off(LED_RED);
 
