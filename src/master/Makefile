@@ -164,7 +164,7 @@ FUSECOMMAND = -U hfuse:w:0xd6:m -U lfuse:w:0xdf:m -U efuse:w:0x01:m
 HEXFORMAT=ihex
 
 # compiler
-CFLAGS=-I. $(INC) -g -mmcu=$(MCU) -O$(OPTLEVEL) \
+CFLAGS=-I. $(INC) -g -std=c99 -mmcu=$(MCU) -O$(OPTLEVEL) \
 	-fpack-struct -fshort-enums             \
 	-funsigned-bitfields -funsigned-char    \
 	-Wall -Wstrict-prototypes               \
