@@ -16,7 +16,6 @@ typedef struct {
     enum dmx_state_t state;      // state machine
     uint16_t         address;    // dmx address (of first channel)
     uint16_t         slot;       // slot number counter
-    uint16_t         dataisnew;  // flag new data
     uint8_t          status;     // usart status byte
     uint8_t          data;       // usart data byte
     uint8_t          preheat;
