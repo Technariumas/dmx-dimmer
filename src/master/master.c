@@ -15,10 +15,6 @@
 /* #include "adc.h" */
 #include "usart.h"
 
-#define LED_RED 0
-#define LED_GREEN 1
-
-
 volatile dmx_t dmx = {IDLE, 1, 0, 0, 0, 0, 0, 255};
 
 

@@ -13,9 +13,6 @@
 #include "spi.h"
 #include "zc.h"
 
-#define LED_RED 0
-#define LED_GREEN 1
-
 // uC cycles between: two zero crossings, two firing angles
 #define CYCLES_ZC  F_CPU/(2*F_MAINS)
 #define CYCLES_ANG CYCLES_ZC/256
