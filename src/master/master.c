@@ -5,14 +5,12 @@
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/wdt.h>      // TODO: disable with fuses and remove refs
-//#include <util/delay.h> // TODO: use or remove
 #include <avr/interrupt.h>
 
 #include "iocontrol.h"
 #include "fakedelay.h"    // TODO: replace with util/delay.h?
 #include "dmx.h"
 #include "spi.h"
-/* #include "adc.h" */
 #include "usart.h"
 
 volatile dmx_t dmx = {
@@ -87,7 +85,6 @@ int main (void) {
     // proceed with proper SPI operation
     spi_master_init();
     cfg_select();
-    /* SPCR |= _BV(CPOL);  // otherwise can't read first bit */
 
     /* read in configuration (address and 6 binary settings)
      * reading is performed by pushing bogus data to dumb shift
@@ -107,9 +104,6 @@ int main (void) {
     if (confh & 0b10) dmx.address |= 0b0100000000;
     if (confh & 0b01) dmx.address |= 0b1000000000;
 
-    /* // set up for getting data from PREHEAT/MAXVAL pots */
-    /* adc_init(); */
-
     // start talking to slaves
     usart_init();
     sei();
@@ -124,12 +118,6 @@ int main (void) {
     delay_ms(200);
 
     while (1) {
-	/* // see if preheat/maxval (one of the two) on panel changed */
-	/* if ( !adc_is_running() ) { */
-	/*     adc_channel_toggle(); */
-	/*     adc_start(); */
-	/* } */
-
 	// iterate over DMX channels
 	for (uint8_t dmx_channel = 0; dmx_channel < DMX_CHANNELS; dmx_channel++) {
             uint8_t slave = dmx_channel / 4;
@@ -163,9 +151,6 @@ int main (void) {
 
             // pull-ups on other end, reduce power consumption
             spi_chan_select(SPI_CHAN_RESET);
-
-            // check if transmission not successful or even newer
-            // data arrived
 	}  // for (channel iterate)
     }  // while (1)
 
@@ -177,8 +162,6 @@ ISR (USART_RX_vect, ISR_BLOCK) {
     // reading data clears status flags, so read status first
     dmx.status = UCSR0A;
     dmx.data = UDR0;
-
-    /* led_on(1); */
 
     // data overrun or frame error (break condition)
     if ( dmx.status & (_BV(DOR0)|_BV(FE0)) ) {
@@ -207,17 +190,4 @@ ISR (USART_RX_vect, ISR_BLOCK) {
 	    break;
 	}
     }
-
-    /* led_off(1); */
 }
-
-// interrupt: ADC conversion complete
-/* ISR (ADC_vect, ISR_NOBLOCK) { */
-/*     // 0:maxval (50-100%); 1: preheat (0-50%) */
-/*     if (adc_channel_which()) { */
-/*     dmx.preheat = adc_get_value()/2; */
-/*     } */
-/*     else { */
-/*     	dmx.maxval = adc_get_value()/2 + 128; */
-/*     } */
-/* } */
