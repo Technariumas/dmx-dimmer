@@ -15,7 +15,16 @@
 /* #include "adc.h" */
 #include "usart.h"
 
-volatile dmx_t dmx = {IDLE, 1, 0, 0, 0, 0, 0, 255};
+volatile dmx_t dmx = {
+    .state = IDLE,
+    .address = 1,
+    .slot = 0,
+    .status = 0,
+    .data = 0,
+    .preheat = 0,
+    .maxval = 255,
+    .chanval = { 0 }
+};
 
 
 // hack: separate slave OK lines are needed :(
