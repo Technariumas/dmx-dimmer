@@ -1,6 +1,6 @@
 This is an open-source 12-channel DMX512 dimmer, currently known as
-dmx-dimmer. The name will change to something less meaningful by
-production time. It is based on [Hendrik Hoelscher's dimmer][hoelscher].
+`dmx-dimmer`. The name will change to something less meaningful if
+it is ever production-ready. It is based on [Hendrik Hoelscher's dimmer][hoelscher].
 
 The goal is to produce schematics, PCB layouts and code, all available
 in a form that allows modification and (even homebrew) manufacture. This
@@ -21,15 +21,20 @@ interested. Most of what exists is in the git log.
 
 [gEDA][geda] was chosen to do the design work. As to why is a topic for a
 whole article. Mainly, I wanted to see whether it's good enough for
-medium-sized projects. The short answer is maybe, if you're stubborn as I.
+medium-sized projects. The short answer is yes, if you live in the real
+world.
 
 Custom [symbols][gedasym] and [footprints][gedafoot] are used.
 
-A license form is currently being decided upon. Rest assured, it will be
-open-source.
+Software (firmware) is licensed under [GPLv3][gpl], and resides in the `src`
+directory. Hardware designs are licensed under [CERN OHL v1.2][ohl] and reside
+in `sch`. Full texts of appropriate licenses are available in those
+directories.
 
 
 [hoelscher]: http://www.hoelscher-hi.de/hendrik/english/dimmer.htm
 [geda]: http://www.gpleda.org/index.html
 [gedasym]: https://github.com/rxdtxd/geda-gschem-symbols-rxdtxd
 [gedafoot]: https://github.com/rxdtxd/geda-pcb-footprints-rxdtxd
+[gpl]: http://www.gnu.org/licenses/gpl-3.0.txt
+[ohl]: http://www.ohwr.org/attachments/2388/cern_ohl_v_1_2.txt

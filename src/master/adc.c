@@ -14,12 +14,11 @@ inline void adc_init (void) {
     // select default channel
     adc_channel_set_preheat();
 
-    /* slow ADC down 128 times (compared to system clock) - if trigger
-     * source in ADCSRB is left default (i.e. free running mode), this
-     * will happen as often as possible; and no one will be a two-knob VJ,
-     * so ADC values won't be updated often
-     */
-    /* ADCSRA = _BV(ADPS2) | _BV(ADPS1) | _BV(ADPS0); */
+    /* slow ADC down 128 times (compared to system clock) - if trigger */
+    /* source in ADCSRB is left default (i.e. free running mode), this */
+    /* will happen as often as possible; and no one will be a two-knob VJ, */
+    /* so ADC values won't be updated often */
+    ADCSRA = _BV(ADPS2) | _BV(ADPS1) | _BV(ADPS0);
 
     // enable auto trigger
     // (according to default settings in ADCSRB - i.e. free-running mode)
